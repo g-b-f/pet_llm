@@ -1,5 +1,9 @@
 from pydantic import BaseModel, Field
 
+
+class EnvironmentalInfo(BaseModel):
+    mouse: tuple[int,int] = Field(description="the location of the user's mouse")
+
 class PetAction(BaseModel):
     thought: str = Field(description="The thought process of the pet.")
     action: str = Field(description="The action to take.", json_schema_extra={"enum": ["move_to", "idle", "swim_fast"]})

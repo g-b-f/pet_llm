@@ -2,8 +2,9 @@ import pygame
 from textwrap import wrap
 
 from lib.brain import Brain
+from lib.extra_types import EnvironmentalInfo
 
-DEBUG = True
+DEBUG = False
 
 
 class PetTankSimulation:
@@ -58,6 +59,13 @@ class PetTankSimulation:
 
         self.brain.wake_up(tank_bounds)
 
+    def get_info(self) -> EnvironmentalInfo:
+        """Gets information from the outside world to pass to the brain"""
+        mouse = pygame.mouse.get_pos()
+        ret = EnvironmentalInfo(mouse=mouse)
+
+        return ret
+
     def run(self) -> None:
         """Executes the main Pygame loop."""
         running = True
@@ -66,7 +74,9 @@ class PetTankSimulation:
                 if event.type == pygame.QUIT:
                     running = False
 
-            self.brain.update()
+            info = self.get_info()
+
+            self.brain.update(info)
             self._render_scene()
             self.clock.tick(self.FPS)
 

@@ -8,7 +8,7 @@ from collections import deque
 from llama_cpp import Llama
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-from lib.extra_types import PetAction
+from lib.extra_types import PetAction, EnvironmentalInfo
 
 class Brain:
     """Manages pet state and background inference with llama-cpp-python without blocking the rendering loop.
@@ -19,7 +19,6 @@ class Brain:
     """
 
     CONTEXT_SIZE = 2048
-    GPU_LAYERS_ALL = -1  # -1 offloads every layer to the GPU
     TEMPERATURE = 0.7
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
     INITIAL_THOUGHT = "Waking up in the tank..."
@@ -57,16 +56,18 @@ class Brain:
         self.llm = Llama(
             model_path=self.model_path,
             n_ctx=self.CONTEXT_SIZE,
-            n_gpu_layers=self.GPU_LAYERS_ALL,
+            n_gpu_layers=-1,
             verbose=False
         )
         self.awake = True
 
-    def update(self) -> None:
+    def update(self, environment_info: EnvironmentalInfo) -> None:
         """Applies queued LLM decisions and advances the pet toward its target.
 
         Call once per frame from the rendering loop.
         """
+        self.environment_info = environment_info
+
         if not self.result_queue.empty():
             decision = self.result_queue.get()
             self.current_thought = decision.get_thought()
@@ -107,16 +108,15 @@ class Brain:
     def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (
             "You are a small pet living in a glass tank window. "
-            "Formulate a brief thought and pick coordinates inside the tank bounds to move toward. "
-            "Adhere strictly to the requested JSON schema."
-            f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y})."
+            "Formulate a thought then pick coordinates inside the tank bounds to move toward. "
+            "Try to keep moving and not stay in the same place."
+            "Adhere strictly to the requested JSON schema.\n"
+            f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y}).\n"
+            f"Your owner's finger is at {self.environment_info.mouse}"
         )
 
         try:
-            # if len(self.memory) > self.MEMORY_LENGTH:
-            #     print("popping")
-            #     self.memory.popleft
-
+            self.memory.clear()
             messages=[cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})] + list(self.memory)
             response = self.llm.create_chat_completion(
                 messages,
