@@ -23,7 +23,7 @@ class Brain:
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
     INITIAL_THOUGHT = "Waking up in the tank..."
 
-    MEMORY_LENGTH = 5
+    MEMORY_LENGTH = 3
 
     # Movement
     PET_SPEED = 2.5
@@ -46,7 +46,7 @@ class Brain:
 
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
-        self.memory: deque[ChatCompletionRequestMessage] = deque()
+        self.memory: deque[ChatCompletionRequestMessage] = deque(maxlen=self.MEMORY_LENGTH)
 
         self.memory.clear()
         self.INITIAL_PROMPT = "Start exploring!"
@@ -116,7 +116,7 @@ class Brain:
         )
 
         try:
-            self.memory.clear()
+            # self.memory.clear() # uncomment to give memory loss
             messages=[cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})] + list(self.memory)
             response = self.llm.create_chat_completion(
                 messages,

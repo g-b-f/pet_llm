@@ -4,7 +4,7 @@ from textwrap import wrap
 from lib.brain import Brain
 from lib.extra_types import EnvironmentalInfo
 
-DEBUG = False
+DEBUG = True
 
 
 class PetTankSimulation:
