@@ -9,28 +9,72 @@ from llama_cpp import Llama
 from lib.extra_types import PetAction
 
 class Brain:
-    """Manages background inference with llama-cpp-python without blocking the rendering loop."""
+    """Manages pet state and background inference with llama-cpp-python without blocking the rendering loop.
+
+    All coordinates are tank-local: (0, 0) is the top-left corner of the swimmable
+    tank area and (x_bounds, y_bounds) is the bottom-right corner. Applying any
+    on-screen offset is the simulation's responsibility.
+    """
 
     CONTEXT_SIZE = 2048
     GPU_LAYERS_ALL = -1  # -1 offloads every layer to the GPU
     TEMPERATURE = 0.7
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
+    INITIAL_THOUGHT = "Waking up in the tank..."
 
-    def __init__(self, model_path: str|Path, bounds:tuple[int,int], bounds_offset:tuple[int,int]) -> None:
+    # Movement
+    PET_SPEED = 2.5
+    ARRIVAL_THRESHOLD = 3.0
+
+    def __init__(self, model_path: str|Path) -> None:
         if isinstance(model_path, Path):
-            model_path = str(model_path.resolve())
+            model_path = model_path.resolve()
+        self.model_path = str(model_path)
+        self.awake = False
+
+    def wake_up(self, bounds:tuple[int,int]):
+        self.x_bounds, self.y_bounds = bounds
+
+        self.current_x = float(self.x_bounds // 2)
+        self.current_y = float(self.y_bounds // 2)
+        self.target_x = self.current_x
+        self.target_y = self.current_y
+        self.current_thought = self.INITIAL_THOUGHT
+
+        self.is_thinking = False
+        self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
         self.llm = Llama(
-            model_path=model_path,
+            model_path=self.model_path,
             n_ctx=self.CONTEXT_SIZE,
             n_gpu_layers=self.GPU_LAYERS_ALL,
             verbose=False
         )
-        self.is_thinking = False
-        self.result_queue: queue.Queue[PetAction] = queue.Queue()
+        self.awake = True
 
-        self.x_bounds, self.y_bounds = bounds
-        self.x_offset, self.y_offset = bounds_offset
+    def update(self) -> None:
+        """Applies queued LLM decisions and advances the pet toward its target.
+
+        Call once per frame from the rendering loop.
+        """
+        if not self.result_queue.empty():
+            decision = self.result_queue.get()
+            self.current_thought = decision.get_thought()
+            self.target_x = decision.get_target_x(self.current_x)
+            self.target_y = decision.get_target_y(self.current_y)
+
+        delta_x = self.target_x - self.current_x
+        delta_y = self.target_y - self.current_y
+        distance = (delta_x**2 + delta_y**2) ** 0.5
+
+        if distance > self.ARRIVAL_THRESHOLD:
+            self.current_x += (delta_x / distance) * self.PET_SPEED
+            self.current_y += (delta_y / distance) * self.PET_SPEED
+        else:
+            self.request_decision_async(
+                int(self.current_x),
+                int(self.current_y)
+            )
 
     def request_decision_async(self, current_x: int, current_y: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
@@ -84,8 +128,8 @@ class Brain:
             fallback_decision = PetAction(
                 thought=self.FALLBACK_THOUGHT,
                 action="move_to",
-                target_x=random.randint(self.x_offset, self.x_bounds - self.x_offset),
-                target_y=random.randint(self.y_offset, self.y_bounds - self.y_offset)
+                target_x=random.randint(0, self.x_bounds),
+                target_y=random.randint(0, self.y_bounds)
             )
             self.result_queue.put(fallback_decision)
         finally:
