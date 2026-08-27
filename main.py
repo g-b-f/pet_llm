@@ -20,9 +20,19 @@ class PetAction(BaseModel):
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 
+    def get_thought(self) -> str:
+        return self.thought if self.thought else ""
 
-PET_ACTION_SCHEMA = PetAction.model_json_schema()
+    def get_action(self) -> str:
+        return self.action if self.action else "idle"
 
+    def get_target_x(self, default=0.0) -> float:
+        ret = self.target_x if self.target_x is not None else default
+        return float(ret)
+
+    def get_target_y(self, default=0.0) -> float:
+        ret = self.target_y if self.target_y is not None else default
+        return float(ret)
 
 class Brain:
     """Manages background inference with llama-cpp-python without blocking the rendering loop."""
@@ -35,7 +45,7 @@ class Brain:
             verbose=False
         )
         self.is_thinking = False
-        self.result_queue: queue.Queue = queue.Queue()
+        self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
     def request_decision_async(self, current_x: int, current_y: int, screen_width: int, screen_height: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
@@ -73,25 +83,27 @@ class Brain:
                 ],
                 response_format={
                     "type": "json_object",
-                    "schema": PET_ACTION_SCHEMA
+                    "schema": PetAction.model_json_schema()
                 },
                 temperature=0.7
             )
             assert not isinstance(response, Iterator)
             content = response["choices"][0]["message"]["content"]
             assert content is not None
-            
-            parsed_decision = json.loads(content)
+
+            dict_decision = json.loads(content)
+            parsed_decision = PetAction(**dict_decision)
             self.result_queue.put(parsed_decision)
 
         except Exception as e:
             print(f"Error during decision generation: {e}")
-            fallback_decision = {
-                "thought": "Mind empty... drifting randomly.",
-                "action": "move_to",
-                "target_x": random.randint(50, screen_width - 50),
-                "target_y": random.randint(50, screen_height - 50)
-            }
+
+            fallback_decision = PetAction(
+                thought= "Mind empty... drifting randomly.",
+                action= "move_to",
+                target_x= random.randint(50, screen_width - 50),
+                target_y= random.randint(50, screen_height - 50)
+            )
             self.result_queue.put(fallback_decision)
         finally:
             self.is_thinking = False
@@ -142,9 +154,9 @@ class PetTankSimulation:
     def _update_pet_logic(self) -> None:
         if not self.brain.result_queue.empty():
             decision = self.brain.result_queue.get()
-            self.current_thought = decision.get("thought", "")
-            self.target_x = float(decision.get("target_x", self.pet_x))
-            self.target_y = float(decision.get("target_y", self.pet_y))
+            self.current_thought = decision.get_thought()
+            self.target_x = decision.get_target_x(self.pet_x)
+            self.target_y = decision.get_target_y(self.pet_y)
 
         delta_x = self.target_x - self.pet_x
         delta_y = self.target_y - self.pet_y
