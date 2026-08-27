@@ -1,0 +1,13 @@
+[project]
+name = "pet-llm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "llama-cpp-python>=0.3.35",
+    "pygame>=2.6.1",
+]
+
+[[tool.uv.index]]
+url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
