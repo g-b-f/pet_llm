@@ -1,3 +1,6 @@
+# AI models
+models/*.gguf
+
 # Python-generated files
 __pycache__/
 *.py[oc]
