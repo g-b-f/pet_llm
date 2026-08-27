@@ -6,7 +6,9 @@ from pathlib import Path
 import pygame
 from pydantic import BaseModel, Field
 from llama_cpp import Llama
+from llama_cpp.llama_types import CreateChatCompletionResponse
 from textwrap import wrap
+from typing import Iterator
 
 
 MODEL_FILE_PATH = (Path().parent/"models/qwen2.5-1.5b-instruct-q4_k_m.gguf")
@@ -75,10 +77,15 @@ class Brain:
                 },
                 temperature=0.7
             )
+            assert not isinstance(response, Iterator)
             content = response["choices"][0]["message"]["content"]
+            assert content is not None
+            
             parsed_decision = json.loads(content)
             self.result_queue.put(parsed_decision)
-        except Exception:
+
+        except Exception as e:
+            print(f"Error during decision generation: {e}")
             fallback_decision = {
                 "thought": "Mind empty... drifting randomly.",
                 "action": "move_to",
