@@ -6,6 +6,7 @@ from pathlib import Path
 import pygame
 from pydantic import BaseModel, Field
 from llama_cpp import Llama
+from textwrap import wrap
 
 
 MODEL_FILE_PATH = (Path().parent/"models/qwen2.5-1.5b-instruct-q4_k_m.gguf")
@@ -92,6 +93,10 @@ class Brain:
 class PetTankSimulation:
     """Handles Pygame window rendering, movement interpolation, and interface displays."""
 
+    THOUGHT_LOC = (20, 18)
+    STATUS_LOC = (20, 68)
+    TEXT_BOX_HEIGHT = THOUGHT_LOC[1] + STATUS_LOC[1]
+
     def __init__(self, model_path: str|Path, screen_width: int = 800, screen_height: int = 600) -> None:
         if isinstance(model_path, Path):
             model_path = str(model_path.resolve())
@@ -149,21 +154,40 @@ class PetTankSimulation:
                 self.screen_height
             )
 
+    def _blit_text(
+            self,
+            surface:pygame.Surface,
+            text:str,
+            pos:tuple[int,int],
+            font:pygame.font.Font,
+            color: tuple[int,int,int] | pygame.Color
+            ):
+        space_width = font.size(' ')[0]
+        max_width, max_height = surface.get_size()
+        x, y = pos
+        max_chars = (max_width - x) // space_width
+        lines = wrap(text, max_chars)
+        for line in lines:
+            line_width, line_height = font.size(line)
+            if x + line_width > max_width:
+                break
+            surface.blit(font.render(line, True, color), (x, y))
+            y += line_height
+
+
     def _render_scene(self) -> None:
         self.screen.fill((18, 26, 38))
 
         pygame.draw.circle(self.screen, (255, 140, 0), (int(self.pet_x), int(self.pet_y)), 16)
         pygame.draw.circle(self.screen, (255, 200, 100), (int(self.target_x), int(self.target_y)), 4, 1)
+        pygame.draw.rect(self.screen, (10, 15, 25), (10, 10, self.screen_width - 20, self.TEXT_BOX_HEIGHT))
 
-        pygame.draw.rect(self.screen, (10, 15, 25), (10, 10, self.screen_width - 20, 55))
-        
-        thought_surface = self.font.render(f"Thought: {self.current_thought}", True, (220, 220, 220))
         status_label = "Status: Thinking..." if self.brain.is_thinking else "Status: Swimming"
         status_color = (200, 200, 130) if self.brain.is_thinking else (130, 200, 130)
         status_surface = self.font.render(status_label, True, status_color)
 
-        self.screen.blit(thought_surface, (20, 18))
-        self.screen.blit(status_surface, (20, 38))
+        self._blit_text(self.screen, "Thought: " + self.current_thought, self.THOUGHT_LOC, self.font, (220, 220, 220))
+        self.screen.blit(status_surface, self.STATUS_LOC)
 
         pygame.display.flip()
 
