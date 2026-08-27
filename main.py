@@ -6,7 +6,6 @@ from pathlib import Path
 import pygame
 from pydantic import BaseModel, Field
 from llama_cpp import Llama
-from llama_cpp.llama_types import CreateChatCompletionResponse
 from textwrap import wrap
 from typing import Iterator
 
@@ -37,7 +36,7 @@ class PetAction(BaseModel):
 class Brain:
     """Manages background inference with llama-cpp-python without blocking the rendering loop."""
 
-    def __init__(self, model_path: str) -> None:
+    def __init__(self, model_path: str, bounds:tuple[int,int], bounds_offset:tuple[int,int]) -> None:
         self.llm = Llama(
             model_path=model_path,
             n_ctx=2048,
@@ -47,7 +46,10 @@ class Brain:
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
-    def request_decision_async(self, current_x: int, current_y: int, screen_width: int, screen_height: int) -> None:
+        self.x_bounds, self.y_bounds = bounds
+        self.x_offset, self.y_offset = bounds_offset
+
+    def request_decision_async(self, current_x: int, current_y: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
 
         Args:
@@ -62,18 +64,18 @@ class Brain:
         self.is_thinking = True
         worker_thread = threading.Thread(
             target=self._generate_decision,
-            args=(current_x, current_y, screen_width, screen_height),
+            args=(current_x, current_y),
             daemon=True
         )
         worker_thread.start()
 
-    def _generate_decision(self, current_x: int, current_y: int, screen_width: int, screen_height: int) -> None:
+    def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (
             "You are a small pet living in a glass tank window. "
             "Formulate a brief thought and pick coordinates inside the tank bounds to move toward. "
             "Adhere strictly to the requested JSON schema."
         )
-        user_prompt = f"Tank bounds: ({screen_width}, {screen_height}). Your position: ({current_x}, {current_y})."
+        user_prompt = f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y})."
 
         try:
             response = self.llm.create_chat_completion(
@@ -101,8 +103,8 @@ class Brain:
             fallback_decision = PetAction(
                 thought= "Mind empty... drifting randomly.",
                 action= "move_to",
-                target_x= random.randint(50, screen_width - 50),
-                target_y= random.randint(50, screen_height - 50)
+                target_x= random.randint(self.x_offset, self.x_bounds - self.x_offset),
+                target_y= random.randint(self.y_offset, self.y_bounds - self.y_offset)
             )
             self.result_queue.put(fallback_decision)
         finally:
@@ -116,22 +118,30 @@ class PetTankSimulation:
     STATUS_LOC = (20, 10)
     TEXT_BOX_HEIGHT = THOUGHT_LOC[1] + STATUS_LOC[1] + 20
 
-    def __init__(self, model_path: str|Path, screen_width: int = 800, screen_height: int = 600) -> None:
+    bounds = 800, 600
+    bounds_offset = 50, TEXT_BOX_HEIGHT
+
+    def __init__(self, model_path: str|Path) -> None:
         if isinstance(model_path, Path):
             model_path = str(model_path.resolve())
         
         pygame.init()
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
-        pygame.display.set_caption("Pet LLM MVP")
+        # self.screen_height = screen_height - self.TEXT_BOX_HEIGHT
+        # self.screen = pygame.display.set_mode((screen_width, screen_height))
+        self.screen = pygame.display.set_mode(self.bounds)
+        pygame.display.set_caption("Pet LLM")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("monospace", 15)
 
-        self.brain = Brain(model_path)
-        
-        self.pet_x = float(screen_width // 2)
-        self.pet_y = float(screen_height // 2)
+        self.brain = Brain(model_path, self.bounds, self.bounds_offset)
+
+        bounds_x, bounds_y = self.bounds
+        offset_x, offset_y = self.bounds_offset
+        tank_bounds = (bounds_x - offset_x, bounds_y - offset_y)
+
+        self.pet_x = float(tank_bounds[0] // 2)
+        self.pet_y = float(tank_bounds[1] // 2)
+
         self.target_x = float(self.pet_x)
         self.target_y = float(self.pet_y)
         self.pet_speed = 2.5
@@ -168,9 +178,7 @@ class PetTankSimulation:
         else:
             self.brain.request_decision_async(
                 int(self.pet_x),
-                int(self.pet_y),
-                self.screen_width,
-                self.screen_height
+                int(self.pet_y)
             )
 
     def _blit_text(
@@ -194,12 +202,13 @@ class PetTankSimulation:
             y += line_height
 
 
+
     def _render_scene(self) -> None:
         self.screen.fill((18, 26, 38))
 
         pygame.draw.circle(self.screen, (255, 140, 0), (int(self.pet_x), int(self.pet_y)), 16)
         pygame.draw.circle(self.screen, (255, 200, 100), (int(self.target_x), int(self.target_y)), 4, 1)
-        pygame.draw.rect(self.screen, (10, 15, 25), (10, 10, self.screen_width - 20, self.TEXT_BOX_HEIGHT))
+        pygame.draw.rect(self.screen, (10, 15, 25), (10, 10, self.bounds[0]-self.bounds_offset[0], self.bounds_offset[1]))
 
         if not self.current_thought == "Waking up in the tank...":
             status_label = "Status: Thinking..." if self.brain.is_thinking else "Status: Swimming"
