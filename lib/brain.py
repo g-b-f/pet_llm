@@ -17,7 +17,7 @@ from lib.utils import get_logger
 logger = get_logger(__name__, "info")
 
 class Brain:
-    """Manages pet state and background inference with llama-cpp-python without blocking the rendering loop.
+    """Manages pet state and background inference using ollama.
 
     All coordinates are tank-local: (0, 0) is the top-left corner of the swimmable
     tank area and (x_bounds, y_bounds) is the bottom-right corner. Applying any
@@ -36,6 +36,7 @@ class Brain:
     INITIAL_PROMPT = "Start exploring!"
 
     MEMORY_LENGTH = 5
+    seed = 1
 
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
@@ -99,16 +100,19 @@ class Brain:
 
     def _supervise_memory(self):
         try:
-            first_action = PetAction(**json.loads(self.memory[0]["content"])) # type: ignore[reportTypedDictNotRequiredAccess, arg-type]
+            first_action = PetAction(**json.loads(self.memory[0]["content"])) # type: ignore
             last_action = PetAction(**json.loads(self.memory[-1]["content"])) # type: ignore[arg-type]
             first_thought = first_action.get_thought()
             last_thought = last_action.get_thought()
 
             if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
-                logger.info(f"thought loop detected after {self.iterations} iterations, clearing memory")
+                logger.info(
+                    f"thought loop detected after {self.iterations} iterations, clearing memory"
+                    )
                 logger.info(f"thought was: '{last_thought}'")
                 # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
                 self.memory.clear()
+                self.seed +=1
             
         except (KeyError, json.JSONDecodeError):
             pass
@@ -150,7 +154,8 @@ class Brain:
             "Try to keep moving and not stay in the same place."
             "Don't attempt to leave the bounds of the tank."
             "Adhere strictly to the requested JSON schema.\n"
-            f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y}).\n"
+            f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
+            "Your position: ({current_x}, {current_y}).\n"
             # f"Your owner's finger is at {self.environment_info.mouse}"
         )
         if self.current_thought == self.INITIAL_THOUGHT:
@@ -159,13 +164,17 @@ class Brain:
 
         try:
             start_time = time()
-            messages=[cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})] + list(self.memory)
+            messages=[
+                cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})
+                ] + list(self.memory)
             response = self.llm.create_chat_completion(
                 messages,
                 temperature=self.TEMPERATURE,
                 presence_penalty=self.PRESENCE_PENALTY,
                 frequency_penalty=self.FREQUENCY_PENALTY,
                 repeat_penalty=self.REPEAT_PENALTY,
+                min_p=self.MIN_P,
+                seed=self.seed,
                 response_format={
                     "type": "json_object",
                     "schema": PetAction.model_json_schema()
