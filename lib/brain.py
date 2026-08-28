@@ -168,7 +168,7 @@ class Brain:
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
             f"Your position: ({current_x}, {current_y}).\n"
-            f"Your owner's finger is at {self.environment_info.mouse}"
+            # f"Your owner's finger is at {self.environment_info.mouse}"
         )
         if self.current_thought == self.INITIAL_THOUGHT:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
