@@ -8,11 +8,13 @@ from collections import deque
 from llama_cpp import Llama
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 from time import time
+from hashlib import md5
+
 
 from lib.extra_types import PetAction, EnvironmentalInfo
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "debug")
+logger = get_logger(__name__, "info")
 
 class Brain:
     """Manages pet state and background inference with llama-cpp-python without blocking the rendering loop.
@@ -98,6 +100,7 @@ class Brain:
             current_x: Current horizontal position of the pet.
             current_y: Current vertical position of the pet.
         """
+        assert self.awake, "still asleep!"
         if self.is_thinking:
             return
 
@@ -119,7 +122,8 @@ class Brain:
             # f"Your owner's finger is at {self.environment_info.mouse}"
         )
         if self.current_thought == self.INITIAL_THOUGHT:
-            logger.debug(f"system prompt hash: {hash(system_prompt)}")
+            prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
+            logger.info(f"system prompt hash: {prompt_hash}")
 
         try:
             start_time = time()
@@ -148,8 +152,10 @@ class Brain:
             try:
                 first_thought = json.loads(self.memory[0]["content"]) # type: ignore[reportTypedDictNotRequiredAccess, arg-type]
                 last_thought = json.loads(self.memory[-1]["content"]) # type: ignore[arg-type]
-                if first_thought == last_thought: 
-                    logger.info("thought loop detected")
+                if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
+                    logger.info(f"thought loop detected after {self.iterations} iterations, clearing memory")
+                    # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
+                    self.memory.clear()
             except (KeyError, json.JSONDecodeError):
                 pass
 
