@@ -99,6 +99,14 @@ class Brain:
                 int(self.current_y)
             )
 
+    def _fallback(self):
+        fallback_decision = PetAction(
+            thought=self.FALLBACK_THOUGHT,
+            action="move_to",
+            target_x=random.randint(0, self.x_bounds),
+            target_y=random.randint(0, self.y_bounds)
+        )
+        self.result_queue.put(fallback_decision)
 
     def _supervise_memory(self):
         try:
@@ -115,6 +123,7 @@ class Brain:
                 logger.info(f"thought was: '{last_thought}'")
                 # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
                 self.memory.clear()
+                self._fallback()
                 self.seed +=1
             
         except (KeyError, json.JSONDecodeError, IndexError):
@@ -196,7 +205,8 @@ class Brain:
                 self.memory.append({"role": "system", "content": "You can't leave the tank!"})
                 self.oob_count +=1
                 if self.oob_count >= self.MAX_OOB_COUNT:
-                    logger.info(f"attempted out-of-bounds too much, clearing memory")
+                    logger.info(f"attempted out-of-bounds too much")#, clearing memory")
+                    self._fallback()
                     self.memory.clear()
                     self.oob_count = 0
             else:
@@ -211,14 +221,7 @@ class Brain:
         except Exception as e:
             print(f"Error during decision generation: {e}")
             logger.exception(e)
-
-            fallback_decision = PetAction(
-                thought=self.FALLBACK_THOUGHT,
-                action="move_to",
-                target_x=random.randint(0, self.x_bounds),
-                target_y=random.randint(0, self.y_bounds)
-            )
-            self.result_queue.put(fallback_decision)
+            self._fallback()
         finally:
             self.is_thinking = False
 
