@@ -3,7 +3,8 @@ from pathlib import Path
 from lib.brain import Brain
 from lib.simulation import PetTankSimulation
 
-MODEL_FILE_PATH = (Path().parent/"models/qwen2.5-1.5b-instruct-q4_k_m.gguf")
+# MODEL_FILE_PATH = (Path().parent/"models/qwen2.5-1.5b-instruct-q4_k_m.gguf")
+MODEL_FILE_PATH = (Path().parent/"models/smollm2-1.7b-q8_0.gguf")
 
 # Layout (pixels)
 SCREEN_WIDTH = 800
