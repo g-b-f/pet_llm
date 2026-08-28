@@ -93,6 +93,24 @@ class Brain:
                 int(self.current_y)
             )
 
+
+    def _supervise_memory(self):
+        try:
+            first_action = PetAction(**json.loads(self.memory[0]["content"])) # type: ignore[reportTypedDictNotRequiredAccess, arg-type]
+            last_action = PetAction(**json.loads(self.memory[-1]["content"])) # type: ignore[arg-type]
+            first_thought = first_action.get_thought()
+            last_thought = last_action.get_thought()
+
+            if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
+                logger.info(f"thought loop detected after {self.iterations} iterations, clearing memory")
+                logger.info(f"thought was: '{last_thought}'")
+                # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
+                self.memory.clear()
+            
+        except (KeyError, json.JSONDecodeError):
+            pass
+
+
     def request_decision_async(self, current_x: int, current_y: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
 
@@ -149,16 +167,7 @@ class Brain:
             self.result_queue.put(parsed_decision)
             self.iterations += 1
 
-            try:
-                first_thought = json.loads(self.memory[0]["content"]) # type: ignore[reportTypedDictNotRequiredAccess, arg-type]
-                last_thought = json.loads(self.memory[-1]["content"]) # type: ignore[arg-type]
-                if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
-                    logger.info(f"thought loop detected after {self.iterations} iterations, clearing memory")
-                    # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
-                    self.memory.clear()
-            except (KeyError, json.JSONDecodeError):
-                pass
-
+            self._supervise_memory()
             end_time = time()
             logger.debug(f"thought for {end_time - start_time:.1f} seconds")
 
@@ -175,3 +184,5 @@ class Brain:
             self.result_queue.put(fallback_decision)
         finally:
             self.is_thinking = False
+
+ 
