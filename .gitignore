@@ -1,6 +1,7 @@
 # AI models
 models/*.gguf
 models/hf_token.json
+log*.txt
 
 # Python-generated files
 __pycache__/
