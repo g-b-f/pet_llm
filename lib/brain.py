@@ -7,6 +7,7 @@ from typing import Iterator, cast
 from collections import deque
 from llama_cpp import Llama
 from llama_cpp.llama_types import ChatCompletionRequestMessage
+from time import time
 
 from lib.extra_types import PetAction, EnvironmentalInfo
 
@@ -19,9 +20,9 @@ class Brain:
     """
 
     CONTEXT_SIZE = 2048
-    TEMPERATURE = 0.7
+    TEMPERATURE = 2
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
-    INITIAL_THOUGHT = "Waking up in the tank..."
+    INITIAL_THOUGHT = "Waking up..."
 
     MEMORY_LENGTH = 3
 
@@ -46,12 +47,12 @@ class Brain:
 
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
-        self.memory: deque[ChatCompletionRequestMessage] = deque(maxlen=self.MEMORY_LENGTH)
 
+        self.memory: deque[ChatCompletionRequestMessage] = deque(maxlen=self.MEMORY_LENGTH)
         self.memory.clear()
         self.INITIAL_PROMPT = "Start exploring!"
         self.memory.append({"role": "user", "content": self.INITIAL_PROMPT})
-
+        self.iterations = 0
 
         self.llm = Llama(
             model_path=self.model_path,
@@ -112,19 +113,22 @@ class Brain:
             "Try to keep moving and not stay in the same place."
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y}).\n"
-            f"Your owner's finger is at {self.environment_info.mouse}"
+            # f"Your owner's finger is at {self.environment_info.mouse}"
         )
 
         try:
+            start_time = time()
             # self.memory.clear() # uncomment to give memory loss
             messages=[cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})] + list(self.memory)
             response = self.llm.create_chat_completion(
                 messages,
+                temperature=self.TEMPERATURE,
+                presence_penalty=0.6,
+                frequency_penalty=0.8,
                 response_format={
                     "type": "json_object",
                     "schema": PetAction.model_json_schema()
                 },
-                temperature=self.TEMPERATURE
             )
             assert not isinstance(response, Iterator)
             message = response["choices"][0]["message"]
@@ -135,9 +139,13 @@ class Brain:
             dict_decision = json.loads(content)
             parsed_decision = PetAction(**dict_decision)
             self.result_queue.put(parsed_decision)
+            self.iterations += 1
 
             # print("mem len: ", len(self.memory))
             # print(self.memory)
+
+            end_time = time()
+            print(f"thought for {end_time - start_time:.1f} seconds", flush=True)
 
         except Exception as e:
             print(f"Error during decision generation: {e}")

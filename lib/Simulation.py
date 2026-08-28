@@ -61,6 +61,7 @@ class PetTankSimulation:
 
     def get_info(self) -> EnvironmentalInfo:
         """Gets information from the outside world to pass to the brain"""
+        # TODO: make this a string that gets appended
         mouse = pygame.mouse.get_pos()
         ret = EnvironmentalInfo(mouse=mouse)
 
@@ -133,9 +134,10 @@ class PetTankSimulation:
 
         if DEBUG:
             self.brain.target_x
-            coords = f"current: ({self.brain.current_x:.1f}, {self.brain.current_y:.1f})       "\
-            f"target: ({self.brain.target_x:.1f}, {self.brain.target_y:.1f})    "\
-            f"memory length: {len(self.brain.memory)}"
+            coords = f"current: ({self.brain.current_x:.1f}, {self.brain.current_y:.1f}) "\
+            f"target: ({self.brain.target_x:.1f}, {self.brain.target_y:.1f}) "\
+            f"memory length: {len(self.brain.memory)} "\
+            f"iteration: {self.brain.iterations}"
             debug_surface = self.font.render(coords, True, pygame.Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
