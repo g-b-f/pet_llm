@@ -1,10 +1,16 @@
-import pygame
+import tomllib
 from textwrap import wrap
+from pathlib import Path
+
+import pygame
 
 from lib.brain import Brain
 from lib.extra_types import EnvironmentalInfo
 
 DEBUG = True
+
+tom = (Path(__file__).parent.parent/ "pyproject.toml").read_text()
+version = tomllib.loads(tom)["project"]["version"]
 
 
 class PetTankSimulation:
@@ -135,7 +141,8 @@ class PetTankSimulation:
             self.brain.target_x
             coords = f"current: ({self.brain.current_x:.1f}, {self.brain.current_y:.1f}) "\
             f"target: ({self.brain.target_x:.1f}, {self.brain.target_y:.1f}) "\
-            f"iteration: {self.brain.iterations}"
+            f"iteration: {self.brain.iterations}  "\
+            f"v{version}"
             debug_surface = self.font.render(coords, True, pygame.Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
