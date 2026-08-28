@@ -145,8 +145,13 @@ class Brain:
             self.result_queue.put(parsed_decision)
             self.iterations += 1
 
-            # print("mem len: ", len(self.memory))
-            # print(self.memory)
+            try:
+                first_thought = json.loads(self.memory[0]["content"]) # type: ignore[reportTypedDictNotRequiredAccess, arg-type]
+                last_thought = json.loads(self.memory[-1]["content"]) # type: ignore[arg-type]
+                if first_thought == last_thought: 
+                    logger.info("thought loop detected")
+            except (KeyError, json.JSONDecodeError):
+                pass
 
             end_time = time()
             logger.debug(f"thought for {end_time - start_time:.1f} seconds")
