@@ -130,6 +130,16 @@ class Brain:
         )
         worker_thread.start()
 
+    def target_out_of_bounds(self, action:PetAction) -> bool:
+        target_x = action.get_target_x()
+        target_y = action.get_target_y()
+        if target_x > self.x_bounds or target_x < 0:
+            return True
+        if target_y > self.y_bounds or target_y < 0:
+            return True
+        return False
+
+
     def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (
             "You are a small pet living in a glass tank window. "
@@ -164,7 +174,11 @@ class Brain:
             self.memory.append(message)
             dict_decision = json.loads(content)
             parsed_decision = PetAction(**dict_decision)
-            self.result_queue.put(parsed_decision)
+            if self.target_out_of_bounds(parsed_decision):
+                logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
+                self.memory.append({"role": "system", "content": "you can't leave the tank!"})
+            else:
+                self.result_queue.put(parsed_decision)
             self.iterations += 1
 
             self._supervise_memory()
