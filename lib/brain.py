@@ -40,6 +40,7 @@ class Brain:
 
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
+    MAX_OOB_COUNT = 3
 
     def __init__(self, model_path: str|Path) -> None:
         if isinstance(model_path, Path):
@@ -62,6 +63,7 @@ class Brain:
         self.memory: deque[ChatCompletionRequestMessage] = deque(maxlen=self.MEMORY_LENGTH)
         self.memory.append({"role": "user", "content": self.INITIAL_PROMPT})
         self.iterations = 0
+        self.oob_count =0
 
         self.llm = Llama(
             model_path=self.model_path,
@@ -102,7 +104,8 @@ class Brain:
         try:
             first_action = PetAction(**json.loads(self.memory[0]["content"])) # type: ignore
             last_action = PetAction(**json.loads(self.memory[-1]["content"])) # type: ignore[arg-type]
-            first_thought = first_action.get_thought()
+
+            first_thought = first_action.get_thought()            
             last_thought = last_action.get_thought()
 
             if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
@@ -114,7 +117,7 @@ class Brain:
                 self.memory.clear()
                 self.seed +=1
             
-        except (KeyError, json.JSONDecodeError):
+        except (KeyError, json.JSONDecodeError, IndexError):
             pass
 
 
@@ -155,7 +158,7 @@ class Brain:
             "Don't attempt to leave the bounds of the tank."
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
-            "Your position: ({current_x}, {current_y}).\n"
+            f"Your position: ({current_x}, {current_y}).\n"
             # f"Your owner's finger is at {self.environment_info.mouse}"
         )
         if self.current_thought == self.INITIAL_THOUGHT:
@@ -174,7 +177,7 @@ class Brain:
                 frequency_penalty=self.FREQUENCY_PENALTY,
                 repeat_penalty=self.REPEAT_PENALTY,
                 min_p=self.MIN_P,
-                seed=self.seed,
+                seed=self.iterations,
                 response_format={
                     "type": "json_object",
                     "schema": PetAction.model_json_schema()
@@ -190,9 +193,15 @@ class Brain:
             parsed_decision = PetAction(**dict_decision)
             if self.target_out_of_bounds(parsed_decision):
                 logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
-                self.memory.append({"role": "system", "content": "you can't leave the tank!"})
+                self.memory.append({"role": "system", "content": "You can't leave the tank!"})
+                self.oob_count +=1
+                if self.oob_count >= self.MAX_OOB_COUNT:
+                    logger.info(f"attempted out-of-bounds too much, clearing memory")
+                    self.memory.clear()
+                    self.oob_count = 0
             else:
                 self.result_queue.put(parsed_decision)
+                self.oob_count = 0
             self.iterations += 1
 
             self._supervise_memory()
