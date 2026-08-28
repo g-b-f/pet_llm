@@ -27,8 +27,8 @@ class Brain:
     CONTEXT_SIZE = 2048
     TEMPERATURE = 2
     FREQUENCY_PENALTY = 0.6
-    PRESENCE_PENALTY = 0.8
-    REPEAT_PENALTY = 1.1
+    PRESENCE_PENALTY = 0.5
+    REPEAT_PENALTY = 2
     MIN_P = 0.08
 
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
@@ -205,7 +205,7 @@ class Brain:
                 self.memory.append({"role": "system", "content": "You can't leave the tank!"})
                 self.oob_count +=1
                 if self.oob_count >= self.MAX_OOB_COUNT:
-                    logger.info(f"attempted out-of-bounds too much")#, clearing memory")
+                    logger.info(f"attempted out-of-bounds too much, clearing memory")
                     self._fallback()
                     self.memory.clear()
                     self.oob_count = 0
