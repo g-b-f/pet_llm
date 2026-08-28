@@ -24,7 +24,7 @@ def get_logger(name: str, level=DEFAULT_LOG_LEVEL) -> logging.Logger:
     handler = RotatingFileHandler(LOG_DIR / "log.txt", maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2)
     handler.setLevel(level_int)
     handler.namer = namer
-    formatter = logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt="%H:%M:%S")
+    formatter = logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt="%Y-%m-%d %Y%H:%M:%S")
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)

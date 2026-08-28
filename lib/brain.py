@@ -10,6 +10,9 @@ from llama_cpp.llama_types import ChatCompletionRequestMessage
 from time import time
 
 from lib.extra_types import PetAction, EnvironmentalInfo
+from lib.utils import get_logger
+
+logger = get_logger(__name__, "debug")
 
 class Brain:
     """Manages pet state and background inference with llama-cpp-python without blocking the rendering loop.
@@ -115,10 +118,11 @@ class Brain:
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y}).\n"
             # f"Your owner's finger is at {self.environment_info.mouse}"
         )
+        if self.current_thought == self.INITIAL_THOUGHT:
+            logger.debug(f"system prompt hash: {hash(system_prompt)}")
 
         try:
             start_time = time()
-            # self.memory.clear() # uncomment to give memory loss
             messages=[cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})] + list(self.memory)
             response = self.llm.create_chat_completion(
                 messages,
@@ -145,10 +149,11 @@ class Brain:
             # print(self.memory)
 
             end_time = time()
-            print(f"thought for {end_time - start_time:.1f} seconds", flush=True)
+            logger.debug(f"thought for {end_time - start_time:.1f} seconds")
 
         except Exception as e:
             print(f"Error during decision generation: {e}")
+            logger.exception(e)
 
             fallback_decision = PetAction(
                 thought=self.FALLBACK_THOUGHT,
