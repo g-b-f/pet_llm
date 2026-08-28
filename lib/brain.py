@@ -26,10 +26,10 @@ class Brain:
 
     CONTEXT_SIZE = 2048
     TEMPERATURE = 2
-    FREQUENCY_PENALTY = 0.6
-    PRESENCE_PENALTY = 0.5
-    REPEAT_PENALTY = 2
-    MIN_P = 0.08
+    FREQUENCY_PENALTY = 0.8
+    PRESENCE_PENALTY = 1
+    REPEAT_PENALTY = 1
+    MIN_P = 0.05
 
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
     INITIAL_THOUGHT = "Waking up..."
@@ -186,7 +186,7 @@ class Brain:
                 frequency_penalty=self.FREQUENCY_PENALTY,
                 repeat_penalty=self.REPEAT_PENALTY,
                 min_p=self.MIN_P,
-                seed=self.iterations,
+                seed=None,
                 response_format={
                     "type": "json_object",
                     "schema": PetAction.model_json_schema()
