@@ -43,13 +43,12 @@ class PetTankSimulation:
     FONT_SIZE = 15
     FPS = 60
 
-    def __init__(self, brain:Brain, bounds:tuple[int,int], bounds_offset:tuple[int,int]) -> None:
+    def __init__(self, brain:Brain, bounds = (SCREEN_WIDTH, SCREEN_HEIGHT)):
         self.brain = brain
         self.bounds = bounds
-        self.bounds_offset = bounds_offset
 
         tank_bounds = (self.SCREEN_WIDTH - 2 * self.TANK_PADDING_X, self.SCREEN_HEIGHT - self.TEXT_BOX_HEIGHT)
-
+        self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.bounds)
