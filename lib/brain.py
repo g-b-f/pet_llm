@@ -26,12 +26,17 @@ class Brain:
 
     CONTEXT_SIZE = 2048
     TEMPERATURE = 2
+    FREQUENCY_PENALTY = 0.8
+    PRESENCE_PENALTY = 1
+    REPEAT_PENALTY = 1
+    MIN_P = 0.08
+
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
     INITIAL_THOUGHT = "Waking up..."
+    INITIAL_PROMPT = "Start exploring!"
 
     MEMORY_LENGTH = 5
 
-    # Movement
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
 
@@ -54,8 +59,6 @@ class Brain:
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
         self.memory: deque[ChatCompletionRequestMessage] = deque(maxlen=self.MEMORY_LENGTH)
-        self.memory.clear()
-        self.INITIAL_PROMPT = "Start exploring!"
         self.memory.append({"role": "user", "content": self.INITIAL_PROMPT})
         self.iterations = 0
 
@@ -160,8 +163,9 @@ class Brain:
             response = self.llm.create_chat_completion(
                 messages,
                 temperature=self.TEMPERATURE,
-                presence_penalty=0.6,
-                frequency_penalty=0.8,
+                presence_penalty=self.PRESENCE_PENALTY,
+                frequency_penalty=self.FREQUENCY_PENALTY,
+                repeat_penalty=self.REPEAT_PENALTY,
                 response_format={
                     "type": "json_object",
                     "schema": PetAction.model_json_schema()
