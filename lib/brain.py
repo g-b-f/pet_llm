@@ -26,9 +26,9 @@ class Brain:
 
     CONTEXT_SIZE = 2048
     TEMPERATURE = 2
-    FREQUENCY_PENALTY = 0.8
-    PRESENCE_PENALTY = 1
-    REPEAT_PENALTY = 1
+    FREQUENCY_PENALTY = 0.6
+    PRESENCE_PENALTY = 0.8
+    REPEAT_PENALTY = 1.1
     MIN_P = 0.08
 
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
@@ -168,7 +168,7 @@ class Brain:
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
             f"Your position: ({current_x}, {current_y}).\n"
-            # f"Your owner's finger is at {self.environment_info.mouse}"
+            f"Your owner's finger is at {self.environment_info.mouse}"
         )
         if self.current_thought == self.INITIAL_THOUGHT:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
