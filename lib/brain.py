@@ -29,7 +29,7 @@ class Brain:
     FALLBACK_THOUGHT = "Mind empty... drifting randomly."
     INITIAL_THOUGHT = "Waking up..."
 
-    MEMORY_LENGTH = 3
+    MEMORY_LENGTH = 5
 
     # Movement
     PET_SPEED = 2.5
@@ -145,6 +145,7 @@ class Brain:
             "You are a small pet living in a glass tank window. "
             "Formulate a thought then pick coordinates inside the tank bounds to move toward. "
             "Try to keep moving and not stay in the same place."
+            "Don't attempt to leave the bounds of the tank."
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). Your position: ({current_x}, {current_y}).\n"
             # f"Your owner's finger is at {self.environment_info.mouse}"
