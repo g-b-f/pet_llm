@@ -13,7 +13,7 @@ tom = (Path(__file__).parent.parent/ "pyproject.toml").read_text()
 version = tomllib.loads(tom)["project"]["version"]
 
 
-class PetTankSimulation:
+class Tank:
     """Handles Pygame window rendering and interface displays.
 
     The pet's position, target, and thought live in the Brain in tank-local
