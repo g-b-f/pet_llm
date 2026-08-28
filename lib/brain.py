@@ -35,7 +35,7 @@ class Brain:
     INITIAL_THOUGHT = "Waking up..."
     INITIAL_PROMPT = "Start exploring!"
 
-    MEMORY_LENGTH = 5
+    MEMORY_LENGTH = 10
     seed = 1
 
     PET_SPEED = 2.5
@@ -161,10 +161,10 @@ class Brain:
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (
-            "You are a small pet living in a glass tank window. "
+            "You are a small pet living in a glass tank. "
             "Formulate a thought then pick coordinates inside the tank bounds to move toward. "
-            "Try to keep moving and not stay in the same place."
-            "Don't attempt to leave the bounds of the tank."
+            "Keep moving and don't stay in the same place."
+            # "Do not attempt to leave the bounds of the tank."
             "Adhere strictly to the requested JSON schema.\n"
             f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
             f"Your position: ({current_x}, {current_y}).\n"
