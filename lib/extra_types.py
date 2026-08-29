@@ -18,20 +18,6 @@ class PetAction(BaseModel, use_enum_values=True):
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 
-    # def get_thought(self) -> str:
-    #     return self.thought if self.thought else ""
-
-    # def get_action(self) -> str:
-    #     return self.action.value if self.action else "idle"
-
-    # def get_target_x(self, default=0.0) -> float:
-    #     ret = self.target_x if self.target_x is not None else default
-    #     return float(ret)
-
-    # def get_target_y(self, default=0.0) -> float:
-    #     ret = self.target_y if self.target_y is not None else default
-    #     return float(ret)
-
 
 class Role(Enum):
     user = "user"
@@ -74,3 +60,21 @@ class ChatCompletionResponse(BaseModel):
     
     def get_content(self):
         return self.get_message().content
+
+class ThoughtConfig(BaseModel):
+    fallback_thought:str = Field("Mind empty... drifting randomly.", description="The fallback thought to use when the pet is stuck in a loop.")
+    initial_thought:str = Field("Waking up...", description="The initial thought to use when the pet is first created.")
+    initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created.")
+
+class ParamsConfig(BaseModel):
+    context_size:int = Field(2048, description="The context size for the model")
+    temperature:float = Field(0.8, description="The temperature for the model")
+    frequency_penalty: float = Field(1, description="The frequency penalty for the model")
+    presence_penalty: float = Field(1, description="The presence penalty for the model")
+    repeat_penalty: float = Field(1, description="The repeat penalty for the model")
+    min_p: float = Field(0.05, description="The minimum probability for the model")
+    seed: int|None = None
+
+class BrainConfig(BaseModel):
+    thoughts: ThoughtConfig
+    params: ParamsConfig

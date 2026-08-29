@@ -15,6 +15,7 @@ from lib.extra_types import (
     EnvironmentalInfo,
     PetAction,
     RoleContent,
+    BrainConfig
 )
 from lib.utils import get_logger
 
@@ -28,29 +29,17 @@ class Brain:
     on-screen offset is the simulation's responsibility.
     """
 
-    CONTEXT_SIZE = 2048
-    TEMPERATURE = 2
-    FREQUENCY_PENALTY = 0.8
-    PRESENCE_PENALTY = 1
-    REPEAT_PENALTY = 1
-    MIN_P = 0.05
-
-    FALLBACK_THOUGHT = "Mind empty... drifting randomly."
-    INITIAL_THOUGHT = "Waking up..."
-    INITIAL_PROMPT = "Start exploring!"
-    INITIAL_MEMORY = RoleContent.user(INITIAL_PROMPT)
-
     MEMORY_LENGTH = 5
 
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
+    awake = False
 
-    def __init__(self, model_path: str|Path) -> None:
-        if isinstance(model_path, Path):
-            model_path = model_path.resolve()
-        self.model_path = str(model_path)
-        self.awake = False
+    def __init__(self, model_path: Path, config: BrainConfig) -> None:
+        self.model_path = str(model_path.resolve())
+        self.config = config
+        self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
 
     def wake_up(self, bounds:tuple[int,int]):
         self.x_bounds, self.y_bounds = bounds
@@ -59,19 +48,19 @@ class Brain:
         self.current_y = float(self.y_bounds // 2)
         self.target_x = self.current_x
         self.target_y = self.current_y
-        self.current_thought = self.INITIAL_THOUGHT
+        self.current_thought = self.config.thoughts.initial_thought
 
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
         self.memory = memory.Memory(self.MEMORY_LENGTH)
-        self.memory += self.INITIAL_MEMORY
+        self.memory += self.initial_memory
         self.iterations = 0
         self.oob_count = 0
 
         self.llm = Llama(
             model_path=self.model_path,
-            n_ctx=self.CONTEXT_SIZE,
+            n_ctx=self.config.params.context_size,
             n_gpu_layers=-1,
             verbose=False
         )
@@ -111,7 +100,7 @@ class Brain:
 
     def _fallback(self):
         fallback_decision = PetAction(
-            thought=self.FALLBACK_THOUGHT,
+            thought=self.config.thoughts.fallback_thought,
             action=Action.move_to,
             target_x=random.randint(0, self.x_bounds),
             target_y=random.randint(0, self.y_bounds)
@@ -156,19 +145,19 @@ class Brain:
             f"Your position: ({current_x}, {current_y}).\n"
             # f"Your owner's finger is at {self.environment_info.mouse}"
         )
-        if self.current_thought == self.INITIAL_THOUGHT:
+        if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
             logger.info(f"system prompt hash: {prompt_hash}")
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
             messages,
-            temperature=self.TEMPERATURE,
-            presence_penalty=self.PRESENCE_PENALTY,
-            frequency_penalty=self.FREQUENCY_PENALTY,
-            repeat_penalty=self.REPEAT_PENALTY,
-            min_p=self.MIN_P,
-            seed=None,
+            temperature=self.config.params.temperature,
+            presence_penalty=self.config.params.presence_penalty,
+            frequency_penalty=self.config.params.frequency_penalty,
+            repeat_penalty=self.config.params.repeat_penalty,
+            min_p=self.config.params.min_p,
+            seed=self.config.params.seed,
             response_format={
                 "type": "json_object",
                 "schema": PetAction.model_json_schema()
