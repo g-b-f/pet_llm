@@ -21,7 +21,7 @@ from lib.utils import get_logger
 logger = get_logger(__name__, "debug")
 
 class Brain:
-    """Manages pet state and background inference using ollama.
+    """Manages pet state and background inference using llama_cpp.
 
     All coordinates are tank-local: (0, 0) is the top-left corner of the swimmable
     tank area and (x_bounds, y_bounds) is the bottom-right corner. Applying any
@@ -41,7 +41,6 @@ class Brain:
     INITIAL_MEMORY = RoleContent.user(INITIAL_PROMPT)
 
     MEMORY_LENGTH = 5
-    seed = 1
 
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
@@ -160,7 +159,6 @@ class Brain:
         if self.current_thought == self.INITIAL_THOUGHT:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
             logger.info(f"system prompt hash: {prompt_hash}")
-            RoleContent.system(system_prompt)
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
@@ -209,7 +207,6 @@ class Brain:
             # self.memory.append(RoleContent.system("you'd like to do something else now"))
             self.memory.clear()
             self._fallback()
-            self.seed +=1
         finally:
             self.is_thinking = False
 
