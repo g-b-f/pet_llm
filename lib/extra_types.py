@@ -79,9 +79,18 @@ class ParamsConfig(BaseModel):
     seed: int|None = None
 
 class BrainConfig(BaseModel):
-    thoughts: ThoughtConfig
-    params: ParamsConfig
-    memory: MemoryConfig
+    thoughts: ThoughtConfig = Field(default_factory=ThoughtConfig.model_construct, description="The configuration for the pet's thoughts")
+    params: ParamsConfig = Field(default_factory=ParamsConfig.model_construct, description="The configuration for the pet's model parameters")
+    memory: MemoryConfig = Field(default_factory=MemoryConfig.model_construct, description="The configuration for the pet's memory")
+
+class TankConfig(BaseModel):
+    runtime: int|None = Field(None, description="The runtime of the simulation in seconds")
+    screen_width: int = Field(800, description="The width of the screen in pixels")
+    screen_height: int = Field(600, description="The height of the screen in pixels")
+
+class SimulationConfig(BaseModel):
+    tank: TankConfig = Field(default_factory=TankConfig.model_construct, description="The configuration for the tank simulation")
+    brain: BrainConfig = Field(default_factory=BrainConfig.model_construct, description="The configuration for the pet's brain")
 
 class BrainReport(BaseModel):
     iterations: int = Field(description="The number of iterations the brain has gone through")

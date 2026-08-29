@@ -6,7 +6,7 @@ import json
 import pygame
 
 from lib.brain import Brain
-from lib.extra_types import EnvironmentalInfo
+from lib.extra_types import EnvironmentalInfo, TankConfig
 
 DEBUG = True
 
@@ -24,8 +24,6 @@ class Tank:
     """
 
     # Layout (pixels)
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
     TEXT_BOX_HEIGHT = 100
     TEXT_BOX_MARGIN = 10
     TANK_PADDING_X = 50
@@ -52,11 +50,11 @@ class Tank:
     FONT_SIZE = 15
     FPS = 60
 
-    def __init__(self, brain:Brain, bounds = (SCREEN_WIDTH, SCREEN_HEIGHT)):
+    def __init__(self, brain:Brain, config: TankConfig):
         self.brain = brain
-        self.bounds = bounds
+        self.config = config
 
-        tank_bounds = (self.SCREEN_WIDTH - 2 * self.TANK_PADDING_X, self.SCREEN_HEIGHT - self.TEXT_BOX_HEIGHT)
+        self.bounds = (self.config.screen_width, self.config.screen_height)
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
         pygame.init()
@@ -65,47 +63,56 @@ class Tank:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(self.FONT_NAME, self.FONT_SIZE)
 
-        self.brain.wake_up(tank_bounds)
+        
 
     def get_info(self) -> EnvironmentalInfo:
         """Gets information from the outside world to pass to the brain"""
         # TODO: make this a string that gets appended
-        mouse = pygame.mouse.get_pos()
-        ret = EnvironmentalInfo(mouse=mouse)
-
+        ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
         return ret
 
-    def run(self, total_seconds: int|None = None) -> None:
+    def run(self) -> None:
         """Runs the main game loop
 
         Args:
             total_seconds (int | None, optional): How long to run for. Defaults to infinite runtime.
         """
+        total_seconds = self.config.runtime
         if total_seconds is None:
             end_time = None
         else:
             end_time = pygame.time.get_ticks() + total_seconds * 1000
 
+        tank_bounds = (
+            self.config.screen_width - 2 * self.TANK_PADDING_X, 
+            self.config.screen_height - self.TEXT_BOX_HEIGHT
+        )
+        self.brain.wake_up(tank_bounds)
         running = True
         while running and (end_time is None or pygame.time.get_ticks() < end_time):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-                    with open(report_path, "wt") as f:
-                        report: list[dict] = json.load(f)
-                        compiled_report = {
-                            "config": self.brain.config.model_dump(), 
-                            "report":self.brain.report.model_dump()
-                        }
-                        report.append(compiled_report)
-                        f.seek(0)
-                        json.dump(report, f, indent=4)
-
             info = self.get_info()
             self.brain.update(info)
             self._render_scene()
             self.clock.tick(self.FPS)
+
+
+        with open(report_path, "r") as f:
+            # try:
+            report: list[dict] = json.load(f)
+            # except json.decoder.JSONDecodeError:
+                # report = []
+        with open(report_path, "w") as f:
+            compiled_report = {
+                "config": self.brain.config.model_dump(), 
+                "report":self.brain.report.model_dump()
+            }
+            compiled_report["report"]["actual_runtime"] = pygame.time.get_ticks() / 1000
+            report.append(compiled_report)
+            json.dump(report, f, indent=4)
 
         pygame.quit()
 
