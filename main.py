@@ -3,7 +3,7 @@ from lib.tank import Tank
 from lib.extra_types import SimulationConfig
 from models.download import Model, get_model
 
-model_path = get_model(Model.smollm)
+model_path = get_model(Model.smollm2)
 
 RUNTIME = 300
 

@@ -9,21 +9,24 @@ token_path = model_path / "hf_token.json"
 
 class Model(StrEnum):
     """Model to load into the brain. Options:
-    - smollm = smollm2-1.7b-q8_0
+    - smollm2 = smollm2-1.7b-q8_0
+    - smollm3 = SmolLM3-3B-128K-Q4_K_M
     - qwen = qwen2.5-1.5b-instruct-q4_k_m
     - gemma = gemma-4-E2B.i1-Q4_K_M
     - llama = llama-3.2-3b-q4_0
     """
-    smollm = "smollm2-1.7b-q8_0"
+    smollm2 = "smollm2-1.7b-q8_0"
+    smollm3 = "SmolLM3-3B-128K-Q4_K_M"
     qwen = "qwen2.5-1.5b-instruct-q4_k_m"
     gemma = "gemma-4-E2B.i1-Q4_K_M"
     llama = "llama-3.2-3b-q4_0"
 
-mapping = {
- "smollm2-1.7b-q8_0": "NikolayKozloff/SmolLM2-1.7B-Q8_0-GGUF",
- "qwen2.5-1.5b-instruct-q4_k_m": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
- "gemma-4-E2B.i1-Q4_K_M":"mradermacher/gemma-4-E2B-i1-GGUF",
- "llama-3.2-3b-q4_0":"kaetemi/Llama-3.2-3B-Q4_0-GGUF"
+mapping: dict[Model, str] = {
+    Model.smollm2 : "NikolayKozloff/SmolLM2-1.7B-Q8_0-GGUF",
+    Model.smollm3 : "unsloth/SmolLM3-3B-128K-GGUF",
+    Model.qwen : "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+    Model.gemma : "mradermacher/gemma-4-E2B-i1-GGUF",
+    Model.llama : "kaetemi/Llama-3.2-3B-Q4_0-GGUF"
 }
 
 def get_model(model:Model):
@@ -40,11 +43,13 @@ def get_model(model:Model):
         token = None
     
     huggingface_hub.hf_hub_download(
-        repo_id=mapping[model.value],
+        repo_id=mapping[model],
         filename=filename,
         local_dir=model_path.resolve(),
         token=token
     )
     if not filepath.exists():
-        raise RuntimeError(f"error downloading: maybe it went to the wrong place? Check {token_path}")
+        raise RuntimeError(
+            f"error downloading: maybe it went to the wrong place? Check {token_path}"
+        )
     return filepath
