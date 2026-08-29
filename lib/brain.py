@@ -11,10 +11,10 @@ from time import time
 from hashlib import md5
 
 
-from lib.extra_types import PetAction, EnvironmentalInfo
+from lib.extra_types import PetAction, EnvironmentalInfo, Action, ChatCompletionResponse
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "info")
+logger = get_logger(__name__, "debug")
 
 class Brain:
     """Manages pet state and background inference using ollama.
@@ -35,7 +35,7 @@ class Brain:
     INITIAL_THOUGHT = "Waking up..."
     INITIAL_PROMPT = "Start exploring!"
 
-    MEMORY_LENGTH = 10
+    MEMORY_LENGTH = 5
     seed = 1
 
     PET_SPEED = 2.5
@@ -102,7 +102,7 @@ class Brain:
     def _fallback(self):
         fallback_decision = PetAction(
             thought=self.FALLBACK_THOUGHT,
-            action="move_to",
+            action=Action.move_to,
             target_x=random.randint(0, self.x_bounds),
             target_y=random.randint(0, self.y_bounds)
         )
@@ -120,7 +120,7 @@ class Brain:
                 logger.info(
                     f"thought loop detected after {self.iterations} iterations, clearing memory"
                     )
-                logger.info(f"thought was: '{last_thought}'")
+                # logger.info(f"thought was: '{last_thought}'")
                 # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
                 self.memory.clear()
                 self._fallback()
@@ -175,7 +175,6 @@ class Brain:
             logger.info(f"system prompt hash: {prompt_hash}")
 
         try:
-            start_time = time()
             messages=[
                 cast(ChatCompletionRequestMessage, {"role": "system", "content": system_prompt})
                 ] + list(self.memory)
@@ -193,13 +192,14 @@ class Brain:
                 },
             )
             assert not isinstance(response, Iterator)
-            message = response["choices"][0]["message"]
-            content = message["content"]
-            assert content is not None
+            response = ChatCompletionResponse(**response)
+            message = response.get_message()
+            content = response.get_content()
 
-            self.memory.append(message)
+            self.memory.append(message.model_dump())
             dict_decision = json.loads(content)
             parsed_decision = PetAction(**dict_decision)
+            logger.debug(f"thought: '{parsed_decision.get_thought()}'")
             if self.target_out_of_bounds(parsed_decision):
                 logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
                 self.memory.append({"role": "system", "content": "You can't leave the tank!"})
@@ -215,8 +215,6 @@ class Brain:
             self.iterations += 1
 
             self._supervise_memory()
-            end_time = time()
-            logger.debug(f"thought for {end_time - start_time:.1f} seconds")
 
         except Exception as e:
             print(f"Error during decision generation: {e}")
