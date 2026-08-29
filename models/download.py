@@ -1,6 +1,7 @@
-from pathlib import Path
 import json
 from enum import Enum
+from pathlib import Path
+
 import huggingface_hub
 
 model_path = token_path = Path(__file__).parent

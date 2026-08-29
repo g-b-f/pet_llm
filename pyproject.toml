@@ -13,3 +13,18 @@ dependencies = [
 
 [[tool.uv.index]]
 url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
+
+[tool.ruff.lint]
+extend-select = [
+    "BLE",  # Blind exceptions
+    "FBT",  # Boolean trap
+    "A",    # Builtin shadowing
+    "C4",   # Comprehensions
+    "LOG",  # Logging
+    "G",    # Logging formatting
+    "PT",   # Pytest
+    "SIM",  # Simplifications
+    "TID",  # Tidy imports
+    "I",    # isort
+    "C901", # flake8-c901 complexity
+]

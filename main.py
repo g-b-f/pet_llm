@@ -1,6 +1,6 @@
 from lib.brain import Brain
 from lib.tank import Tank
-from models.download import get_model, Model
+from models.download import Model, get_model
 
 model_path = get_model(Model.smollm)
 

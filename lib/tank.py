@@ -1,6 +1,6 @@
 import tomllib
-from textwrap import wrap
 from pathlib import Path
+from textwrap import wrap
 
 import pygame
 
@@ -138,7 +138,6 @@ class Tank:
         self._blit_text(self.screen, "Thought: " + self.brain.current_thought, self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR)
 
         if DEBUG:
-            self.brain.target_x
             brain_debug = "  ".join([f"{k}:{v}" for k,v in self.brain.debug_info.items()])
             coords = brain_debug + f"  v{version}"
             debug_surface = self.font.render(coords, True, pygame.Color("white"))

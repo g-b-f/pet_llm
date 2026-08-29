@@ -1,18 +1,17 @@
-from collections import deque
-from collections.abc import MutableSequence
 import json
+from collections import deque
 
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-from lib.extra_types import PetAction, EnvironmentalInfo, ChatCompletionResponse, RoleContent
+from lib.extra_types import PetAction, RoleContent
 from lib.utils import get_logger
 
 logger = get_logger(__name__)
 
-class MemoryError(Exception):
+class MemoryHandlerError(Exception):
     pass
 
-class ThoughtLoopError(MemoryError):
+class ThoughtLoopError(MemoryHandlerError):
     def __init__(self, last_thought, *args) -> None:
         self.last_thought = last_thought
         super().__init__(*args)

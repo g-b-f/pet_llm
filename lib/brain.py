@@ -1,18 +1,22 @@
 import json
+import queue
 import random
 import threading
-import queue
-from pathlib import Path
-from typing import Iterator, cast
-from collections import deque
-from llama_cpp import Llama
-from llama_cpp.llama_types import ChatCompletionRequestMessage
-from time import time
 from hashlib import md5
+from pathlib import Path
+from typing import Iterator
 
-from lib.extra_types import PetAction, EnvironmentalInfo, Action, ChatCompletionResponse, RoleContent
-from lib.utils import get_logger
+from llama_cpp import Llama
+
 from lib import memory
+from lib.extra_types import (
+    Action,
+    ChatCompletionResponse,
+    EnvironmentalInfo,
+    PetAction,
+    RoleContent,
+)
+from lib.utils import get_logger
 
 logger = get_logger(__name__, "debug")
 
@@ -139,9 +143,7 @@ class Brain:
         target_y = action.target_y
         if target_x > self.x_bounds or target_x < 0:
             return True
-        if target_y > self.y_bounds or target_y < 0:
-            return True
-        return False
+        return bool(target_y > self.y_bounds or target_y < 0)
 
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
@@ -158,7 +160,7 @@ class Brain:
         if self.current_thought == self.INITIAL_THOUGHT:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
             logger.info(f"system prompt hash: {prompt_hash}")
-            sys_prompt = RoleContent.system(system_prompt)
+            RoleContent.system(system_prompt)
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
@@ -188,7 +190,7 @@ class Brain:
             self.memory += RoleContent.system("You can't leave the tank!")
             self.oob_count +=1
             if self.oob_count >= self.MAX_OOB_COUNT:
-                logger.info(f"attempted out-of-bounds too much, clearing memory")
+                logger.info("attempted out-of-bounds too much, clearing memory")
                 self._fallback()
                 self.memory.clear()
                 self.oob_count = 0
