@@ -5,6 +5,8 @@ from models.download import Model, get_model
 
 model_path = get_model(Model.smollm)
 
+RUNTIME = 120
+
 if __name__ == "__main__":
     brain_config = BrainConfig.model_construct()
     brain = Brain(model_path, brain_config)

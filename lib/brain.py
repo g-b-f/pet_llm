@@ -11,6 +11,7 @@ from llama_cpp import Llama
 from lib import memory
 from lib.extra_types import (
     Action,
+    BrainReport,
     ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
@@ -132,6 +133,14 @@ class Brain:
             return True
         return bool(target_y > self.y_bounds or target_y < 0)
 
+    @property
+    def report(self) -> BrainReport:
+        """End of life report"""
+        return BrainReport(
+            iterations=self.iterations,
+            thought_loops=self.oob_count,
+            out_of_bounds_attempts=self.oob_count
+        )
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (

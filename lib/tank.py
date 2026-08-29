@@ -2,6 +2,7 @@ import tomllib
 from pathlib import Path
 from textwrap import wrap
 
+import json
 import pygame
 
 from lib.brain import Brain
@@ -11,6 +12,8 @@ DEBUG = True
 
 tom = (Path(__file__).parent.parent/ "pyproject.toml").read_text()
 version = tomllib.loads(tom)["project"]["version"]
+
+report_path = Path(__file__).parent.parent / "report.json"
 
 
 class Tank:
@@ -72,16 +75,34 @@ class Tank:
 
         return ret
 
-    def run(self) -> None:
-        """Executes the main Pygame loop."""
+    def run(self, total_seconds: int|None = None) -> None:
+        """Runs the main game loop
+
+        Args:
+            total_seconds (int | None, optional): How long to run for. Defaults to infinite runtime.
+        """
+        if total_seconds is None:
+            end_time = None
+        else:
+            end_time = pygame.time.get_ticks() + total_seconds * 1000
+
         running = True
-        while running:
+        while running and (end_time is None or pygame.time.get_ticks() < end_time):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-            info = self.get_info()
+                    with open(report_path, "wt") as f:
+                        report: list[dict] = json.load(f)
+                        compiled_report = {
+                            "config": self.brain.config.model_dump(), 
+                            "report":self.brain.report.model_dump()
+                        }
+                        report.append(compiled_report)
+                        f.seek(0)
+                        json.dump(report, f, indent=4)
 
+            info = self.get_info()
             self.brain.update(info)
             self._render_scene()
             self.clock.tick(self.FPS)
@@ -129,7 +150,7 @@ class Tank:
         )
         pygame.draw.rect(self.screen, self.TEXT_BOX_COLOR, text_box_rect)
 
-        if self.brain.current_thought != self.brain.INITIAL_THOUGHT:
+        if self.brain.current_thought != self.brain.config.thoughts.initial_thought:
             status_label = "Status: Thinking..." if self.brain.is_thinking else "Status: Swimming"
             status_color = self.THINKING_STATUS_COLOR if self.brain.is_thinking else self.SWIMMING_STATUS_COLOR
             status_surface = self.font.render(status_label, True, status_color)
