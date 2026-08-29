@@ -96,3 +96,4 @@ class BrainReport(BaseModel):
     iterations: int = Field(description="The number of iterations the brain has gone through")
     thought_loops: int = Field(description="The number of thought loops detected")
     out_of_bounds_attempts: int = Field(description="The number of times the pet has attempted to go out of bounds")
+    actual_runtime: None|float = Field(None, description="The actual runtime of the simulation in seconds")

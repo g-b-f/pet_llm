@@ -71,6 +71,24 @@ class Tank:
         ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
         return ret
 
+    def generate_report(self) -> None:
+        brain_report = self.brain.report
+        brain_report.actual_runtime = pygame.time.get_ticks() / 1000
+
+        with open(report_path, "r") as f:
+            # try:
+            report: list[dict] = json.load(f)
+            # except json.decoder.JSONDecodeError:
+                # report = []
+        
+        with open(report_path, "w") as f:
+            compiled_report = {
+                "config": self.brain.config.model_dump(),
+                "report":self.brain.report.model_dump()
+            }
+            report.append(compiled_report)
+            json.dump(brain_report, f, indent=4)
+
     def run(self) -> None:
         """Runs the main game loop
 
@@ -99,21 +117,7 @@ class Tank:
             self._render_scene()
             self.clock.tick(self.FPS)
 
-
-        with open(report_path, "r") as f:
-            # try:
-            report: list[dict] = json.load(f)
-            # except json.decoder.JSONDecodeError:
-                # report = []
-        with open(report_path, "w") as f:
-            compiled_report = {
-                "config": self.brain.config.model_dump(), 
-                "report":self.brain.report.model_dump()
-            }
-            compiled_report["report"]["actual_runtime"] = pygame.time.get_ticks() / 1000
-            report.append(compiled_report)
-            json.dump(report, f, indent=4)
-
+        self.generate_report()
         pygame.quit()
 
     def _blit_text(
