@@ -11,11 +11,6 @@ class TestModelEnum:
         for model in Model:
             assert model.value in mapping, f"{model.name} missing from mapping"
 
-    def test_model_values_are_strings(self):
-        for model in Model:
-            assert isinstance(model.value, str)
-
-
 class TestGetModel:
     def test_returns_existing_file(self, tmp_path: Path):
         fake_model = tmp_path / "smollm2-1.7b-q8_0.gguf"
@@ -29,7 +24,7 @@ class TestGetModel:
                 result = get_model(Model.smollm)
         assert result.name == "smollm2-1.7b-q8_0.gguf"
 
-    def test_downloads_when_missing(self, tmp_path: Path):
+    def test_raises_when_error_downloading(self, tmp_path: Path):
         with patch("models.download.huggingface_hub") as mock_hf:
             mock_hf.hf_hub_download = MagicMock()
             with patch.object(Path, "exists", return_value=False):

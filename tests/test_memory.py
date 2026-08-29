@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from lib.extra_types import PetAction, RoleContent
+from lib.extra_types import PetAction, RoleContent, Action
 from lib.memory import Memory, ThoughtLoopError
 
 
@@ -15,7 +15,7 @@ def memory() -> Memory:
 def sample_action() -> PetAction:
     return PetAction(
         thought="I want to swim",
-        action="move_to",
+        action= Action.move_to,
         target_x=10,
         target_y=20,
     )

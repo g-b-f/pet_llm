@@ -1,12 +1,9 @@
-import json
-import queue
-import threading
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from lib.brain import Brain
-from lib.extra_types import Action, EnvironmentalInfo, PetAction, RoleContent
+from lib.extra_types import Action, EnvironmentalInfo, PetAction
 
 
 @pytest.fixture
@@ -143,7 +140,7 @@ class TestRequestDecisionAsync:
     def test_skips_if_already_thinking(self, awake_brain: Brain):
         awake_brain.is_thinking = True
         with patch("lib.brain.threading.Thread") as mock_thread:
-            awake_brain.request_decision_async(0, 0)
+            awake_brain.request_decision_async(50, 50)
             mock_thread.assert_not_called()
 
     def test_starts_thread(self, awake_brain: Brain):
@@ -161,28 +158,18 @@ class TestRequestDecisionAsync:
 
 
 class TestTargetOutOfBounds:
-    def test_in_bounds(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=50, target_y=50)
-        assert not awake_brain.target_out_of_bounds(action)
-
-    def test_x_too_large(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=101, target_y=50)
+    @pytest.mark.parametrize(
+        ("target_x", "target_y"),[(101, 50), (-1, 50), (50, 101), (50, -1)]
+    )
+    def test_target_out_of_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
+        action = PetAction(thought="t", action=Action.move_to, target_x=target_x, target_y=target_y)
         assert awake_brain.target_out_of_bounds(action)
 
-    def test_x_negative(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=-1, target_y=50)
-        assert awake_brain.target_out_of_bounds(action)
-
-    def test_y_too_large(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=50, target_y=101)
-        assert awake_brain.target_out_of_bounds(action)
-
-    def test_y_negative(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=50, target_y=-1)
-        assert awake_brain.target_out_of_bounds(action)
-
-    def test_boundary_values_ok(self, awake_brain: Brain):
-        action = PetAction(thought="t", action=Action.move_to, target_x=100, target_y=100)
+    @pytest.mark.parametrize(
+        ("target_x", "target_y"),[(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
+    )
+    def test_target_in_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
+        action = PetAction(thought="t", action=Action.move_to, target_x=target_x, target_y=target_y)
         assert not awake_brain.target_out_of_bounds(action)
 
 

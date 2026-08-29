@@ -1,5 +1,5 @@
 import json
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 import huggingface_hub
@@ -7,7 +7,7 @@ import huggingface_hub
 model_path = token_path = Path(__file__).parent
 token_path = model_path / "hf_token.json"
 
-class Model(Enum):
+class Model(StrEnum):
     """Model to load into the brain. Options:
     - smollm = smollm2-1.7b-q8_0
     - qwen = qwen2.5-1.5b-instruct-q4_k_m
