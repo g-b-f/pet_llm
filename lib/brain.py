@@ -95,7 +95,8 @@ class Brain:
         self.debug_info = {
             "current": (round(self.current_x,1), round(self.current_y,1)),
             "target": (round(self.target_x,1), round(self.target_y,1)),
-            "iteration": self.iterations
+            "iteration": self.iterations,
+            "seed": self.config.params.seed
             }
 
     def _fallback(self):

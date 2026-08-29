@@ -76,18 +76,22 @@ class Tank:
         brain_report.actual_runtime = pygame.time.get_ticks() / 1000
 
         with open(report_path, "r") as f:
-            # try:
-            report: list[dict] = json.load(f)
-            # except json.decoder.JSONDecodeError:
-                # report = []
-        
+            try:
+                report: list[dict] = json.load(f)
+            except json.decoder.JSONDecodeError as e:
+                print(f"error decoding: {e}")
+                report = list()
+
         with open(report_path, "w") as f:
             compiled_report = {
-                "config": self.brain.config.model_dump(),
-                "report":self.brain.report.model_dump()
+                "config": {
+                    "brain": self.brain.config.model_dump(),
+                    "tank": self.config.model_dump()
+                },
+                "report": brain_report.model_dump()
             }
             report.append(compiled_report)
-            json.dump(brain_report, f, indent=4)
+            json.dump(report, f, indent=4)
 
     def run(self) -> None:
         """Runs the main game loop
