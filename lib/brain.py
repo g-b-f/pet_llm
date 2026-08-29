@@ -12,7 +12,7 @@ from hashlib import md5
 
 from lib.extra_types import PetAction, EnvironmentalInfo, Action, ChatCompletionResponse, RoleContent
 from lib.utils import get_logger
-from lib.memory import Memory
+from lib import memory
 
 logger = get_logger(__name__, "debug")
 
@@ -61,8 +61,8 @@ class Brain:
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
-        self.memory = Memory(self.MEMORY_LENGTH)
-        self.memory.append(self.INITIAL_MEMORY)
+        self.memory = memory.Memory(self.MEMORY_LENGTH)
+        self.memory += self.INITIAL_MEMORY
         self.iterations = 0
         self.oob_count = 0
 
@@ -100,6 +100,12 @@ class Brain:
                 int(self.current_y)
             )
 
+        self.debug_info = {
+            "current": (round(self.current_x,1), round(self.current_y,1)),
+            "target": (round(self.target_x,1), round(self.target_y,1)),
+            "iteration": self.iterations
+            }
+
     def _fallback(self):
         fallback_decision = PetAction(
             thought=self.FALLBACK_THOUGHT,
@@ -108,31 +114,6 @@ class Brain:
             target_y=random.randint(0, self.y_bounds)
         )
         self.result_queue.put(fallback_decision)
-
-    def _supervise_memory(self):
-        if self.memory.is_empty:
-            logger.debug("memory empty, returning")
-            return
-        
-        first_action = self.memory.get_action(0)
-        last_action = self.memory.get_action(-1)
-
-        if first_action is None or last_action is None:
-            return
-
-        first_thought = first_action.thought
-        last_thought = last_action.thought
-
-        if len(self.memory) == self.memory.maxlen and first_thought == last_thought: 
-            logger.info(
-                f"thought loop detected after {self.iterations} iterations, clearing memory"
-                )
-            # logger.info(f"thought was: '{last_thought}'")
-            # self.memory[1] = {"role": "system", "content": "you'd like to do something else now"}
-            self.memory.clear()
-            self._fallback()
-            self.seed +=1
-
 
     def request_decision_async(self, current_x: int, current_y: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
@@ -179,50 +160,54 @@ class Brain:
             logger.info(f"system prompt hash: {prompt_hash}")
             sys_prompt = RoleContent.system(system_prompt)
 
-        try:
-            messages = self.memory.get_messages(system_prompt)
-            response = self.llm.create_chat_completion(
-                messages,
-                temperature=self.TEMPERATURE,
-                presence_penalty=self.PRESENCE_PENALTY,
-                frequency_penalty=self.FREQUENCY_PENALTY,
-                repeat_penalty=self.REPEAT_PENALTY,
-                min_p=self.MIN_P,
-                seed=None,
-                response_format={
-                    "type": "json_object",
-                    "schema": PetAction.model_json_schema()
-                },
-            )
-            assert not isinstance(response, Iterator)
-            parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
-            message = parsed_response.get_message()
-            content = parsed_response.get_content()
+        messages = self.memory.get_messages(system_prompt)
+        response = self.llm.create_chat_completion(
+            messages,
+            temperature=self.TEMPERATURE,
+            presence_penalty=self.PRESENCE_PENALTY,
+            frequency_penalty=self.FREQUENCY_PENALTY,
+            repeat_penalty=self.REPEAT_PENALTY,
+            min_p=self.MIN_P,
+            seed=None,
+            response_format={
+                "type": "json_object",
+                "schema": PetAction.model_json_schema()
+            },
+        )
+        assert not isinstance(response, Iterator)
+        parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
+        message = parsed_response.get_message()
+        content = parsed_response.get_content()
 
-            self.memory.append(message)
-            dict_decision = json.loads(content)
-            parsed_decision = PetAction(**dict_decision)
-            logger.debug(f"thought: '{parsed_decision.thought}'")
-            if self.target_out_of_bounds(parsed_decision):
-                logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
-                self.memory.append(RoleContent.system("You can't leave the tank!"))
-                self.oob_count +=1
-                if self.oob_count >= self.MAX_OOB_COUNT:
-                    logger.info(f"attempted out-of-bounds too much, clearing memory")
-                    self._fallback()
-                    self.memory.clear()
-                    self.oob_count = 0
-            else:
-                self.result_queue.put(parsed_decision)
+        self.memory += message
+        dict_decision = json.loads(content)
+        parsed_decision = PetAction(**dict_decision)
+        logger.debug(f"thought: '{parsed_decision.thought}'")
+        if self.target_out_of_bounds(parsed_decision):
+            logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
+            self.memory += RoleContent.system("You can't leave the tank!")
+            self.oob_count +=1
+            if self.oob_count >= self.MAX_OOB_COUNT:
+                logger.info(f"attempted out-of-bounds too much, clearing memory")
+                self._fallback()
+                self.memory.clear()
                 self.oob_count = 0
-            self.iterations += 1
+        else:
+            self.result_queue.put(parsed_decision)
+            self.oob_count = 0
+        self.iterations += 1
 
-            self._supervise_memory()
-
-        # except Exception as e:
-        #     print(f"Error during decision generation: {e}")
-        #     logger.exception(e)
-        #     self._fallback()
+        try:
+            self.memory.supervise()
+        except memory.ThoughtLoopError as e:
+            logger.info(
+                f"thought loop detected after {self.iterations} iterations, clearing memory"
+                )
+            logger.info(f"thought was: '{e.last_thought}'")
+            # self.memory.append(RoleContent.system("you'd like to do something else now"))
+            self.memory.clear()
+            self._fallback()
+            self.seed +=1
         finally:
             self.is_thinking = False
 

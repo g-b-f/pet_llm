@@ -139,10 +139,8 @@ class Tank:
 
         if DEBUG:
             self.brain.target_x
-            coords = f"current: ({self.brain.current_x:.1f}, {self.brain.current_y:.1f}) "\
-            f"target: ({self.brain.target_x:.1f}, {self.brain.target_y:.1f}) "\
-            f"iteration: {self.brain.iterations}  "\
-            f"v{version}"
+            brain_debug = "  ".join([f"{k}:{v}" for k,v in self.brain.debug_info.items()])
+            coords = brain_debug + f"  v{version}"
             debug_surface = self.font.render(coords, True, pygame.Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
