@@ -30,13 +30,12 @@ class Brain:
     """
 
     MEMORY_LENGTH = 5
-
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
-    awake = False
 
     def __init__(self, model_path: Path, config: BrainConfig) -> None:
+        self.awake = False
         self.model_path = str(model_path.resolve())
         self.config = config
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
@@ -53,7 +52,7 @@ class Brain:
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
-        self.memory = memory.Memory(self.MEMORY_LENGTH)
+        self.memory = memory.Memory(self.config.memory)
         self.memory += self.initial_memory
         self.iterations = 0
         self.oob_count = 0

@@ -55,13 +55,6 @@ Model selection is hardcoded in [main.py](main.py): `get_model(Model.smollm)`, c
 
 7. **Decision triggering is arrival-based:** new decision requested only when the pet is within `ARRIVAL_THRESHOLD` (3.0 px) of its target. Movement = normalized step of `PET_SPEED` (2.5 px/frame).
 
-## Configuration
-
-Tuning knobs are **class attributes**, not config files:
-- `Brain`: `CONTEXT_SIZE=2048`, `TEMPERATURE=2` (deliberately high for erratic behavior), penalties, `MEMORY_LENGTH=5`, `PET_SPEED`, `ARRIVAL_THRESHOLD`, `MAX_OOB_COUNT=3` ([lib/brain.py](lib/brain.py))
-- `Tank`: 800×600 screen, layout/colors, `FPS=60`; module-level `DEBUG = True` toggles the on-screen HUD ([lib/tank.py](lib/tank.py))
-- `Tank` reads `pyproject.toml` at import time (via `tomllib`) to display the version — the file must parse even in tests.
-
 ## Testing Conventions
 
 - [tests/conftest.py](tests/conftest.py) only inserts the project root into `sys.path` — no shared fixtures; each test file defines its own.

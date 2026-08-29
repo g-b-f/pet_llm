@@ -3,7 +3,7 @@ from collections import deque
 
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-from lib.extra_types import PetAction, RoleContent
+from lib.extra_types import PetAction, RoleContent, MemoryConfig
 from lib.utils import get_logger
 
 logger = get_logger(__name__)
@@ -17,9 +17,9 @@ class ThoughtLoopError(MemoryHandlerError):
         super().__init__(*args)
 
 class Memory:
-    def __init__(self, maxlen: int):
-        self._memory_queue:deque[RoleContent] = deque(maxlen=maxlen)
-        self.maxlen = maxlen
+    def __init__(self, config: MemoryConfig):
+        self.config = config
+        self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
 
     def get_messages(self, system_prompt:str) -> list[ChatCompletionRequestMessage]:
         sys_prompt = RoleContent.system(system_prompt)
@@ -58,7 +58,7 @@ class Memory:
 
     @property
     def is_full(self) -> bool:
-        return self.length == self.maxlen
+        return self.length == self.config.max_length
     
     def clear(self):
         self._memory_queue.clear()

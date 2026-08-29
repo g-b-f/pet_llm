@@ -61,10 +61,13 @@ class ChatCompletionResponse(BaseModel):
     def get_content(self):
         return self.get_message().content
 
+class MemoryConfig(BaseModel):
+    max_length: int = Field(5, description="The maximum number of messages to store in memory")
+
 class ThoughtConfig(BaseModel):
-    fallback_thought:str = Field("Mind empty... drifting randomly.", description="The fallback thought to use when the pet is stuck in a loop.")
-    initial_thought:str = Field("Waking up...", description="The initial thought to use when the pet is first created.")
-    initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created.")
+    fallback_thought:str = Field("Mind empty... drifting randomly.", description="The fallback thought to use when the pet is stuck in a loop")
+    initial_thought:str = Field("Waking up...", description="The initial thought to use when the pet is first created")
+    initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created")
 
 class ParamsConfig(BaseModel):
     context_size:int = Field(2048, description="The context size for the model")
@@ -78,3 +81,4 @@ class ParamsConfig(BaseModel):
 class BrainConfig(BaseModel):
     thoughts: ThoughtConfig
     params: ParamsConfig
+    memory: MemoryConfig
