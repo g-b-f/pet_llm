@@ -7,20 +7,8 @@ from models.download import Model, get_model
 model_path = get_model(Model.smollm2)
 logger = get_logger(__name__)
 
-RUNTIME = 300
-
 if __name__ == "__main__":
     config = SimulationConfig.model_construct()
-    config.tank.runtime = RUNTIME
-
-    for temp in range(15, 25, 3):
-        for seed in range(1, 7):
-            temperature = temp/10
-            logger.info(f"{temperature=}, {seed=}")
-
-            config.brain.params.seed = seed
-            config.brain.params.temperature = temperature
-
-            brain = Brain(model_path, config.brain)
-            simulation = Tank(brain, config.tank)
-            simulation.run()
+    brain = Brain(model_path, config.brain)
+    simulation = Tank(brain, config.tank)
+    simulation.run()

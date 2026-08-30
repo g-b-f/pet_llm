@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+from typing import Iterator
 
 DEFAULT_LOG_LEVEL = "INFO"
 MAX_LOG_SIZE_BYTES = 1024 * 1024 # 1 MB
@@ -33,3 +34,14 @@ def get_logger(name: str, level=DEFAULT_LOG_LEVEL) -> logging.Logger:
     logger.addHandler(handler)
 
     return logger
+
+def frange(start:float, stop:float, step:float, multiplier:int=100) -> Iterator[float]:
+    """A floating-point range generator."""
+
+    current = int(start * multiplier)
+    stop_int = int(stop * multiplier)
+    step_int = int(step * multiplier)
+
+    while current < stop_int:
+        yield current / multiplier
+        current += step_int
