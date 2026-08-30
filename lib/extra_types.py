@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Optional
+import json
 
 from pydantic import BaseModel, Field
 
@@ -19,6 +20,7 @@ class PetAction(BaseModel, use_enum_values=True):
     target_y: int = Field(description="Target Y coordinate.")
 
 
+
 class Role(Enum):
     user = "user"
     system = "system"
@@ -35,6 +37,10 @@ class RoleContent(BaseModel, use_enum_values=True):
     @classmethod
     def system(cls, content:str):
         return cls(role=Role.system, content=content)
+
+    @classmethod
+    def assistant(cls, content:str):
+        return cls(role=Role.assistant, content=content)
 
 class MessageChoice(BaseModel):
     index: int
@@ -60,6 +66,9 @@ class ChatCompletionResponse(BaseModel):
     
     def get_content(self):
         return self.get_message().content
+
+    def get_action(self):
+        return PetAction(**json.loads(self.get_content()))
 
 class MemoryConfig(BaseModel):
     max_length: int = Field(5, description="The maximum number of messages to store in memory")
@@ -95,8 +104,8 @@ class SimulationConfig(BaseModel):
     brain: BrainConfig = Field(default_factory=BrainConfig.model_construct, description="The configuration for the pet's brain")
 
 class BrainReport(BaseModel):
-    iterations: int = Field(description="The number of iterations the brain has gone through")
-    thought_loops: int = Field(description="The number of thought loops detected")
-    empty_thoughts: int = Field(description="The number of times the pet has had an empty thought")
-    out_of_bounds_attempts: int = Field(description="The number of times the pet has attempted to go out of bounds")
+    iterations: int = Field(0, description="The number of iterations the brain has gone through")
+    thought_loops: int = Field(0, description="The number of thought loops detected")
+    empty_thoughts: int = Field(0, description="The number of times the pet has had an empty thought")
+    out_of_bounds_attempts: int = Field(0, description="The number of times the pet has attempted to go out of bounds")
     actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")

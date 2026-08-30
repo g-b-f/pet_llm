@@ -56,7 +56,9 @@ class Brain:
         self.memory = memory.Memory(self.config.memory)
         self.memory += self.initial_memory
         self.iterations = 0
-        self.oob_count = 0
+        self.current_oob_count = 0
+
+        self.report = BrainReport.model_construct()
 
         self.llm = Llama(
             model_path=self.model_path,
@@ -134,17 +136,6 @@ class Brain:
             return True
         return bool(target_y > self.y_bounds or target_y < 0)
 
-    @property
-    def report(self) -> BrainReport:
-        """End of life report"""
-        return BrainReport(
-            iterations=self.iterations,
-            thought_loops=self.memory.thought_loops,
-            out_of_bounds_attempts=self.oob_count,
-            empty_thoughts=self.empty_thoughts,
-            actual_runtime=None
-        )
-
     def _generate_decision(self, current_x: int, current_y: int) -> None:
         system_prompt = (
             "You are a small pet living in a glass tank. "
@@ -177,26 +168,25 @@ class Brain:
         assert not isinstance(response, Iterator)
         parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
         message = parsed_response.get_message()
-        content = parsed_response.get_content()
+        action = parsed_response.get_action()
 
         self.memory += message
-        dict_decision = json.loads(content)
-        parsed_decision = PetAction(**dict_decision)
-        thought_is_empty = not parsed_decision.thought.strip()
-        if self.target_out_of_bounds(parsed_decision):
-            if thought_is_empty:
-            logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
-                self.empty_thoughts +=1
+        if not action.thought.strip():
+            self.report.empty_thoughts +=1
+        
+        if self.target_out_of_bounds(action):
+            logger.info(f"tried to go to {action.target_x, action.target_y}")
             self.memory += RoleContent.system("You can't leave the tank!")
-            self.oob_count +=1
-            if self.oob_count >= self.MAX_OOB_COUNT:
+            self.current_oob_count +=1
+            self.report.out_of_bounds_attempts +=1
+            if self.current_oob_count >= self.MAX_OOB_COUNT:
                 logger.info("attempted out-of-bounds too much, clearing memory")
                 self._fallback()
                 self.memory.clear()
-                self.oob_count = 0
+                self.current_oob_count = 0
         else:
-            self.result_queue.put(parsed_decision)
-            self.oob_count = 0
+            self.result_queue.put(action)
+            self.current_oob_count = 0
         self.iterations += 1
 
         try:
