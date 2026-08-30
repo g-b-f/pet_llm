@@ -95,9 +95,10 @@ class Brain:
             )
 
         self.debug_info = {
-            "current": (round(self.current_x,1), round(self.current_y,1)),
-            "target": (round(self.target_x,1), round(self.target_y,1)),
+            # "current": (round(self.current_x,1), round(self.current_y,1)),
+            # "target": (round(self.target_x,1), round(self.target_y,1)),
             "iteration": self.iterations,
+            "temperature": self.config.params.temperature,
             "seed": self.config.params.seed
             }
 
@@ -149,7 +150,7 @@ class Brain:
         )
         if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
-            logger.info(f"system prompt hash: {prompt_hash}")
+            logger.debug(f"system prompt hash: {prompt_hash}")
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
@@ -177,8 +178,10 @@ class Brain:
         if self.target_out_of_bounds(action):
             logger.info(f"tried to go to {action.target_x, action.target_y}")
             self.memory += RoleContent.system("You can't leave the tank!")
+
             self.current_oob_count +=1
             self.report.out_of_bounds_attempts +=1
+
             if self.current_oob_count >= self.MAX_OOB_COUNT:
                 logger.info("attempted out-of-bounds too much, clearing memory")
                 self._fallback()
@@ -187,11 +190,14 @@ class Brain:
         else:
             self.result_queue.put(action)
             self.current_oob_count = 0
+
         self.iterations += 1
+        self.report.iterations +=1
 
         try:
             self.memory.supervise()
         except memory.ThoughtLoopError as e:
+            self.report.thought_loops +=1
             logger.info(
                 f"thought loop detected after {self.iterations} iterations, clearing memory"
                 )
