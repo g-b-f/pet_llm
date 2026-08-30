@@ -1,0 +1,1243 @@
+[
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 3,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 17.717
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 30,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.803
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 54,
+      "thought_loops": 8,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.859
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 59,
+      "thought_loops": 10,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.353
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 48,
+      "thought_loops": 6,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.347
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.338
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 52,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.309
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 44,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.396
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 68,
+      "thought_loops": 10,
+      "out_of_bounds_attempts": 2,
+      "actual_runtime": 300.414
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 51,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.336
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 47,
+      "thought_loops": 2,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.296
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.322
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 49,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.369
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 38,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.411
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 50,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.913
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 2,
+      "actual_runtime": 300.38
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 37,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.482
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 61,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.458
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 56,
+      "thought_loops": 6,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.112
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 38,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.676
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 37,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.343
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 60,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.462
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 2,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.29
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 65,
+      "thought_loops": 12,
+      "out_of_bounds_attempts": 2,
+      "actual_runtime": 300.757
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.09
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 34,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.471
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 36,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.023
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 49,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.524
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 47,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.652
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 72,
+      "thought_loops": 11,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.483
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 50,
+      "thought_loops": 2,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.75
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 34,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.513
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.395
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 50,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 1,
+      "actual_runtime": 300.562
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 58,
+      "thought_loops": 7,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.357
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.637
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 46,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.675
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 34,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.523
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 60,
+      "thought_loops": 11,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.077
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 59,
+      "thought_loops": 11,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.349
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 46,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.421
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.497
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.0,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 51,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.697
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 40,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.627
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 65,
+      "thought_loops": 8,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.46
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 63,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.707
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 65,
+      "thought_loops": 11,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.328
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 3,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.381
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.3,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 49,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.924
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 37,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.366
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 57,
+      "thought_loops": 8,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.176
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 48,
+      "thought_loops": 7,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.333
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 61,
+      "thought_loops": 9,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.322
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 74,
+      "thought_loops": 12,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.583
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.6,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 55,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.688
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 38,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.464
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 37,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.316
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 54,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.353
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 62,
+      "thought_loops": 9,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.484
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 72,
+      "thought_loops": 12,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.546
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 1.9,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 46,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.387
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 39,
+      "thought_loops": 2,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.339
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 36,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.759
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 54,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 2,
+      "actual_runtime": 300.322
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 45,
+      "thought_loops": 4,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.482
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 68,
+      "thought_loops": 11,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.739
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.2,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 55,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.516
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 1
+    },
+    "result": {
+      "iterations": 35,
+      "thought_loops": 0,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.36
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 2
+    },
+    "result": {
+      "iterations": 56,
+      "thought_loops": 5,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.579
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 3
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.324
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 4
+    },
+    "result": {
+      "iterations": 6,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.383
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 5
+    },
+    "result": {
+      "iterations": 57,
+      "thought_loops": 8,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 301.242
+    }
+  },
+  {
+    "config": {
+      "context_size": 2048,
+      "temperature": 2.5,
+      "frequency_penalty": 1,
+      "presence_penalty": 1,
+      "repeat_penalty": 1,
+      "min_p": 0.05,
+      "seed": 6
+    },
+    "result": {
+      "iterations": 41,
+      "thought_loops": 1,
+      "out_of_bounds_attempts": 0,
+      "actual_runtime": 300.682
+    }
+  }
+]

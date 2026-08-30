@@ -3,6 +3,8 @@ models/*.gguf
 models/hf_token.json
 log*.txt
 
+.coverage
+
 # Python-generated files
 __pycache__/
 *.py[oc]
