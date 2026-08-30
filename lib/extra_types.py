@@ -74,7 +74,10 @@ class MemoryConfig(BaseModel):
     max_length: int = Field(5, description="The maximum number of messages to store in memory")
 
 class ThoughtConfig(BaseModel):
-    fallback_thought:str = Field("Mind empty... drifting randomly.", description="The fallback thought to use when the pet is stuck in a loop")
+    fallback_thought:str = Field(
+        "Mind empty... drifting randomly.",
+        description="The fallback thought to use when the LLM attempts an invalid thought"
+        )
     initial_thought:str = Field("Waking up...", description="The initial thought to use when the pet is first created")
     initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created")
 
@@ -95,7 +98,7 @@ class BrainConfig(BaseModel):
     memory: MemoryConfig = Field(default_factory=MemoryConfig.model_construct, description="The configuration for the pet's memory")
 
 class TankConfig(BaseModel):
-    runtime: int|None = Field(None, description="The runtime of the simulation in seconds")
+    runtime: int|None = Field(None, description="The requested runtime of the simulation in seconds")
     screen_width: int = Field(800, description="The width of the screen in pixels")
     screen_height: int = Field(600, description="The height of the screen in pixels")
 
@@ -104,8 +107,8 @@ class SimulationConfig(BaseModel):
     brain: BrainConfig = Field(default_factory=BrainConfig.model_construct, description="The configuration for the pet's brain")
 
 class BrainReport(BaseModel):
-    iterations: int = Field(0, description="The number of iterations the brain has gone through")
+    iterations: int = Field(0, description="The total number of request/responses by the LLM")
     thought_loops: int = Field(0, description="The number of thought loops detected")
-    empty_thoughts: int = Field(0, description="The number of times the pet has had an empty thought")
-    out_of_bounds_attempts: int = Field(0, description="The number of times the pet has attempted to go out of bounds")
+    empty_thoughts: int = Field(0, description="The number of times the LLM has had an empty thought")
+    out_of_bounds_attempts: int = Field(0, description="The number of times the LLM has attempted to go out of bounds")
     actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")
