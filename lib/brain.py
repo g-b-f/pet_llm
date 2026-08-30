@@ -20,7 +20,7 @@ from lib.extra_types import (
 )
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "debug")
+logger = get_logger(__name__, "info")
 
 class Brain:
     """Manages pet state and background inference using llama_cpp.
