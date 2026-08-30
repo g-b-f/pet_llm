@@ -70,9 +70,11 @@ class ThoughtConfig(BaseModel):
     initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created")
 
 class ParamsConfig(BaseModel):
-    context_size:int = Field(2048, description="The context size for the model")
-    temperature:float = Field(0.8, description="The temperature for the model")
-    frequency_penalty: float = Field(1, description="The frequency penalty for the model")
+    context_size: int = Field(2048, description="The context size for the model")
+    temperature: float = Field(2, description="The temperature for the model")
+    frequency_penalty: float = Field(
+        1, description="The frequency penalty for the model"
+    )
     presence_penalty: float = Field(1, description="The presence penalty for the model")
     repeat_penalty: float = Field(1, description="The repeat penalty for the model")
     min_p: float = Field(0.05, description="The minimum probability for the model")
@@ -95,5 +97,6 @@ class SimulationConfig(BaseModel):
 class BrainReport(BaseModel):
     iterations: int = Field(description="The number of iterations the brain has gone through")
     thought_loops: int = Field(description="The number of thought loops detected")
+    empty_thoughts: int = Field(description="The number of times the pet has had an empty thought")
     out_of_bounds_attempts: int = Field(description="The number of times the pet has attempted to go out of bounds")
-    actual_runtime: None|float = Field(None, description="The actual runtime of the simulation in seconds")
+    actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")

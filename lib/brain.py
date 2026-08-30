@@ -139,8 +139,10 @@ class Brain:
         """End of life report"""
         return BrainReport(
             iterations=self.iterations,
-            thought_loops=self.oob_count,
-            out_of_bounds_attempts=self.oob_count
+            thought_loops=self.memory.thought_loops,
+            out_of_bounds_attempts=self.oob_count,
+            empty_thoughts=self.empty_thoughts,
+            actual_runtime=None
         )
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
@@ -169,7 +171,7 @@ class Brain:
             seed=self.config.params.seed,
             response_format={
                 "type": "json_object",
-                "schema": PetAction.model_json_schema()
+                "schema": PetAction.model_json_schema(), #type:ignore
             },
         )
         assert not isinstance(response, Iterator)
@@ -180,9 +182,11 @@ class Brain:
         self.memory += message
         dict_decision = json.loads(content)
         parsed_decision = PetAction(**dict_decision)
-        logger.debug(f"thought: '{parsed_decision.thought}'")
+        thought_is_empty = not parsed_decision.thought.strip()
         if self.target_out_of_bounds(parsed_decision):
+            if thought_is_empty:
             logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
+                self.empty_thoughts +=1
             self.memory += RoleContent.system("You can't leave the tank!")
             self.oob_count +=1
             if self.oob_count >= self.MAX_OOB_COUNT:
