@@ -116,10 +116,12 @@ class Brain:
             self.request_decision_async(int(self.current_x), int(self.current_y))
 
         self.debug_info = {
-            "current": (round(self.current_x, 1), round(self.current_y, 1)),
-            "target": (round(self.target_x, 1), round(self.target_y, 1)),
+            # "current": (round(self.current_x, 1), round(self.current_y, 1)),
+            # "target": (round(self.target_x, 1), round(self.target_y, 1)),
             "iteration": self.iterations,
             "seed": self.config.params.seed,
+            "temp": self.config.params.temperature,
+            "learning": self.config.learning.enabled
         }
 
     def _fallback(self):
@@ -201,7 +203,7 @@ class Brain:
         )
         if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
-            logger.info("system prompt hash: %s", prompt_hash)
+            # logger.info("system prompt hash: %s", prompt_hash)
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
@@ -214,7 +216,7 @@ class Brain:
             seed=self.config.params.seed,
             response_format={
                 "type": "json_object",
-                "schema": PetAction.model_json_schema(),
+                "schema": PetAction.model_json_schema(), #type:ignore
             },
         )
         assert not isinstance(response, Iterator)
