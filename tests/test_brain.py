@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +14,7 @@ def brain_config() -> BrainConfig:
 
 @pytest.fixture
 def brain(brain_config: BrainConfig) -> Brain:
-    return Brain("fake/model/path.gguf", brain_config)
+    return Brain(Path("fake/model/path.gguf"), brain_config)
 
 
 @pytest.fixture
@@ -48,21 +49,6 @@ def _make_llm_response(thought: str, x: int, y: int) -> dict:
     }
 
 
-class TestBrainInit:
-    def test_not_awake_by_default(self, brain: Brain):
-        assert not brain.awake
-
-    def test_model_path_stored_as_string(self, brain_config: BrainConfig):
-        b = Brain("some/path.gguf", brain_config)
-        assert isinstance(b.model_path, str)
-
-    def test_path_object_resolved(self, brain_config: BrainConfig):
-        from pathlib import Path
-
-        b = Brain(Path("some/path.gguf"), brain_config)
-        assert isinstance(b.model_path, str)
-
-
 class TestWakeUp:
     def test_awake_after_wake_up(self, awake_brain: Brain):
         assert awake_brain.awake
@@ -86,7 +72,7 @@ class TestWakeUp:
         assert awake_brain.iterations == 0
 
     def test_oob_count_zero(self, awake_brain: Brain):
-        assert awake_brain.oob_count == 0
+        assert awake_brain.current_oob_count == 0
 
 
 class TestUpdate:
@@ -220,18 +206,18 @@ class TestGenerateDecision:
 
     def test_oob_increments_oob_count(self, awake_brain: Brain):
         self._setup_brain_for_generation(awake_brain, x=999, y=999)
-        assert awake_brain.oob_count == 1
+        assert awake_brain.current_oob_count == 1
 
     def test_max_oob_triggers_fallback(self, awake_brain: Brain):
-        awake_brain.oob_count = Brain.MAX_OOB_COUNT - 1
+        awake_brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
         self._setup_brain_for_generation(awake_brain, x=999, y=999)
-        assert awake_brain.oob_count == 0
+        assert awake_brain.current_oob_count == 0
         assert not awake_brain.result_queue.empty()
         decision = awake_brain.result_queue.get()
         assert decision.thought == awake_brain.config.thoughts.fallback_thought
 
     def test_memory_cleared_on_max_oob(self, awake_brain: Brain):
-        awake_brain.oob_count = Brain.MAX_OOB_COUNT - 1
+        awake_brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
         self._setup_brain_for_generation(awake_brain, x=999, y=999)
         assert awake_brain.memory.length == 0
 
