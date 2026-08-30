@@ -58,10 +58,11 @@ def frange(start:float, stop:float, step:float, multiplier:int=100) -> Iterator[
 
 def loss_function(
     report: BrainReport,
-    thought_loop_weight: float = 10.0,
-    empty_thought_weight: float = 5.0,
-    out_of_bounds_weight: float = 20.0,
-    inactivity_penalty: float = 1000.0,
+    thought_loop_weight = 10.0,
+    empty_thought_weight = 5.0,
+    out_of_bounds_weight = 20.0,
+    malformed_json_weight = 100.0,
+    inactivity_penalty = 1000.0,
 ) -> float:
     """Calculates a normalized scalar loss penalizing degenerate LLM behaviors.
 
@@ -70,6 +71,7 @@ def loss_function(
         thought_loop_weight: Multiplier for repeated looping states.
         empty_thought_weight: Multiplier for uninformative or empty outputs.
         out_of_bounds_weight: Multiplier for safety and constraint violations.
+        malformed_json_weight: Multiplier for unparseable LLM outputs.
         inactivity_penalty: Penalty returned if no iterations were executed.
 
     Returns:
@@ -82,6 +84,7 @@ def loss_function(
         (report.thought_loops * thought_loop_weight)
         + (report.empty_thoughts * empty_thought_weight)
         + (report.out_of_bounds_attempts * out_of_bounds_weight)
+        + (report.malformed_json * malformed_json_weight)
     )
 
     error_rate = weighted_error_score / float(report.iterations)

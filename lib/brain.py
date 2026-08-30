@@ -169,7 +169,15 @@ class Brain:
         assert not isinstance(response, Iterator)
         parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
         message = parsed_response.get_message()
-        action = parsed_response.get_action()
+
+        try:
+            action = parsed_response.get_action()
+        except (json.JSONDecodeError, ValueError):
+            self.report.malformed_json += 1
+            logger.warning("malformed LLM JSON; using fallback decision and resetting is_thinking")
+            self._fallback()
+            self.is_thinking = False
+            return
 
         self.memory += message
         if not action.thought.strip():

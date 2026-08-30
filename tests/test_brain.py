@@ -225,3 +225,18 @@ class TestGenerateDecision:
         initial_len = awake_brain.memory.length
         self._setup_brain_for_generation(awake_brain)
         assert awake_brain.memory.length > initial_len
+
+    def test_malformed_json_resets_thinking_and_counts(self, awake_brain: Brain):
+        response = _make_llm_response("hello", 10, 20)
+        response["choices"][0]["message"]["content"] = "not valid json {{"
+        awake_brain.llm = MagicMock()
+        awake_brain.llm.create_chat_completion.return_value = response
+
+        awake_brain.is_thinking = True
+        awake_brain._generate_decision(50, 50)
+
+        assert not awake_brain.is_thinking
+        assert awake_brain.report.malformed_json == 1
+        assert not awake_brain.result_queue.empty()
+        decision = awake_brain.result_queue.get()
+        assert decision.thought == awake_brain.config.thoughts.fallback_thought
