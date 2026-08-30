@@ -61,6 +61,7 @@ class Brain:
         self.memory += self.initial_memory
         self.iterations = 0
         self.oob_count = 0
+        self.empty_thoughts = 0
 
         self.llm: Llama | DynamicAdapterLLM
         if self.config.learning.enabled:
@@ -187,6 +188,7 @@ class Brain:
             iterations=self.iterations,
             thought_loops=self.memory.thought_loops,
             out_of_bounds_attempts=self.oob_count,
+            empty_thoughts=self.empty_thoughts,
             actual_runtime=None
         )
 
@@ -232,15 +234,15 @@ class Brain:
         learning = self.config.learning
         thought_is_empty = not parsed_decision.thought.strip()
         if self.target_out_of_bounds(parsed_decision):
-            logger.info(
-                "tried to go to %s",
-                (parsed_decision.target_x, parsed_decision.target_y),
-            )
+            logger.info("tried to go to %s",(parsed_decision.target_x, parsed_decision.target_y))
+            
             # discourage out-of-bounds targets (and empty thoughts)
             reward = learning.reward_out_of_bounds
             if thought_is_empty:
                 reward = min(reward, learning.reward_empty_thought)
+                self.empty_thoughts +=1
             self._record_experience(reward)
+
             self.memory += RoleContent.system("You can't leave the tank!")
             self.oob_count += 1
             if self.oob_count >= self.MAX_OOB_COUNT:

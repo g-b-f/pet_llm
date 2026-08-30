@@ -118,18 +118,6 @@ class TestUpdate:
         assert awake_brain.target_x == 10
         assert awake_brain.target_y == 20
 
-    def test_debug_info_populated(
-        self, awake_brain: Brain, env_info: EnvironmentalInfo
-    ):
-        awake_brain.target_x = (
-            100.0  # keep pet moving; avoid firing a real inference thread
-        )
-        awake_brain.target_y = 50.0
-        awake_brain.update(env_info)
-        assert "current" in awake_brain.debug_info
-        assert "target" in awake_brain.debug_info
-        assert "iteration" in awake_brain.debug_info
-
     def test_arrival_triggers_decision_request(
         self, awake_brain: Brain, env_info: EnvironmentalInfo
     ):

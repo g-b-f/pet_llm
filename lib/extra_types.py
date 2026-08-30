@@ -39,6 +39,10 @@ class RoleContent(BaseModel, use_enum_values=True):
     def system(cls, content: str):
         return cls(role=Role.system, content=content)
 
+    @classmethod
+    def assistant(cls, content: str):
+        return cls(role=Role.assistant, content=content)
+
 
 class MessageChoice(BaseModel):
     index: int
@@ -91,7 +95,7 @@ class ThoughtConfig(BaseModel):
 
 class ParamsConfig(BaseModel):
     context_size: int = Field(2048, description="The context size for the model")
-    temperature: float = Field(0.8, description="The temperature for the model")
+    temperature: float = Field(2, description="The temperature for the model")
     frequency_penalty: float = Field(
         1, description="The frequency penalty for the model"
     )
@@ -167,13 +171,8 @@ class SimulationConfig(BaseModel):
 
 
 class BrainReport(BaseModel):
-    iterations: int = Field(
-        description="The number of iterations the brain has gone through"
-    )
+    iterations: int = Field(description="The number of iterations the brain has gone through")
     thought_loops: int = Field(description="The number of thought loops detected")
-    out_of_bounds_attempts: int = Field(
-        description="The number of times the pet has attempted to go out of bounds"
-    )
-    actual_runtime: None | float = Field(
-        None, description="The actual runtime of the simulation in seconds"
-    )
+    empty_thoughts: int = Field(description="The number of times the pet has had an empty thought")
+    out_of_bounds_attempts: int = Field(description="The number of times the pet has attempted to go out of bounds")
+    actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")

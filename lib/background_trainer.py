@@ -13,6 +13,11 @@ logger = get_logger(__name__)
 
 ADAPTERS_DIR = Path(__file__).parent.parent / "adapters"
 
+TRAINER_SCRIPT = Path(__file__).parent.parent / "models" / "train_lora.py"
+
+# Default trainer: an isolated Python process running the peft-based LoRA trainer.
+DEFAULT_TRAINER_COMMAND: list[str] = [sys.executable, str(TRAINER_SCRIPT)]
+
 # Low-priority creation flags so training never starves the render thread.
 LOW_PRIORITY_KWARGS: dict = (
     {"creationflags": subprocess.IDLE_PRIORITY_CLASS}
@@ -26,8 +31,9 @@ class BackgroundTrainer:
 
     Polls an ``ExperienceBuffer`` from a daemon monitor thread. Once the buffer
     reaches ``trigger_capacity`` entries, positive experiences are exported to
-    a temporary JSONL dataset and an external trainer (``llama-finetune`` or
-    any compatible command) is launched as a low-priority subprocess.
+    a temporary JSONL dataset and an external trainer (by default the peft-based
+    ``models/train_lora.py``, or any compatible command) is launched as a
+    low-priority subprocess.
 
     When the subprocess finishes and produced a ``.gguf`` adapter, the
     adapter's path is put on ``completion_queue`` so the main thread can
@@ -47,7 +53,7 @@ class BackgroundTrainer:
         self.model_path = str(model_path)
         self.output_dir = Path(output_dir)
         self.trigger_capacity = trigger_capacity
-        self.trainer_command = trainer_command or ["llama-finetune"]
+        self.trainer_command = trainer_command or DEFAULT_TRAINER_COMMAND
 
         self.completion_queue: queue.Queue[Path] = queue.Queue()
         self._is_training = False
@@ -124,7 +130,7 @@ class BackgroundTrainer:
             adapter_path = self.output_dir / f"adapter_{self._run_count}.gguf"
             command = self._build_command(dataset_file.name, adapter_path)
 
-            subprocess.Popen(  # noqa: S603
+            process = subprocess.Popen(  # noqa: S603
                 command,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
@@ -132,7 +138,7 @@ class BackgroundTrainer:
             )
             threading.Thread(
                 target=self._wait_for_completion,
-                args=(adapter_path,),
+                args=(process, adapter_path),
                 daemon=True,
                 name=f"trainer-wait-{self._run_count}",
             ).start()
@@ -151,8 +157,18 @@ class BackgroundTrainer:
             str(adapter_path),
         ]
 
-    def _wait_for_completion(self, adapter_path: Path) -> None:
+    def _wait_for_completion(
+        self,
+        process: subprocess.Popen | None,
+        adapter_path: Path,
+    ) -> None:
+        """Block until the trainer exits, then queue the adapter if produced."""
         try:
+            if process is not None:
+                returncode = process.wait()
+                if returncode != 0:
+                    logger.warning("trainer exited with code %s", returncode)
+
             if adapter_path.exists():
                 logger.info("adapter ready: %s", adapter_path)
                 self.completion_queue.put(adapter_path)

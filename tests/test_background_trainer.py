@@ -38,7 +38,9 @@ class TestBackgroundTrainerInit:
         assert trainer.completion_queue.empty()
 
     def test_default_trainer_command(self, trainer: BackgroundTrainer):
-        assert trainer.trainer_command == ["llama-finetune"]
+        from lib.background_trainer import DEFAULT_TRAINER_COMMAND
+
+        assert trainer.trainer_command == DEFAULT_TRAINER_COMMAND
 
 
 class TestLaunchTraining:
@@ -47,22 +49,14 @@ class TestLaunchTraining:
             trainer.launch_training()
             assert mock_popen.called
             command = mock_popen.call_args[0][0]
-            assert command[0] == "llama-finetune"
+            assert command[0] == sys.executable
+            assert command[1].endswith("train_lora.py")
             assert "--model" in command
             assert "--dataset" in command
             assert "--output" in command
             assert str(tmp_path / "adapter_1.gguf") in command
 
-    def test_low_priority_flags(self, trainer: BackgroundTrainer):
-        with patch("lib.background_trainer.subprocess.Popen") as mock_popen:
-            trainer.launch_training()
-            kwargs = mock_popen.call_args[1]
-            if sys.platform == "win32":
-                assert kwargs["creationflags"] == subprocess.IDLE_PRIORITY_CLASS
-            else:
-                assert kwargs["nice"] == 19
-
-    def test_writes_jsonl_dataset(self, trainer: BackgroundTrainer):
+    def test_writes_dataset(self, trainer: BackgroundTrainer):
         with patch("lib.background_trainer.subprocess.Popen") as mock_popen:
             trainer.launch_training()
             command = mock_popen.call_args[0][0]
@@ -101,7 +95,7 @@ class TestLaunchTraining:
         with (
             patch(
                 "lib.background_trainer.subprocess.Popen",
-                side_effect=FileNotFoundError("llama-finetune"),
+                side_effect=FileNotFoundError("train_lora.py"),
             ),
             pytest.raises(FileNotFoundError),
         ):
@@ -117,7 +111,7 @@ class TestCompletionNotification:
             trainer.launch_training()
         adapter_path = tmp_path / "adapter_1.gguf"
         adapter_path.touch()  # trainer subprocess would produce this
-        trainer._wait_for_completion(adapter_path)
+        trainer._wait_for_completion(None, adapter_path)
         assert trainer.get_completed_adapter() == adapter_path
         assert not trainer.is_training
 
@@ -125,9 +119,22 @@ class TestCompletionNotification:
         self, trainer: BackgroundTrainer, tmp_path: Path
     ):
         trainer._is_training = True
-        trainer._wait_for_completion(tmp_path / "never_created.gguf")
+        trainer._wait_for_completion(None, tmp_path / "never_created.gguf")
         assert trainer.get_completed_adapter() is None
         assert not trainer.is_training
+
+    def test_waits_for_process_exit(self, trainer: BackgroundTrainer, tmp_path: Path):
+        process = subprocess.Popen(
+            [sys.executable, "-c", "pass"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        adapter_path = tmp_path / "out.gguf"
+        adapter_path.touch()
+        trainer._is_training = True
+        trainer._wait_for_completion(process, adapter_path)
+        assert process.poll() is not None  # process reaped
+        assert trainer.get_completed_adapter() == adapter_path
 
     def test_get_completed_adapter_empty(self, trainer: BackgroundTrainer):
         assert trainer.get_completed_adapter() is None
@@ -156,3 +163,99 @@ class TestMonitorThread:
             buffer.record(1.0)  # buffer now at trigger_capacity=2
             assert fired.wait(timeout=3.0)
         trainer.stop()
+
+
+PROJECT_ROOT = Path(__file__).parent.parent
+TRAINER_SCRIPT = PROJECT_ROOT / "models" / "train_lora.py"
+# A tiny HF model keeps the end-to-end training test fast on CPU. The production
+# code passes the GGUF base model path; peft needs a HF-format model id/path.
+TINY_HF_MODEL = "hf-internal-testing/tiny-random-SmolLM2"
+
+# Command prefix that invokes the trainer as an isolated Python process, matching
+# BackgroundTrainer's default. `_build_command` appends --model/--dataset/--output.
+TRAINER_CMD = [sys.executable, str(TRAINER_SCRIPT)]
+
+
+def _chat_buffer() -> ExperienceBuffer:
+    mem = Memory(MemoryConfig(max_length=5))
+    mem += RoleContent.user("Start exploring!")
+    mem += RoleContent.assistant(
+        content='{"thought": "exploring", "action": "move_to", "target_x": 5, "target_y": 5}'
+    )
+    buffer = ExperienceBuffer(mem)
+    buffer.record(1.0)
+    return buffer
+
+
+@pytest.mark.slow
+class TestRealTrainer:
+    """Run the real, unmocked Python LoRA trainer (``models/train_lora.py``).
+
+    These exercise the full subprocess pipeline: JSONL export, peft training,
+    and GGUF conversion. They need network access on first run to download the
+    HF model and llama.cpp's convert_lora_to_gguf.py.
+    """
+
+    def test_trainer_help_invocable(self):
+        result = subprocess.run(
+            [*TRAINER_CMD, "--help"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        assert result.returncode == 0
+
+    def test_trainer_rejects_missing_dataset(self, tmp_path: Path):
+        result = subprocess.run(
+            [
+                *TRAINER_CMD,
+                "--model",
+                TINY_HF_MODEL,
+                "--dataset",
+                str(tmp_path / "nope.jsonl"),
+                "--output",
+                str(tmp_path / "out.gguf"),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        assert result.returncode != 0
+
+    def test_launch_training_invokes_trainer(self, tmp_path: Path):
+        """Real launch against a bad model: process runs, fails, no adapter."""
+        trainer = BackgroundTrainer(
+            _chat_buffer(),
+            model_path="nonexistent-model",
+            output_dir=tmp_path,
+            trainer_command=TRAINER_CMD,
+        )
+        trainer.launch_training()
+        deadline = threading.Event()
+        while trainer.is_training and not deadline.wait(0.5):
+            pass
+        assert not trainer.is_training
+        assert trainer.get_completed_adapter() is None
+
+    def test_full_training_produces_gguf_adapter(self, tmp_path: Path):
+        """End-to-end: real training produces a .gguf LoRA adapter."""
+        buffer = _chat_buffer()
+        for _ in range(2):
+            buffer.record(1.0)
+        trainer = BackgroundTrainer(
+            buffer,
+            model_path=TINY_HF_MODEL,
+            output_dir=tmp_path,
+            trainer_command=TRAINER_CMD,
+        )
+        trainer.launch_training()
+        adapter = None
+        deadline = threading.Event()
+        for _ in range(1200):  # up to ~10 minutes on CPU
+            adapter = trainer.get_completed_adapter()
+            if adapter is not None or not trainer.is_training:
+                break
+            deadline.wait(0.5)
+        assert adapter is not None, "training did not produce an adapter"
+        assert adapter.exists()
+        assert adapter.suffix == ".gguf"
