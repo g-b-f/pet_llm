@@ -112,3 +112,7 @@ class BrainReport(BaseModel):
     empty_thoughts: int = Field(0, description="The number of times the LLM has had an empty thought")
     out_of_bounds_attempts: int = Field(0, description="The number of times the LLM has attempted to go out of bounds")
     actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")
+
+class OutputReport(BaseModel):
+    config: SimulationConfig
+    report: BrainReport

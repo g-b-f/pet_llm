@@ -6,7 +6,7 @@ import json
 import pygame
 
 from lib.brain import Brain
-from lib.extra_types import EnvironmentalInfo, TankConfig
+from lib.extra_types import EnvironmentalInfo, OutputReport, SimulationConfig, TankConfig
 
 DEBUG = True
 
@@ -71,7 +71,7 @@ class Tank:
         ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
         return ret
 
-    def generate_report(self) -> None:
+    def generate_report(self) -> OutputReport:
         brain_report = self.brain.report
         brain_report.actual_runtime = pygame.time.get_ticks() / 1000
 
@@ -82,18 +82,17 @@ class Tank:
                 print(f"error decoding: {e}")
                 report = list()
 
+        compiled_report = OutputReport(
+            config=SimulationConfig(tank=self.config, brain=self.brain.config),
+            report=brain_report
+            )
         with open(report_path, "w") as f:
-            compiled_report = {
-                "config": {
-                    "brain": self.brain.config.model_dump(),
-                    "tank": self.config.model_dump()
-                },
-                "report": brain_report.model_dump()
-            }
-            report.append(compiled_report)
+            report.append(compiled_report.model_dump())
             json.dump(report, f, indent=4)
 
-    def run(self) -> None:
+        return compiled_report
+
+    def run(self) -> OutputReport:
         """Runs the main game loop
 
         Args:
@@ -121,8 +120,8 @@ class Tank:
             self._render_scene()
             self.clock.tick(self.FPS)
 
-        self.generate_report()
         pygame.quit()
+        return self.generate_report()
 
     def _blit_text(
             self,
