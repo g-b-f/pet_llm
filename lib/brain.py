@@ -183,8 +183,9 @@ class Brain:
         """End of life report"""
         return BrainReport(
             iterations=self.iterations,
-            thought_loops=self.oob_count,
+            thought_loops=self.memory.thought_loops,
             out_of_bounds_attempts=self.oob_count,
+            actual_runtime=None
         )
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:

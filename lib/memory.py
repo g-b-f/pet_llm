@@ -20,6 +20,7 @@ class Memory:
     def __init__(self, config: MemoryConfig):
         self.config = config
         self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
+        self.thought_loops = 0
 
     def get_messages(self, system_prompt:str) -> list[ChatCompletionRequestMessage]:
         sys_prompt = RoleContent.system(system_prompt)
@@ -46,6 +47,7 @@ class Memory:
             return
 
         if first_action.thought == last_action.thought:
+            self.thought_loops += 1
             raise ThoughtLoopError(last_action.thought)
 
     @property
