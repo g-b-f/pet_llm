@@ -3,12 +3,17 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lib.brain import Brain
-from lib.extra_types import Action, EnvironmentalInfo, PetAction
+from lib.extra_types import Action, BrainConfig, EnvironmentalInfo, PetAction
 
 
 @pytest.fixture
-def brain() -> Brain:
-    return Brain("fake/model/path.gguf")
+def brain_config() -> BrainConfig:
+    return BrainConfig.model_construct()
+
+
+@pytest.fixture
+def brain(brain_config: BrainConfig) -> Brain:
+    return Brain("fake/model/path.gguf", brain_config)
 
 
 @pytest.fixture
@@ -47,13 +52,14 @@ class TestBrainInit:
     def test_not_awake_by_default(self, brain: Brain):
         assert not brain.awake
 
-    def test_model_path_stored_as_string(self):
-        b = Brain("some/path.gguf")
+    def test_model_path_stored_as_string(self, brain_config: BrainConfig):
+        b = Brain("some/path.gguf", brain_config)
         assert isinstance(b.model_path, str)
 
-    def test_path_object_resolved(self):
+    def test_path_object_resolved(self, brain_config: BrainConfig):
         from pathlib import Path
-        b = Brain(Path("some/path.gguf"))
+
+        b = Brain(Path("some/path.gguf"), brain_config)
         assert isinstance(b.model_path, str)
 
 
@@ -66,7 +72,9 @@ class TestWakeUp:
         assert awake_brain.current_y == 50.0
 
     def test_initial_thought(self, awake_brain: Brain):
-        assert awake_brain.current_thought == Brain.INITIAL_THOUGHT
+        assert (
+            awake_brain.current_thought == awake_brain.config.thoughts.initial_thought
+        )
 
     def test_initial_memory_has_one_entry(self, awake_brain: Brain):
         assert awake_brain.memory.length == 1
@@ -82,7 +90,9 @@ class TestWakeUp:
 
 
 class TestUpdate:
-    def test_pet_moves_toward_target(self, awake_brain: Brain, env_info: EnvironmentalInfo):
+    def test_pet_moves_toward_target(
+        self, awake_brain: Brain, env_info: EnvironmentalInfo
+    ):
         awake_brain.target_x = 100.0
         awake_brain.target_y = 50.0
         initial_x = awake_brain.current_x
@@ -96,21 +106,33 @@ class TestUpdate:
         awake_brain.update(env_info)
         assert abs(awake_brain.current_x - (initial_x + Brain.PET_SPEED)) < 0.01
 
-    def test_queued_decision_applied(self, awake_brain: Brain, env_info: EnvironmentalInfo):
-        decision = PetAction(thought="new thought", action=Action.move_to, target_x=10, target_y=20)
+    def test_queued_decision_applied(
+        self, awake_brain: Brain, env_info: EnvironmentalInfo
+    ):
+        decision = PetAction(
+            thought="new thought", action=Action.move_to, target_x=10, target_y=20
+        )
         awake_brain.result_queue.put(decision)
         awake_brain.update(env_info)
         assert awake_brain.current_thought == "new thought"
         assert awake_brain.target_x == 10
         assert awake_brain.target_y == 20
 
-    def test_debug_info_populated(self, awake_brain: Brain, env_info: EnvironmentalInfo):
+    def test_debug_info_populated(
+        self, awake_brain: Brain, env_info: EnvironmentalInfo
+    ):
+        awake_brain.target_x = (
+            100.0  # keep pet moving; avoid firing a real inference thread
+        )
+        awake_brain.target_y = 50.0
         awake_brain.update(env_info)
         assert "current" in awake_brain.debug_info
         assert "target" in awake_brain.debug_info
         assert "iteration" in awake_brain.debug_info
 
-    def test_arrival_triggers_decision_request(self, awake_brain: Brain, env_info: EnvironmentalInfo):
+    def test_arrival_triggers_decision_request(
+        self, awake_brain: Brain, env_info: EnvironmentalInfo
+    ):
         awake_brain.target_x = awake_brain.current_x
         awake_brain.target_y = awake_brain.current_y
         with patch.object(awake_brain, "request_decision_async") as mock_req:
@@ -123,7 +145,7 @@ class TestFallback:
         awake_brain._fallback()
         assert not awake_brain.result_queue.empty()
         decision = awake_brain.result_queue.get()
-        assert decision.thought == Brain.FALLBACK_THOUGHT
+        assert decision.thought == awake_brain.config.thoughts.fallback_thought
 
     def test_fallback_within_bounds(self, awake_brain: Brain):
         awake_brain._fallback()
@@ -159,25 +181,34 @@ class TestRequestDecisionAsync:
 
 class TestTargetOutOfBounds:
     @pytest.mark.parametrize(
-        ("target_x", "target_y"),[(101, 50), (-1, 50), (50, 101), (50, -1)]
+        ("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)]
     )
-    def test_target_out_of_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
-        action = PetAction(thought="t", action=Action.move_to, target_x=target_x, target_y=target_y)
+    def test_target_out_of_bounds(
+        self, awake_brain: Brain, target_x: int, target_y: int
+    ):
+        action = PetAction(
+            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
+        )
         assert awake_brain.target_out_of_bounds(action)
 
     @pytest.mark.parametrize(
-        ("target_x", "target_y"),[(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
+        ("target_x", "target_y"), [(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
     )
     def test_target_in_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
-        action = PetAction(thought="t", action=Action.move_to, target_x=target_x, target_y=target_y)
+        action = PetAction(
+            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
+        )
         assert not awake_brain.target_out_of_bounds(action)
 
 
 class TestGenerateDecision:
-    def _setup_brain_for_generation(self, brain: Brain, response_thought: str = "hello",
-                                     x: int = 10, y: int = 20):
+    def _setup_brain_for_generation(
+        self, brain: Brain, response_thought: str = "hello", x: int = 10, y: int = 20
+    ):
         brain.llm = MagicMock()
-        brain.llm.create_chat_completion.return_value = _make_llm_response(response_thought, x, y)
+        brain.llm.create_chat_completion.return_value = _make_llm_response(
+            response_thought, x, y
+        )
         brain._generate_decision(50, 50)
 
     def test_successful_decision_queued(self, awake_brain: Brain):
@@ -209,7 +240,7 @@ class TestGenerateDecision:
         assert awake_brain.oob_count == 0
         assert not awake_brain.result_queue.empty()
         decision = awake_brain.result_queue.get()
-        assert decision.thought == Brain.FALLBACK_THOUGHT
+        assert decision.thought == awake_brain.config.thoughts.fallback_thought
 
     def test_memory_cleared_on_max_oob(self, awake_brain: Brain):
         awake_brain.oob_count = Brain.MAX_OOB_COUNT - 1

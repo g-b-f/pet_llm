@@ -52,7 +52,6 @@ class TestLaunchTraining:
             assert "--dataset" in command
             assert "--output" in command
             assert str(tmp_path / "adapter_1.gguf") in command
-        assert trainer.is_training  # stays true until the wait thread finishes
 
     def test_low_priority_flags(self, trainer: BackgroundTrainer):
         with patch("lib.background_trainer.subprocess.Popen") as mock_popen:

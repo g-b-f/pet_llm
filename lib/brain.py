@@ -9,18 +9,22 @@ from typing import Iterator
 from llama_cpp import Llama
 
 from lib import memory
+from lib.background_trainer import BackgroundTrainer
+from lib.dynamic_adapter_llm import DynamicAdapterLLM
+from lib.experience_buffer import ExperienceBuffer
 from lib.extra_types import (
     Action,
+    BrainConfig,
     BrainReport,
     ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
-    BrainConfig
 )
 from lib.utils import get_logger
 
 logger = get_logger(__name__, "info")
+
 
 class Brain:
     """Manages pet state and background inference using llama_cpp.
@@ -35,13 +39,13 @@ class Brain:
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
 
-    def __init__(self, model_path: Path, config: BrainConfig) -> None:
+    def __init__(self, model_path: str | Path, config: BrainConfig) -> None:
         self.awake = False
-        self.model_path = str(model_path.resolve())
+        self.model_path = str(Path(model_path).resolve())
         self.config = config
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
 
-    def wake_up(self, bounds:tuple[int,int]):
+    def wake_up(self, bounds: tuple[int, int]):
         self.x_bounds, self.y_bounds = bounds
 
         self.current_x = float(self.x_bounds // 2)
@@ -58,12 +62,32 @@ class Brain:
         self.iterations = 0
         self.oob_count = 0
 
-        self.llm = Llama(
-            model_path=self.model_path,
-            n_ctx=self.config.params.context_size,
-            n_gpu_layers=-1,
-            verbose=False
-        )
+        self.llm: Llama | DynamicAdapterLLM
+        if self.config.learning.enabled:
+            self.llm = DynamicAdapterLLM(
+                model_path=self.model_path,
+                n_ctx=self.config.params.context_size,
+                n_gpu_layers=-1,
+                verbose=False,
+            )
+            self.experience_buffer = ExperienceBuffer(
+                self.memory,
+                maxlen=self.config.learning.buffer_maxlen,
+                threshold=self.config.learning.buffer_threshold,
+            )
+            self.trainer = BackgroundTrainer(
+                self.experience_buffer,
+                model_path=self.model_path,
+                trigger_capacity=self.config.learning.trigger_capacity,
+            )
+            self.trainer.start()
+        else:
+            self.llm = Llama(
+                model_path=self.model_path,
+                n_ctx=self.config.params.context_size,
+                n_gpu_layers=-1,
+                verbose=False,
+            )
         self.awake = True
 
     def update(self, environment_info: EnvironmentalInfo) -> None:
@@ -72,6 +96,8 @@ class Brain:
         Call once per frame from the rendering loop.
         """
         self.environment_info = environment_info
+
+        self._drain_completed_adapter()
 
         if not self.result_queue.empty():
             decision = self.result_queue.get()
@@ -87,24 +113,21 @@ class Brain:
             self.current_x += (delta_x / distance) * self.PET_SPEED
             self.current_y += (delta_y / distance) * self.PET_SPEED
         else:
-            self.request_decision_async(
-                int(self.current_x),
-                int(self.current_y)
-            )
+            self.request_decision_async(int(self.current_x), int(self.current_y))
 
         self.debug_info = {
-            "current": (round(self.current_x,1), round(self.current_y,1)),
-            "target": (round(self.target_x,1), round(self.target_y,1)),
+            "current": (round(self.current_x, 1), round(self.current_y, 1)),
+            "target": (round(self.target_x, 1), round(self.target_y, 1)),
             "iteration": self.iterations,
-            "seed": self.config.params.seed
-            }
+            "seed": self.config.params.seed,
+        }
 
     def _fallback(self):
         fallback_decision = PetAction(
             thought=self.config.thoughts.fallback_thought,
             action=Action.move_to,
             target_x=random.randint(0, self.x_bounds),
-            target_y=random.randint(0, self.y_bounds)
+            target_y=random.randint(0, self.y_bounds),
         )
         self.result_queue.put(fallback_decision)
 
@@ -121,18 +144,39 @@ class Brain:
 
         self.is_thinking = True
         worker_thread = threading.Thread(
-            target=self._generate_decision,
-            args=(current_x, current_y),
-            daemon=True
+            target=self._generate_decision, args=(current_x, current_y), daemon=True
         )
         worker_thread.start()
 
-    def target_out_of_bounds(self, action:PetAction) -> bool:
+    def target_out_of_bounds(self, action: PetAction) -> bool:
         target_x = action.target_x
         target_y = action.target_y
         if target_x > self.x_bounds or target_x < 0:
             return True
         return bool(target_y > self.y_bounds or target_y < 0)
+
+    def _drain_completed_adapter(self) -> None:
+        """Hot-swap a freshly trained LoRA adapter, if one is ready.
+
+        Runs on the render thread; the trainer's completion queue is the
+        hand-off point from the background training process.
+        """
+        if not self.config.learning.enabled:
+            return
+        adapter_path = self.trainer.get_completed_adapter()
+        if adapter_path is None:
+            return
+        if not isinstance(self.llm, DynamicAdapterLLM):
+            return
+        try:
+            self.llm.apply_lora_from_path(adapter_path)
+            logger.info("hot-swapped LoRA adapter: %s", adapter_path)
+        except Exception:
+            logger.exception("failed to apply trained adapter %s", adapter_path)
+
+    def _record_experience(self, reward: float) -> None:
+        if self.config.learning.enabled:
+            self.experience_buffer.record(reward)
 
     @property
     def report(self) -> BrainReport:
@@ -140,7 +184,7 @@ class Brain:
         return BrainReport(
             iterations=self.iterations,
             thought_loops=self.oob_count,
-            out_of_bounds_attempts=self.oob_count
+            out_of_bounds_attempts=self.oob_count,
         )
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
@@ -156,7 +200,7 @@ class Brain:
         )
         if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
-            logger.info(f"system prompt hash: {prompt_hash}")
+            logger.info("system prompt hash: %s", prompt_hash)
 
         messages = self.memory.get_messages(system_prompt)
         response = self.llm.create_chat_completion(
@@ -169,28 +213,46 @@ class Brain:
             seed=self.config.params.seed,
             response_format={
                 "type": "json_object",
-                "schema": PetAction.model_json_schema()
+                "schema": PetAction.model_json_schema(),
             },
         )
         assert not isinstance(response, Iterator)
-        parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
+        parsed_response = ChatCompletionResponse(**response)  # type:ignore[arg-type]
         message = parsed_response.get_message()
         content = parsed_response.get_content()
 
         self.memory += message
         dict_decision = json.loads(content)
         parsed_decision = PetAction(**dict_decision)
-        logger.debug(f"thought: '{parsed_decision.thought}'")
+        logger.debug("thought: '%s'", parsed_decision.thought)
+
+        learning = self.config.learning
+        thought_is_empty = not parsed_decision.thought.strip()
         if self.target_out_of_bounds(parsed_decision):
-            logger.info(f"tried to go to {parsed_decision.target_x, parsed_decision.target_y}")
+            logger.info(
+                "tried to go to %s",
+                (parsed_decision.target_x, parsed_decision.target_y),
+            )
+            # discourage out-of-bounds targets (and empty thoughts)
+            reward = learning.reward_out_of_bounds
+            if thought_is_empty:
+                reward = min(reward, learning.reward_empty_thought)
+            self._record_experience(reward)
             self.memory += RoleContent.system("You can't leave the tank!")
-            self.oob_count +=1
+            self.oob_count += 1
             if self.oob_count >= self.MAX_OOB_COUNT:
                 logger.info("attempted out-of-bounds too much, clearing memory")
                 self._fallback()
                 self.memory.clear()
                 self.oob_count = 0
         else:
+            # discourage empty thoughts, reward real ones
+            reward = (
+                learning.reward_empty_thought
+                if thought_is_empty
+                else learning.reward_move_to
+            )
+            self._record_experience(reward)
             self.result_queue.put(parsed_decision)
             self.oob_count = 0
         self.iterations += 1
@@ -199,13 +261,13 @@ class Brain:
             self.memory.supervise()
         except memory.ThoughtLoopError as e:
             logger.info(
-                f"thought loop detected after {self.iterations} iterations, clearing memory"
-                )
-            logger.info(f"thought was: '{e.last_thought}'")
+                "thought loop detected after %s iterations, clearing memory",
+                self.iterations,
+            )
+            logger.info("thought was: '%s'", e.last_thought)
             # self.memory.append(RoleContent.system("you'd like to do something else now"))
             self.memory.clear()
+            self._record_experience(learning.reward_fallback)
             self._fallback()
         finally:
             self.is_thinking = False
-
- 

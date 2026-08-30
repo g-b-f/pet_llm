@@ -2,20 +2,20 @@ import json
 
 import pytest
 
-from lib.extra_types import PetAction, RoleContent, Action
+from lib.extra_types import Action, MemoryConfig, PetAction, RoleContent
 from lib.memory import Memory, ThoughtLoopError
 
 
 @pytest.fixture
 def memory() -> Memory:
-    return Memory(maxlen=3)
+    return Memory(MemoryConfig(max_length=3))
 
 
 @pytest.fixture
 def sample_action() -> PetAction:
     return PetAction(
         thought="I want to swim",
-        action= Action.move_to,
+        action=Action.move_to,
         target_x=10,
         target_y=20,
     )
@@ -23,7 +23,7 @@ def sample_action() -> PetAction:
 
 class TestMemoryBasics:
     def test_init(self, memory: Memory):
-        assert memory.maxlen == 3
+        assert memory.config.max_length == 3
         assert memory.length == 0
         assert memory.is_empty
         assert not memory.is_full
@@ -99,9 +99,13 @@ class TestSupervise:
         memory += RoleContent(role="assistant", content=sample_action.model_dump_json())
         memory.supervise()
 
-    def test_matching_thoughts_raise_loop_error(self, memory: Memory, sample_action: PetAction):
+    def test_matching_thoughts_raise_loop_error(
+        self, memory: Memory, sample_action: PetAction
+    ):
         for _ in range(3):
-            memory += RoleContent(role="assistant", content=sample_action.model_dump_json())
+            memory += RoleContent(
+                role="assistant", content=sample_action.model_dump_json()
+            )
         with pytest.raises(ThoughtLoopError) as exc_info:
             memory.supervise()
         assert exc_info.value.last_thought == "I want to swim"
