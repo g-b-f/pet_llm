@@ -1,4 +1,8 @@
+from pathlib import Path
+
 import optuna
+from optuna.storages.journal import JournalFileBackend, JournalStorage
+from optuna.storages.journal._file import BaseJournalFileLock
 from lib.brain import Brain
 from lib.extra_types import SimulationConfig
 from lib.tank import Tank
@@ -6,12 +10,22 @@ from lib.utils import get_logger, loss_function
 from models.download import Model, get_model
 
 model_path = get_model(Model.smollm2)
-logger = get_logger(__name__)
+logger = get_logger(__name__, log_file="log_bayes.txt")
 
-RUNTIME = 300
+RUNTIME = 250
+N_TRIALS = 50
+N_SEEDS = 3
 
+storage_backend = Path(__file__).parent /"study_backend.jsonl"
 
-def evaluate_simulation(trial: optuna.Trial, seeds=1) -> float:
+class DummyLock(BaseJournalFileLock):
+    """It's a single threaded process why tf are you making me use a lock"""
+    def acquire(self):
+        return True
+    def release(self):
+        pass
+
+def evaluate_simulation(trial: optuna.Trial) -> float:
     """Evaluates simulation loss for a set of sampled brain parameters.
 
     Args:
@@ -36,9 +50,13 @@ def evaluate_simulation(trial: optuna.Trial, seeds=1) -> float:
 
     losses:list[float] = []
 
-    for seed in range(seeds):
+    for seed in range(N_SEEDS):
         brain = Brain(model_path, config.brain)
         tank = Tank(brain, config.tank)
+
+        # make headless:
+        # tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
+
         logger.info(
             f"{seed=}, {temperature=}, {frequency_penalty=}, "
             f"{presence_penalty=}, {repeat_penalty=}"
@@ -52,8 +70,25 @@ def evaluate_simulation(trial: optuna.Trial, seeds=1) -> float:
 
 
 if __name__ == "__main__":
-    optimization_study = optuna.create_study(direction="minimize")
-    optimization_study.optimize(evaluate_simulation, n_trials=20)
+    logger.info(f"starting optimisation")
+    logger.info(f"{RUNTIME=}, {N_TRIALS=}, {N_SEEDS=}")
+    eta = RUNTIME * N_TRIALS * N_SEEDS
+    logger.info(f"eta: {eta/(60*60):.2f} hours")
+
+    storage = JournalStorage(
+        JournalFileBackend(
+            str(storage_backend.resolve()),
+            lock_obj=DummyLock()
+            )
+        )
+
+    optimization_study = optuna.create_study(
+        study_name=f"pet_llm_{model_path.stem}",
+        storage=storage,
+        direction="minimize",
+        load_if_exists=True
+        )
+    optimization_study.optimize(evaluate_simulation, n_trials=N_TRIALS)
 
     logger.info(f"Best parameters: {optimization_study.best_params}")
     logger.info(f"Best loss: {optimization_study.best_value}")
