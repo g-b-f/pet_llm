@@ -81,6 +81,9 @@ class Tank:
             except json.decoder.JSONDecodeError as e:
                 print(f"error decoding: {e}")
                 report = list()
+            except FileNotFoundError as e:
+                print(f"file not found: {e}")
+                report = list()
 
         compiled_report = OutputReport(
             config=SimulationConfig(tank=self.config, brain=self.brain.config),
