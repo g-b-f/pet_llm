@@ -1,8 +1,9 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Iterator
-from lib.extra_types import BrainReport
+from typing import Iterator, TYPE_CHECKING
+if TYPE_CHECKING:
+    from lib.extra_types import BrainReport
 
 DEFAULT_LOG_LEVEL = "INFO"
 MAX_LOG_SIZE_BYTES = 1024 * 1024 # 1 MB
@@ -18,12 +19,12 @@ def namer(default_name: str) -> str:
     new_name = f"{base_file.stem}_{index}{base_file.suffix}"
     return str(default_path.parent / new_name)
 
-def get_logger(name: str, level=DEFAULT_LOG_LEVEL) -> logging.Logger:
+def get_logger(name: str, level=DEFAULT_LOG_LEVEL, log_file = "log.txt") -> logging.Logger:
     if level.upper() not in logging._nameToLevel:
         raise ValueError(f"Invalid log level: {level}")
     level_int = logging._nameToLevel[level.upper()]
 
-    handler = RotatingFileHandler(LOG_DIR / "log.txt", maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2)
+    handler = RotatingFileHandler(LOG_DIR / log_file, maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2)
     handler.setLevel(level_int)
     handler.namer = namer
     formatter = logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")

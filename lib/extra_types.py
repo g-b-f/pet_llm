@@ -1,9 +1,12 @@
 from enum import Enum
+from logging import getLogger
 from typing import Optional
 import json
 
 from pydantic import BaseModel, Field
 
+from lib.utils import get_logger
+logger = get_logger(__name__)
 
 class EnvironmentalInfo(BaseModel):
     mouse: tuple[int,int] = Field(description="the location of the user's mouse")
@@ -19,7 +22,13 @@ class PetAction(BaseModel, use_enum_values=True):
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 
-
+    def get_thought(self):
+        try:
+            return self.thought.encode().decode()
+        except UnicodeEncodeError:
+            logger.warning(f"""non utf-8 thought: '{self.thought.encode(errors = "backslashreplace").decode(errors = "backslashreplace")}'""")
+            logger.warning(f"""equivalent to: '{self.thought.encode(errors = "namereplace").decode(errors = "namereplace")}'""")
+            return self.thought.encode(errors = "replace").decode(errors = "replace")
 
 class Role(Enum):
     user = "user"

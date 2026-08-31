@@ -77,7 +77,7 @@ class Brain:
 
         if not self.result_queue.empty():
             decision = self.result_queue.get()
-            self.current_thought = decision.thought
+            self.current_thought = decision.get_thought()
             self.target_x = decision.target_x
             self.target_y = decision.target_y
 
@@ -179,6 +179,7 @@ class Brain:
             self.is_thinking = False
             return
 
+        logger.info(f"thought '{action.get_thought()}'")
         self.memory += message
         if not action.thought.strip():
             self.report.empty_thoughts +=1
