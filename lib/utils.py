@@ -63,6 +63,7 @@ def loss_function(
     empty_thought_weight = 5.0,
     out_of_bounds_weight = 20.0,
     malformed_json_weight = 100.0,
+    non_alphanumeric_weight = 7.5,
     inactivity_penalty = 1000.0,
 ) -> float:
     """Calculates a normalized scalar loss penalizing degenerate LLM behaviors.
@@ -85,6 +86,7 @@ def loss_function(
         (report.thought_loops * thought_loop_weight)
         + (report.empty_thoughts * empty_thought_weight)
         + (report.out_of_bounds_attempts * out_of_bounds_weight)
+        + (report.non_alphanumeric * non_alphanumeric_weight)
         + (report.malformed_json * malformed_json_weight)
     )
 

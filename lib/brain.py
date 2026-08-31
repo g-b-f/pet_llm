@@ -180,9 +180,12 @@ class Brain:
             self.is_thinking = False
             return
 
-        logger.info(f"thought '{action.get_thought()}'")
+        thought = action.get_thought()
+        logger.info(f"thought '{thought}'")
         self.memory += message
-        if not action.thought.strip():
+        if not thought.isalnum():
+            self.report.non_alphanumeric +=1
+        if not thought.strip():
             self.report.empty_thoughts +=1
         
         if self.target_out_of_bounds(action):
