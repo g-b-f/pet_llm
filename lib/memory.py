@@ -6,7 +6,7 @@ from llama_cpp.llama_types import ChatCompletionRequestMessage
 from lib.extra_types import PetAction, RoleContent, MemoryConfig
 from lib.utils import get_logger
 
-logger = get_logger(__name__)
+logger = get_logger(__name__, "info", log_file="log_bayes.txt") 
 
 class MemoryHandlerError(Exception):
     pass

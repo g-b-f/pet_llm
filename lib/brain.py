@@ -20,7 +20,8 @@ from lib.extra_types import (
 )
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "debug")
+# TODO: make it unnecessary to add `log_file` for child loggers
+logger = get_logger(__name__, "debug", log_file="log_bayes.txt") 
 
 class Brain:
     """Manages pet state and background inference using llama_cpp.

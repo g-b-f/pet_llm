@@ -10,7 +10,7 @@ from lib.utils import get_logger, loss_function
 from models.download import Model, get_model
 
 model_path = get_model(Model.smollm2)
-logger = get_logger(__name__, log_file="log_bayes.txt")
+logger = get_logger(__name__, "debug", log_file="log_bayes.txt")
 
 RUNTIME = 250
 N_TRIALS = 50

@@ -1,7 +1,12 @@
 # AI models
 models/*.gguf
 models/hf_token.json
-log*.txt
+
+log.txt
+log_old.txt
+log_1.txt
+log_2.txt
+log_3.txt
 
 .coverage
 
