@@ -20,8 +20,8 @@ RUNTIME = 120  # seconds per simulation
 # N_TRIALS = 20
 N_TRIALS = 2
 
-APP_NAME = "pet-llm-bayes-optimise"
-VOLUME_NAME = "pet-llm-bayes-output"
+APP_NAME = "testing"
+VOLUME_NAME = "test-output"
 VOLUME_MOUNT = "/vol"
 
 app = modal.App(APP_NAME)
@@ -71,91 +71,6 @@ image = (
     timeout=TIMEOUT,
 )
 def run_study():
-    import json
-    import os
-    import shutil
-    import time
-
-    import optuna
-
-    from lib.brain import Brain
-    from lib.extra_types import SimulationConfig
-    from lib.tank import Tank
-    from lib.utils import get_logger, loss_function
-    from models.download import Model, get_model
-
-    print("inside run_study")
-
-    logger = get_logger(__name__)
-    model_path = get_model(Model.smollm2)
-
-    headless = os.environ.get("PET_LLM_HEADLESS") == "1"
-
-    def evaluate_simulation(trial: optuna.Trial) -> float:
-        """Sample one parameter set, run the sim, and return its scalar loss."""
-        temperature = trial.suggest_float("temperature", 1.5, 2.5)
-        frequency_penalty = trial.suggest_float("frequency_penalty", 1.5, 2.5)
-        presence_penalty = trial.suggest_float("presence_penalty", 1.5, 2.5)
-        repeat_penalty = trial.suggest_float("repeat_penalty", 1.5, 2.5)
-
-        config = SimulationConfig.model_construct()
-        config.tank.runtime = RUNTIME
-        config.brain.params.temperature = temperature
-        config.brain.params.frequency_penalty = frequency_penalty
-        config.brain.params.presence_penalty = presence_penalty
-        config.brain.params.repeat_penalty = repeat_penalty
-
-        brain = Brain(model_path, config.brain)
-        tank = Tank(brain, config.tank)
-        if headless:
-            tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
-        logger.info(
-            f"{temperature=}, {frequency_penalty=}, "
-            f"{presence_penalty=}, {repeat_penalty=}"
-        )
-        result = tank.run()
-        loss = loss_function(result.report)
-        logger.info(f"{loss=}")
-        return loss
-
-    study = optuna.create_study(direction="minimize")
-
-    start = time.monotonic()
-    deadline = start + TIME_BUDGET
-    first_duration: float | None = None
-
-    for trial_num in range(N_TRIALS):
-        if time.monotonic() >= deadline:
-            logger.info(f"Optimization budget reached after {trial_num} trials; stopping early.")
-            break
-
-        trial_start = time.monotonic()
-        study.optimize(evaluate_simulation, n_trials=1)
-        trial_duration = time.monotonic() - trial_start
-
-        if first_duration is None:
-            first_duration = trial_duration
-            eta = first_duration * N_TRIALS
-            logger.info(
-                f"First trial took {first_duration / 60:.1f} min -> "
-                f"rough ETA ~{eta / 3600:.1f} h for all {N_TRIALS} trials "
-                f"(budget-capped at {TIME_BUDGET / 3600:.0f} h)."
-            )
-        else:
-            done = trial_num + 1
-            remaining = max(N_TRIALS - done, 0)
-            average_duration = (time.monotonic() - start) / done
-            logger.info(
-                f"Trial {done}/{N_TRIALS} took {trial_duration / 60:.1f} min; "
-                f"~{remaining * average_duration / 3600:.1f} h remaining."
-            )
-
-    elapsed_h = (time.monotonic() - start) / 3600
-    logger.info(f"Best parameters: {study.best_params}") 
-    logger.info(f"Best loss: {study.best_value}")
-
-    # Persist outputs to the Modal Volume (report.json/log.txt are written by
-    # tank.py / utils.py into /root; copy them out and commit).
     volume = Path(VOLUME_MOUNT)
     for file_name in ("report.json", "log.txt"):
         file_path = Path("/root") / file_name
