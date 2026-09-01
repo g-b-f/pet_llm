@@ -60,10 +60,10 @@ def frange(start:float, stop:float, step:float, multiplier:int=100) -> Iterator[
 def loss_function(
     report: "BrainReport",
     thought_loop_weight = 10.0,
-    empty_thought_weight = 5.0,
-    out_of_bounds_weight = 20.0,
+    empty_thought_weight = 7.0,
+    out_of_bounds_weight = 10.0,
     malformed_json_weight = 100.0,
-    non_alphanumeric_weight = 7.5,
+    non_alphanumeric_weight = 10.0,
     inactivity_penalty = 1000.0,
 ) -> float:
     """Calculates a normalized scalar loss penalizing degenerate LLM behaviors.

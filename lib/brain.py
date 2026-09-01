@@ -5,6 +5,7 @@ import threading
 from hashlib import md5
 from pathlib import Path
 from typing import Iterator
+import string
 
 from llama_cpp import Llama
 
@@ -183,7 +184,11 @@ class Brain:
         thought = action.get_thought()
         logger.info(f"thought '{thought}'")
         self.memory += message
-        if not thought.isalnum():
+        thought_chars = set(thought)
+        valid_chars = string.ascii_letters + ",.?!"
+        valid_chars_set = set(valid_chars)
+
+        if not thought_chars.issubset(valid_chars_set):
             self.report.non_alphanumeric +=1
         if not thought.strip():
             self.report.empty_thoughts +=1
