@@ -127,3 +127,13 @@ class BrainReport(BaseModel):
 class OutputReport(BaseModel):
     config: SimulationConfig
     report: BrainReport
+
+class TunerConfig(BaseModel):
+    pass
+class LossFunctionWeights(BaseModel):
+    pass
+
+class StudyReport(BaseModel):
+    tuner_config: TunerConfig
+    loss_function_weights: LossFunctionWeights
+    reports: list[OutputReport]

@@ -24,7 +24,7 @@ def get_logger(name: str, level=DEFAULT_LOG_LEVEL, log_file = "log.txt") -> logg
         raise ValueError(f"Invalid log level: {level}")
     level_int = logging._nameToLevel[level.upper()]
 
-    handler = RotatingFileHandler(LOG_DIR / log_file, maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2)
+    handler = RotatingFileHandler(LOG_DIR / log_file, maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2, encoding="utf-8")
     handler.setLevel(level_int)
     handler.namer = namer
     formatter = logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")

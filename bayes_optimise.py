@@ -13,7 +13,7 @@ model_path = get_model(Model.smollm2)
 logger = get_logger(__name__, "debug", log_file="log_bayes.txt")
 
 RUNTIME = 250
-N_TRIALS = 50
+N_TRIALS = 25
 N_SEEDS = 3
 
 storage_backend = Path(__file__).parent /"study_backend.jsonl"
