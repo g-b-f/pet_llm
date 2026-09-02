@@ -17,7 +17,7 @@ class DummyLock(BaseJournalFileLock):
     def release(self):
         pass
 
-storage_backend = Path(__file__).parent /"study_backend.jsonl"
+storage_backend = Path(__file__).parent.parent /"study_backend.jsonl"
 storage = JournalStorage(
         JournalFileBackend(
             str(storage_backend.resolve()),

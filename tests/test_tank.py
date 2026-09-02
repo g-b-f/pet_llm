@@ -70,7 +70,7 @@ class TestRunWakeUp:
         tank.config.runtime = 0  # end the loop immediately
         tank._mock_pygame.time.get_ticks.return_value = 0
         tank._mock_pygame.event.get.return_value = []
-        with patch.object(Tank, "generate_report"):
+        with patch.object(Tank, "get_report"):
             tank.run()
         expected_w = tank_config.screen_width - 2 * Tank.TANK_PADDING_X
         expected_h = tank_config.screen_height - Tank.TEXT_BOX_HEIGHT
