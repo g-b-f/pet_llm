@@ -63,7 +63,7 @@ def evaluate_simulation(trial: optuna.Trial) -> float:
             tuner_config=tuner_config,
             loss_function_weights=loss_function_weights,
             simulation_config=config,
-            reports=[],
+            trials=[],
         )
         report_path.write_text(study_report.model_dump_json(indent=2))
 
@@ -80,7 +80,7 @@ def evaluate_simulation(trial: optuna.Trial) -> float:
         loss = loss_function(result.report, loss_function_weights)
         logger.info(f"{loss=}")
         losses.append(loss)
-        append_report(report_path, result.report)
+        append_report(report_path, result.report, config.brain.params)
 
     return sum(losses) / len(losses)
 

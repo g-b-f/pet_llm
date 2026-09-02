@@ -5,7 +5,7 @@ import optuna
 from optuna.storages.journal import JournalFileBackend, JournalStorage
 from optuna.storages.journal._file import BaseJournalFileLock
 from lib.types.config import ParamsConfig, TunerConfig
-from lib.types.report import BrainReport, StudyReport
+from lib.types.report import BrainReport, StudyReport, Trial
 from lib.utils import get_logger
 
 logger = get_logger(__file__)
@@ -34,8 +34,8 @@ def suggest_vals(trial: optuna.Trial, tuner_config: TunerConfig, params_config =
     return params_config  
 
 
-def append_report(report_path: Path, report: BrainReport):
+def append_report(report_path: Path, report: BrainReport, params: ParamsConfig):
     data = json.loads(report_path.read_text())
     study_report = StudyReport(**data)
-    study_report.reports.append(report)
+    study_report.trials.append(Trial(params=params, report=report))
     report_path.write_text(study_report.model_dump_json(indent=2))

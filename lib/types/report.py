@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from lib.types.config import SimulationConfig, LossFunctionWeights, TunerConfig
+from lib.types.config import SimulationConfig, LossFunctionWeights, TunerConfig, ParamsConfig
 
 class BrainReport(BaseModel):
     iterations: int = Field(0, description="The total number of request/responses by the LLM")
@@ -14,8 +14,12 @@ class OutputReport(BaseModel):
     config: SimulationConfig
     report: BrainReport
 
+class Trial(BaseModel):
+    params: ParamsConfig
+    report: BrainReport
+
 class StudyReport(BaseModel):
     tuner_config: TunerConfig
     loss_function_weights: LossFunctionWeights
     simulation_config: SimulationConfig
-    reports: list[BrainReport]
+    trials: list[Trial]
