@@ -91,7 +91,7 @@ if __name__ == "__main__":
     eta = RUNTIME * N_TRIALS * N_SEEDS
 
     hours, minutes = divmod(eta, 60 * 60)
-    logger.info(f"eta: {hours} hours, {minutes} minutes")
+    logger.info(f"eta: {hours} hours, {minutes/15} minutes")
 
     study = optuna.create_study(
         study_name=study_name,

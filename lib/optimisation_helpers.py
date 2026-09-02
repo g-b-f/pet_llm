@@ -34,8 +34,7 @@ def suggest_vals(trial: optuna.Trial, tuner_config: TunerConfig, params_config =
 
 
 def append_report(report_path: Path, report: BrainReport):
-    with open(report_path, "r") as f:
-        study_report = StudyReport(**json.load(f))
-
+    data = json.loads(report_path.read_text())
+    study_report = StudyReport(**data)
     study_report.reports.append(report)
     report_path.write_text(study_report.model_dump_json(indent=2))
