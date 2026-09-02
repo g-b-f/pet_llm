@@ -114,7 +114,7 @@ class Brain:
 
     def is_valid_chars(self, thought:str) -> bool:
         thought_chars = set(thought)
-        valid_chars = string.ascii_letters + ",.?!'"
+        valid_chars = string.ascii_letters + " ,.?!'"
         valid_chars_set = set(valid_chars)
         quoted = thought.startswith("'") or thought.endswith("'")
         return thought_chars.issubset(valid_chars_set) and not quoted

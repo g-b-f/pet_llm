@@ -17,9 +17,9 @@ from models.download import Model, get_model
 RUNTIME = 300
 N_TRIALS = 25
 N_SEEDS = 3
-VERSION = 3
+VERSION = 4
 
-logger = get_logger(__name__, "debug", log_file="log_bayes.txt")
+logger = get_logger(__name__, "debug", log_file="log.txt")
 model_path = get_model(Model.smollm2)
 
 study_name = f"v{VERSION}_pet_llm_{model_path.stem}"
@@ -31,14 +31,13 @@ loss_function_weights = LossFunctionWeights(
     out_of_bounds=10.0,
     malformed_json=100.0,
     invalid_chars=10.0,
-    inactivity_penalty=1000.0,
 )
 
 tuner_config = TunerConfig(
-    temperature=(1.5, 2.5),
-    frequency_penalty=(1.5, 2.5),
-    presence_penalty=(1.5, 2.5),
-    repeat_penalty=(1.5, 2.5),
+    temperature=(0.8, 2.5),
+    frequency_penalty=(0.2, 2.5),
+    presence_penalty=(0.2, 2.5),
+    repeat_penalty=(0.2, 2.5),
 )
 
 

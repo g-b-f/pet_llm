@@ -9,7 +9,6 @@ class LossFunctionWeights(BaseModel):
     out_of_bounds: float
     malformed_json: float
     invalid_chars: float
-    inactivity_penalty: float
 
 class MemoryConfig(BaseModel):
     max_length: int = Field(5, description="The maximum number of messages to store in memory")

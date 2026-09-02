@@ -77,8 +77,7 @@ def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> floa
         The total loss scalar to be minimized by Optuna.
     """
     if report.iterations <= 0:
-        print("inactive model")
-        return weights.inactivity_penalty
+        raise RuntimeError("no iterations")
 
     weighted_error_score = (
         (report.thought_loops * weights.thought_loop)
