@@ -1,23 +1,23 @@
 import json
 import queue
 import random
+import string
 import threading
 from hashlib import md5
 from pathlib import Path
 from typing import Iterator
-import string
 
 from llama_cpp import Llama
 
 from lib import memory
 from lib.extra_types import (
     Action,
+    BrainConfig,
     BrainReport,
     ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
-    BrainConfig
 )
 from lib.utils import get_logger
 

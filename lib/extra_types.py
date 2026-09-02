@@ -1,10 +1,11 @@
+import json
 from enum import Enum
 from typing import Optional
-import json
 
 from pydantic import BaseModel, Field
 
 from lib.utils import get_logger
+
 logger = get_logger(__name__)
 
 class EnvironmentalInfo(BaseModel):

@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
     from lib.extra_types import BrainReport, LossFunctionWeights

@@ -1,12 +1,17 @@
+import json
 import tomllib
 from pathlib import Path
 from textwrap import wrap
 
-import json
 import pygame
 
 from lib.brain import Brain
-from lib.extra_types import EnvironmentalInfo, OutputReport, SimulationConfig, TankConfig
+from lib.extra_types import (
+    EnvironmentalInfo,
+    OutputReport,
+    SimulationConfig,
+    TankConfig,
+)
 
 DEBUG = True
 
@@ -89,10 +94,10 @@ class Tank:
                 report: list[dict] = json.load(f)
             except json.decoder.JSONDecodeError as e:
                 print(f"error decoding: {e}")
-                report = list()
+                report = []
             except FileNotFoundError as e:
                 print(f"file not found: {e}")
-                report = list()
+                report = []
 
         compiled_report = self.get_report()
         with open(report_path, "w") as f:

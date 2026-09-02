@@ -3,7 +3,7 @@ from collections import deque
 
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-from lib.extra_types import PetAction, RoleContent, MemoryConfig
+from lib.extra_types import MemoryConfig, PetAction, RoleContent
 from lib.utils import get_logger
 
 logger = get_logger(__name__, "info", log_file="log_bayes.txt") 
