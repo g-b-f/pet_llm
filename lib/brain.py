@@ -113,6 +113,13 @@ class Brain:
         )
         self.result_queue.put(fallback_decision)
 
+    def is_valid_chars(self, thought:str) -> bool:
+        thought_chars = set(thought)
+        valid_chars = string.ascii_letters + ",.?!'"
+        valid_chars_set = set(valid_chars)
+        quoted = thought.startswith("'") or thought.endswith("'")
+        return thought_chars.issubset(valid_chars_set) and not quoted
+
     def request_decision_async(self, current_x: int, current_y: int) -> None:
         """Triggers a background thread to generate the next pet thought and action.
 
@@ -184,11 +191,8 @@ class Brain:
         thought = action.get_thought()
         logger.info(f"thought '{thought}'")
         self.memory += message
-        thought_chars = set(thought)
-        valid_chars = string.ascii_letters + ",.?!"
-        valid_chars_set = set(valid_chars)
 
-        if not thought_chars.issubset(valid_chars_set):
+        if not self.is_valid_chars(thought):
             self.report.non_alphanumeric +=1
         if not thought.strip():
             self.report.empty_thoughts +=1
