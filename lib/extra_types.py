@@ -1,5 +1,4 @@
 from enum import Enum
-from logging import getLogger
 from typing import Optional
 import json
 
@@ -129,11 +128,22 @@ class OutputReport(BaseModel):
     report: BrainReport
 
 class TunerConfig(BaseModel):
-    pass
+    """high/low values for bayes optimisation"""
+    temperature: tuple[float,float]
+    frequency_penalty: tuple[float,float]
+    presence_penalty: tuple[float,float]
+    repeat_penalty: tuple[float,float]
+
 class LossFunctionWeights(BaseModel):
-    pass
+    thought_loop: float
+    empty_thought: float
+    out_of_bounds: float
+    malformed_json: float
+    invalid_chars: float
+    inactivity_penalty: float
 
 class StudyReport(BaseModel):
     tuner_config: TunerConfig
     loss_function_weights: LossFunctionWeights
-    reports: list[OutputReport]
+    simulation_config: SimulationConfig
+    reports: list[BrainReport]

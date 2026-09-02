@@ -71,6 +71,15 @@ class Tank:
         ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
         return ret
 
+    def get_report(self) -> OutputReport:
+        brain_report = self.brain.report
+        brain_report.actual_runtime = pygame.time.get_ticks() / 1000
+
+        return OutputReport(
+            config=SimulationConfig(tank=self.config, brain=self.brain.config),
+            report=brain_report
+            )
+    
     def generate_report(self) -> OutputReport:
         brain_report = self.brain.report
         brain_report.actual_runtime = pygame.time.get_ticks() / 1000
@@ -85,10 +94,7 @@ class Tank:
                 print(f"file not found: {e}")
                 report = list()
 
-        compiled_report = OutputReport(
-            config=SimulationConfig(tank=self.config, brain=self.brain.config),
-            report=brain_report
-            )
+        compiled_report = self.get_report()
         with open(report_path, "w") as f:
             report.append(compiled_report.model_dump())
             json.dump(report, f, indent=4)
@@ -124,7 +130,7 @@ class Tank:
             self.clock.tick(self.FPS)
 
         pygame.quit()
-        return self.generate_report()
+        return self.get_report()
 
     def _blit_text(
             self,
