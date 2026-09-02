@@ -21,8 +21,7 @@ from lib.types.config import BrainConfig
 from lib.types.report import BrainReport
 from lib.utils import get_logger
 
-# TODO: make it unnecessary to add `log_file` for child loggers
-logger = get_logger(__name__, "debug", log_file="log_bayes.txt") 
+logger = get_logger(__name__, "debug") 
 
 class Brain:
     """Manages pet state and background inference using llama_cpp.

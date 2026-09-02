@@ -40,8 +40,13 @@ def get_logger(
     )
     handler.setFormatter(formatter)
 
+    if name == "__main__":
+        for logger_name, logger_obj in logging.root.manager.loggerDict.items():
+            if logger_name.startswith("lib"):
+                if isinstance(logger_obj, logging.Logger):
+                    logger_obj.handlers = [handler]
+
     logger = logging.getLogger(name)
-    logger.handlers.clear()
     logger.setLevel(level_int)
     logger.addHandler(handler)
 
