@@ -3,12 +3,12 @@ from pathlib import Path
 import optuna
 
 from lib.brain import Brain
-from lib.extra_types import (
+from lib.types.config import (
     LossFunctionWeights,
     SimulationConfig,
-    StudyReport,
     TunerConfig,
 )
+from lib.types.report import StudyReport
 from lib.optimisation_helpers import append_report, storage, suggest_vals
 from lib.tank import Tank
 from lib.utils import get_logger, loss_function

@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
-    from lib.extra_types import BrainReport, LossFunctionWeights
+    from lib.types.config import LossFunctionWeights
+    from lib.types.report import BrainReport
 
 DEFAULT_LOG_LEVEL = "INFO"
 MAX_LOG_SIZE_BYTES = 1024 * 1024  # 1 MB

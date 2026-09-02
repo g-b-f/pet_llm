@@ -10,15 +10,15 @@ from typing import Iterator
 from llama_cpp import Llama
 
 from lib import memory
-from lib.extra_types import (
+from lib.types.other import (
     Action,
-    BrainConfig,
-    BrainReport,
     ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
 )
+from lib.types.config import BrainConfig
+from lib.types.report import BrainReport
 from lib.utils import get_logger
 
 # TODO: make it unnecessary to add `log_file` for child loggers

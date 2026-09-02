@@ -80,7 +80,7 @@ def run_study():
     import optuna
 
     from lib.brain import Brain
-    from lib.extra_types import SimulationConfig
+    from lib.types.config import SimulationConfig
     from lib.tank import Tank
     from lib.utils import get_logger, loss_function
     from models.download import Model, get_model

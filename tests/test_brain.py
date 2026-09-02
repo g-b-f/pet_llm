@@ -4,7 +4,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lib.brain import Brain
-from lib.extra_types import Action, BrainConfig, EnvironmentalInfo, PetAction
+from lib.types.other import Action, EnvironmentalInfo, PetAction
+from lib.types.config import BrainConfig
 
 
 @pytest.fixture

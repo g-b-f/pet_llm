@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from lib.brain import Brain
-from lib.extra_types import SimulationConfig
+from lib.types.config import SimulationConfig
 from lib.tank import Tank
 from lib.utils import get_logger
 from models.download import Model, get_model

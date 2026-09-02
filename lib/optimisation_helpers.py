@@ -4,7 +4,8 @@ from pathlib import Path
 import optuna
 from optuna.storages.journal import JournalFileBackend, JournalStorage
 from optuna.storages.journal._file import BaseJournalFileLock
-from lib.extra_types import BrainReport, ParamsConfig, StudyReport, TunerConfig
+from lib.types.config import ParamsConfig, TunerConfig
+from lib.types.report import BrainReport, StudyReport
 from lib.utils import get_logger
 
 logger = get_logger(__file__)

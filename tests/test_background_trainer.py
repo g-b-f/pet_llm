@@ -8,7 +8,8 @@ import pytest
 
 from lib.background_trainer import BackgroundTrainer
 from lib.experience_buffer import ExperienceBuffer
-from lib.extra_types import MemoryConfig, RoleContent
+from lib.types.other import RoleContent
+from lib.types.config import MemoryConfig
 from lib.memory import Memory
 
 

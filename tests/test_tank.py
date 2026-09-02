@@ -2,7 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.extra_types import BrainConfig, EnvironmentalInfo, TankConfig
+from lib.types.other import EnvironmentalInfo
+from lib.types.config import BrainConfig, TankConfig
 from lib.tank import Tank
 
 

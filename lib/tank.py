@@ -6,12 +6,9 @@ from textwrap import wrap
 import pygame
 
 from lib.brain import Brain
-from lib.extra_types import (
-    EnvironmentalInfo,
-    OutputReport,
-    SimulationConfig,
-    TankConfig,
-)
+from lib.types.other import EnvironmentalInfo
+from lib.types.config import SimulationConfig, TankConfig
+from lib.types.report import OutputReport
 
 DEBUG = True
 
