@@ -1,5 +1,8 @@
 from pydantic import BaseModel, Field
 
+# TODO: drop `params` from initial BrainConfig
+# Maybe have InitialBrainConfig? 
+
 class LossFunctionWeights(BaseModel):
     thought_loop: float
     empty_thought: float

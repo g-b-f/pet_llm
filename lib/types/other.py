@@ -72,9 +72,6 @@ class ChatCompletionResponse(BaseModel):
 
     def get_message(self):
         return self.choices[0].message
-    
-    def get_content(self):
-        return self.get_message().content
 
     def get_action(self):
-        return PetAction(**json.loads(self.get_content()))
+        return PetAction(**json.loads(self.get_message().content))

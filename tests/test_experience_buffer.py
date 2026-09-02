@@ -10,10 +10,7 @@ from lib.memory import Memory
 def memory() -> Memory:
     mem = Memory(MemoryConfig(max_length=5))
     mem += RoleContent.user("Start exploring!")
-    mem += RoleContent(
-        role="assistant",
-        content='{"thought": "hi", "action": "move_to", "target_x": 1, "target_y": 2}',
-    )
+    mem += RoleContent.assistant('{"thought": "hi", "action": "move_to", "target_x": 1, "target_y": 2}')
     return mem
 
 

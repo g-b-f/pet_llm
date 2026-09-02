@@ -32,7 +32,6 @@ class Brain:
     on-screen offset is the simulation's responsibility.
     """
 
-    MEMORY_LENGTH = 5
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
