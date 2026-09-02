@@ -9174,5 +9174,2114 @@
             "non_alphanumeric": 22,
             "actual_runtime": 0.0
         }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5142313923218769,
+                    "frequency_penalty": 2.2188789655310575,
+                    "presence_penalty": 2.1408699890407155,
+                    "repeat_penalty": 1.7430628632105214,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 5,
+            "empty_thoughts": 10,
+            "out_of_bounds_attempts": 9,
+            "malformed_json": 0,
+            "non_alphanumeric": 40,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5142313923218769,
+                    "frequency_penalty": 2.2188789655310575,
+                    "presence_penalty": 2.1408699890407155,
+                    "repeat_penalty": 1.7430628632105214,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 55,
+            "thought_loops": 6,
+            "empty_thoughts": 18,
+            "out_of_bounds_attempts": 10,
+            "malformed_json": 0,
+            "non_alphanumeric": 35,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5142313923218769,
+                    "frequency_penalty": 2.2188789655310575,
+                    "presence_penalty": 2.1408699890407155,
+                    "repeat_penalty": 1.7430628632105214,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 55,
+            "thought_loops": 6,
+            "empty_thoughts": 8,
+            "out_of_bounds_attempts": 8,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8818217182113668,
+                    "frequency_penalty": 1.5451248336292656,
+                    "presence_penalty": 1.52248438520235,
+                    "repeat_penalty": 2.2309739904309556,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 5,
+            "empty_thoughts": 5,
+            "out_of_bounds_attempts": 21,
+            "malformed_json": 0,
+            "non_alphanumeric": 46,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8818217182113668,
+                    "frequency_penalty": 1.5451248336292656,
+                    "presence_penalty": 1.52248438520235,
+                    "repeat_penalty": 2.2309739904309556,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 4,
+            "empty_thoughts": 5,
+            "out_of_bounds_attempts": 30,
+            "malformed_json": 1,
+            "non_alphanumeric": 43,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8818217182113668,
+                    "frequency_penalty": 1.5451248336292656,
+                    "presence_penalty": 1.52248438520235,
+                    "repeat_penalty": 2.2309739904309556,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 3,
+            "empty_thoughts": 6,
+            "out_of_bounds_attempts": 16,
+            "malformed_json": 0,
+            "non_alphanumeric": 47,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.1516231853807364,
+                    "frequency_penalty": 1.5986077958901324,
+                    "presence_penalty": 1.7239221330431471,
+                    "repeat_penalty": 2.278624196153735,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 3,
+            "empty_thoughts": 17,
+            "out_of_bounds_attempts": 20,
+            "malformed_json": 1,
+            "non_alphanumeric": 28,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.1516231853807364,
+                    "frequency_penalty": 1.5986077958901324,
+                    "presence_penalty": 1.7239221330431471,
+                    "repeat_penalty": 2.278624196153735,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 2,
+            "empty_thoughts": 8,
+            "out_of_bounds_attempts": 24,
+            "malformed_json": 0,
+            "non_alphanumeric": 35,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.1516231853807364,
+                    "frequency_penalty": 1.5986077958901324,
+                    "presence_penalty": 1.7239221330431471,
+                    "repeat_penalty": 2.278624196153735,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 4,
+            "empty_thoughts": 4,
+            "out_of_bounds_attempts": 14,
+            "malformed_json": 1,
+            "non_alphanumeric": 45,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.435030468564675,
+                    "frequency_penalty": 2.349966449938972,
+                    "presence_penalty": 1.6611160076117644,
+                    "repeat_penalty": 2.2622848450067834,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 1,
+            "empty_thoughts": 12,
+            "out_of_bounds_attempts": 25,
+            "malformed_json": 0,
+            "non_alphanumeric": 32,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.435030468564675,
+                    "frequency_penalty": 2.349966449938972,
+                    "presence_penalty": 1.6611160076117644,
+                    "repeat_penalty": 2.2622848450067834,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 1,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 30,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.435030468564675,
+                    "frequency_penalty": 2.349966449938972,
+                    "presence_penalty": 1.6611160076117644,
+                    "repeat_penalty": 2.2622848450067834,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 41,
+            "thought_loops": 1,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 21,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9704397776035194,
+                    "frequency_penalty": 2.265149150899831,
+                    "presence_penalty": 2.111661943717435,
+                    "repeat_penalty": 2.2631620840274067,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 44,
+            "thought_loops": 2,
+            "empty_thoughts": 9,
+            "out_of_bounds_attempts": 11,
+            "malformed_json": 0,
+            "non_alphanumeric": 35,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9704397776035194,
+                    "frequency_penalty": 2.265149150899831,
+                    "presence_penalty": 2.111661943717435,
+                    "repeat_penalty": 2.2631620840274067,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 42,
+            "thought_loops": 2,
+            "empty_thoughts": 8,
+            "out_of_bounds_attempts": 13,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9704397776035194,
+                    "frequency_penalty": 2.265149150899831,
+                    "presence_penalty": 2.111661943717435,
+                    "repeat_penalty": 2.2631620840274067,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 44,
+            "thought_loops": 3,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 12,
+            "malformed_json": 0,
+            "non_alphanumeric": 36,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9162307197867878,
+                    "frequency_penalty": 2.0443375095106773,
+                    "presence_penalty": 2.3330062861069214,
+                    "repeat_penalty": 2.0688345738416127,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 56,
+            "thought_loops": 5,
+            "empty_thoughts": 15,
+            "out_of_bounds_attempts": 8,
+            "malformed_json": 0,
+            "non_alphanumeric": 30,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9162307197867878,
+                    "frequency_penalty": 2.0443375095106773,
+                    "presence_penalty": 2.3330062861069214,
+                    "repeat_penalty": 2.0688345738416127,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 57,
+            "thought_loops": 5,
+            "empty_thoughts": 14,
+            "out_of_bounds_attempts": 24,
+            "malformed_json": 0,
+            "non_alphanumeric": 38,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.9162307197867878,
+                    "frequency_penalty": 2.0443375095106773,
+                    "presence_penalty": 2.3330062861069214,
+                    "repeat_penalty": 2.0688345738416127,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 5,
+            "empty_thoughts": 4,
+            "out_of_bounds_attempts": 14,
+            "malformed_json": 1,
+            "non_alphanumeric": 46,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.872492585146725,
+                    "frequency_penalty": 1.8849795134647933,
+                    "presence_penalty": 1.8415485967403455,
+                    "repeat_penalty": 1.5267677060614155,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 3,
+            "empty_thoughts": 14,
+            "out_of_bounds_attempts": 19,
+            "malformed_json": 0,
+            "non_alphanumeric": 38,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.872492585146725,
+                    "frequency_penalty": 1.8849795134647933,
+                    "presence_penalty": 1.8415485967403455,
+                    "repeat_penalty": 1.5267677060614155,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 46,
+            "thought_loops": 3,
+            "empty_thoughts": 2,
+            "out_of_bounds_attempts": 15,
+            "malformed_json": 1,
+            "non_alphanumeric": 40,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.872492585146725,
+                    "frequency_penalty": 1.8849795134647933,
+                    "presence_penalty": 1.8415485967403455,
+                    "repeat_penalty": 1.5267677060614155,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 56,
+            "thought_loops": 4,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 20,
+            "malformed_json": 0,
+            "non_alphanumeric": 49,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8748118003121264,
+                    "frequency_penalty": 2.395708626230789,
+                    "presence_penalty": 1.914671421899067,
+                    "repeat_penalty": 1.8580310520722536,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 5,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 10,
+            "malformed_json": 0,
+            "non_alphanumeric": 45,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8748118003121264,
+                    "frequency_penalty": 2.395708626230789,
+                    "presence_penalty": 1.914671421899067,
+                    "repeat_penalty": 1.8580310520722536,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 45,
+            "thought_loops": 2,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 22,
+            "malformed_json": 0,
+            "non_alphanumeric": 42,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.8748118003121264,
+                    "frequency_penalty": 2.395708626230789,
+                    "presence_penalty": 1.914671421899067,
+                    "repeat_penalty": 1.8580310520722536,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 57,
+            "thought_loops": 5,
+            "empty_thoughts": 9,
+            "out_of_bounds_attempts": 20,
+            "malformed_json": 0,
+            "non_alphanumeric": 48,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.113352589309306,
+                    "frequency_penalty": 2.4985453597943676,
+                    "presence_penalty": 2.26571493790763,
+                    "repeat_penalty": 2.0646714978514558,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 7,
+            "empty_thoughts": 14,
+            "out_of_bounds_attempts": 19,
+            "malformed_json": 0,
+            "non_alphanumeric": 38,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.113352589309306,
+                    "frequency_penalty": 2.4985453597943676,
+                    "presence_penalty": 2.26571493790763,
+                    "repeat_penalty": 2.0646714978514558,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 4,
+            "empty_thoughts": 11,
+            "out_of_bounds_attempts": 17,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.113352589309306,
+                    "frequency_penalty": 2.4985453597943676,
+                    "presence_penalty": 2.26571493790763,
+                    "repeat_penalty": 2.0646714978514558,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 50,
+            "thought_loops": 5,
+            "empty_thoughts": 11,
+            "out_of_bounds_attempts": 8,
+            "malformed_json": 0,
+            "non_alphanumeric": 38,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.517481300627996,
+                    "frequency_penalty": 1.5183420960230307,
+                    "presence_penalty": 1.9480182287055658,
+                    "repeat_penalty": 1.7137885075570436,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 55,
+            "thought_loops": 4,
+            "empty_thoughts": 17,
+            "out_of_bounds_attempts": 16,
+            "malformed_json": 1,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.517481300627996,
+                    "frequency_penalty": 1.5183420960230307,
+                    "presence_penalty": 1.9480182287055658,
+                    "repeat_penalty": 1.7137885075570436,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 54,
+            "thought_loops": 6,
+            "empty_thoughts": 11,
+            "out_of_bounds_attempts": 7,
+            "malformed_json": 0,
+            "non_alphanumeric": 36,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.517481300627996,
+                    "frequency_penalty": 1.5183420960230307,
+                    "presence_penalty": 1.9480182287055658,
+                    "repeat_penalty": 1.7137885075570436,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 54,
+            "thought_loops": 6,
+            "empty_thoughts": 11,
+            "out_of_bounds_attempts": 12,
+            "malformed_json": 0,
+            "non_alphanumeric": 41,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5695943860963388,
+                    "frequency_penalty": 1.8400216038218922,
+                    "presence_penalty": 2.4703576203426785,
+                    "repeat_penalty": 2.4732588516835254,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 57,
+            "thought_loops": 3,
+            "empty_thoughts": 15,
+            "out_of_bounds_attempts": 16,
+            "malformed_json": 0,
+            "non_alphanumeric": 42,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5695943860963388,
+                    "frequency_penalty": 1.8400216038218922,
+                    "presence_penalty": 2.4703576203426785,
+                    "repeat_penalty": 2.4732588516835254,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 5,
+            "empty_thoughts": 6,
+            "out_of_bounds_attempts": 8,
+            "malformed_json": 0,
+            "non_alphanumeric": 36,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.5695943860963388,
+                    "frequency_penalty": 1.8400216038218922,
+                    "presence_penalty": 2.4703576203426785,
+                    "repeat_penalty": 2.4732588516835254,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 4,
+            "empty_thoughts": 10,
+            "out_of_bounds_attempts": 17,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.500653203122795,
+                    "frequency_penalty": 1.8654435942700618,
+                    "presence_penalty": 2.453030893097934,
+                    "repeat_penalty": 2.453913148032222,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 56,
+            "thought_loops": 5,
+            "empty_thoughts": 15,
+            "out_of_bounds_attempts": 20,
+            "malformed_json": 0,
+            "non_alphanumeric": 32,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.500653203122795,
+                    "frequency_penalty": 1.8654435942700618,
+                    "presence_penalty": 2.453030893097934,
+                    "repeat_penalty": 2.453913148032222,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 48,
+            "thought_loops": 5,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 5,
+            "malformed_json": 0,
+            "non_alphanumeric": 45,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.500653203122795,
+                    "frequency_penalty": 1.8654435942700618,
+                    "presence_penalty": 2.453030893097934,
+                    "repeat_penalty": 2.453913148032222,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 58,
+            "thought_loops": 8,
+            "empty_thoughts": 14,
+            "out_of_bounds_attempts": 12,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.663488003637276,
+                    "frequency_penalty": 2.1249486675776175,
+                    "presence_penalty": 2.1498481029018452,
+                    "repeat_penalty": 1.5112378924857197,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 47,
+            "thought_loops": 6,
+            "empty_thoughts": 19,
+            "out_of_bounds_attempts": 2,
+            "malformed_json": 0,
+            "non_alphanumeric": 28,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.663488003637276,
+                    "frequency_penalty": 2.1249486675776175,
+                    "presence_penalty": 2.1498481029018452,
+                    "repeat_penalty": 1.5112378924857197,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 6,
+            "empty_thoughts": 9,
+            "out_of_bounds_attempts": 7,
+            "malformed_json": 0,
+            "non_alphanumeric": 43,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.663488003637276,
+                    "frequency_penalty": 2.1249486675776175,
+                    "presence_penalty": 2.1498481029018452,
+                    "repeat_penalty": 1.5112378924857197,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 7,
+            "empty_thoughts": 11,
+            "out_of_bounds_attempts": 9,
+            "malformed_json": 0,
+            "non_alphanumeric": 32,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7010189170751442,
+                    "frequency_penalty": 2.1534168294454736,
+                    "presence_penalty": 2.1094233439979355,
+                    "repeat_penalty": 1.5256223069775365,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 53,
+            "thought_loops": 6,
+            "empty_thoughts": 16,
+            "out_of_bounds_attempts": 13,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7010189170751442,
+                    "frequency_penalty": 2.1534168294454736,
+                    "presence_penalty": 2.1094233439979355,
+                    "repeat_penalty": 1.5256223069775365,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 54,
+            "thought_loops": 8,
+            "empty_thoughts": 19,
+            "out_of_bounds_attempts": 10,
+            "malformed_json": 0,
+            "non_alphanumeric": 24,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7010189170751442,
+                    "frequency_penalty": 2.1534168294454736,
+                    "presence_penalty": 2.1094233439979355,
+                    "repeat_penalty": 1.5256223069775365,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 55,
+            "thought_loops": 6,
+            "empty_thoughts": 16,
+            "out_of_bounds_attempts": 13,
+            "malformed_json": 0,
+            "non_alphanumeric": 32,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.6836787490225615,
+                    "frequency_penalty": 2.0704335393705127,
+                    "presence_penalty": 2.134035968035591,
+                    "repeat_penalty": 1.7073951316981009,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 4,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 6,
+            "malformed_json": 0,
+            "non_alphanumeric": 42,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.6836787490225615,
+                    "frequency_penalty": 2.0704335393705127,
+                    "presence_penalty": 2.134035968035591,
+                    "repeat_penalty": 1.7073951316981009,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 6,
+            "empty_thoughts": 12,
+            "out_of_bounds_attempts": 15,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.6836787490225615,
+                    "frequency_penalty": 2.0704335393705127,
+                    "presence_penalty": 2.134035968035591,
+                    "repeat_penalty": 1.7073951316981009,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 5,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 11,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.683549821750801,
+                    "frequency_penalty": 2.1995111489474284,
+                    "presence_penalty": 2.2275169739378824,
+                    "repeat_penalty": 1.698051528239973,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 47,
+            "thought_loops": 3,
+            "empty_thoughts": 4,
+            "out_of_bounds_attempts": 16,
+            "malformed_json": 1,
+            "non_alphanumeric": 43,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.683549821750801,
+                    "frequency_penalty": 2.1995111489474284,
+                    "presence_penalty": 2.2275169739378824,
+                    "repeat_penalty": 1.698051528239973,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 49,
+            "thought_loops": 5,
+            "empty_thoughts": 10,
+            "out_of_bounds_attempts": 10,
+            "malformed_json": 1,
+            "non_alphanumeric": 39,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.683549821750801,
+                    "frequency_penalty": 2.1995111489474284,
+                    "presence_penalty": 2.2275169739378824,
+                    "repeat_penalty": 1.698051528239973,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 2,
+            "empty_thoughts": 9,
+            "out_of_bounds_attempts": 20,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7397224858915321,
+                    "frequency_penalty": 1.998777587165435,
+                    "presence_penalty": 2.011430583461419,
+                    "repeat_penalty": 1.841204457400568,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 44,
+            "thought_loops": 2,
+            "empty_thoughts": 2,
+            "out_of_bounds_attempts": 7,
+            "malformed_json": 0,
+            "non_alphanumeric": 39,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7397224858915321,
+                    "frequency_penalty": 1.998777587165435,
+                    "presence_penalty": 2.011430583461419,
+                    "repeat_penalty": 1.841204457400568,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 44,
+            "thought_loops": 2,
+            "empty_thoughts": 8,
+            "out_of_bounds_attempts": 10,
+            "malformed_json": 0,
+            "non_alphanumeric": 37,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7397224858915321,
+                    "frequency_penalty": 1.998777587165435,
+                    "presence_penalty": 2.011430583461419,
+                    "repeat_penalty": 1.841204457400568,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 46,
+            "thought_loops": 3,
+            "empty_thoughts": 12,
+            "out_of_bounds_attempts": 7,
+            "malformed_json": 0,
+            "non_alphanumeric": 34,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7700939775896194,
+                    "frequency_penalty": 1.9946009162746647,
+                    "presence_penalty": 1.9985381611896738,
+                    "repeat_penalty": 1.9781940314503879,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 59,
+            "thought_loops": 6,
+            "empty_thoughts": 27,
+            "out_of_bounds_attempts": 18,
+            "malformed_json": 0,
+            "non_alphanumeric": 25,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7700939775896194,
+                    "frequency_penalty": 1.9946009162746647,
+                    "presence_penalty": 1.9985381611896738,
+                    "repeat_penalty": 1.9781940314503879,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 51,
+            "thought_loops": 4,
+            "empty_thoughts": 12,
+            "out_of_bounds_attempts": 14,
+            "malformed_json": 2,
+            "non_alphanumeric": 32,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7700939775896194,
+                    "frequency_penalty": 1.9946009162746647,
+                    "presence_penalty": 1.9985381611896738,
+                    "repeat_penalty": 1.9781940314503879,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 40,
+            "thought_loops": 4,
+            "empty_thoughts": 7,
+            "out_of_bounds_attempts": 1,
+            "malformed_json": 0,
+            "non_alphanumeric": 33,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": 300,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 2.0774135122209323,
+                    "frequency_penalty": 1.7692001136314026,
+                    "presence_penalty": 1.8410149320959843,
+                    "repeat_penalty": 1.86102365974604,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 48,
+            "thought_loops": 3,
+            "empty_thoughts": 8,
+            "out_of_bounds_attempts": 16,
+            "malformed_json": 1,
+            "non_alphanumeric": 33,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": null,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.663488003637276,
+                    "frequency_penalty": 2.1249486675776175,
+                    "presence_penalty": 2.1498481029018452,
+                    "repeat_penalty": 1.5112378924857197,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 5,
+            "thought_loops": 0,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 0,
+            "malformed_json": 0,
+            "non_alphanumeric": 5,
+            "actual_runtime": 0.0
+        }
+    },
+    {
+        "config": {
+            "tank": {
+                "runtime": null,
+                "screen_width": 800,
+                "screen_height": 600
+            },
+            "brain": {
+                "thoughts": {
+                    "fallback_thought": "Mind empty... drifting randomly.",
+                    "initial_thought": "Waking up...",
+                    "initial_prompt": "Start exploring!"
+                },
+                "params": {
+                    "context_size": 2048,
+                    "temperature": 1.7397224858915321,
+                    "frequency_penalty": 1.998777587165435,
+                    "presence_penalty": 2.011430583461419,
+                    "repeat_penalty": 1.841204457400568,
+                    "min_p": 0.05,
+                    "seed": null
+                },
+                "memory": {
+                    "max_length": 5
+                }
+            }
+        },
+        "report": {
+            "iterations": 4,
+            "thought_loops": 0,
+            "empty_thoughts": 0,
+            "out_of_bounds_attempts": 0,
+            "malformed_json": 0,
+            "non_alphanumeric": 4,
+            "actual_runtime": 0.0
+        }
     }
 ]

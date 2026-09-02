@@ -15,8 +15,10 @@ logger = get_logger(__name__, "debug", log_file="log_bayes.txt")
 RUNTIME = 300
 N_TRIALS = 25
 N_SEEDS = 3
+VERSION = 2
 
 storage_backend = Path(__file__).parent /"study_backend.jsonl"
+
 
 class DummyLock(BaseJournalFileLock):
     """It's a single threaded process why tf are you making me use a lock"""
@@ -83,7 +85,7 @@ if __name__ == "__main__":
         )
 
     optimization_study = optuna.create_study(
-        study_name=f"pet_llm_{model_path.stem}",
+        study_name=f"v{VERSION}_pet_llm_{model_path.stem}",
         storage=storage,
         direction="minimize",
         load_if_exists=True
