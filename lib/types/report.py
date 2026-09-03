@@ -19,6 +19,7 @@ class Trial(BaseModel):
     report: BrainReport
 
 class StudyReport(BaseModel):
+    comments: str = Field("")
     tuner_config: TunerConfig
     loss_function_weights: LossFunctionWeights
     simulation_config: SimulationConfig

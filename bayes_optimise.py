@@ -18,7 +18,9 @@ from models.download import Model, get_model
 RUNTIME = 300
 N_TRIALS = 25
 N_SEEDS = 3
-VERSION = 4
+
+VERSION = 5
+COMMENTS = ""
 
 logger = get_logger(__name__, "debug", log_file="log.txt")
 model_path = get_model(Model.smollm2)
@@ -60,6 +62,7 @@ def evaluate_simulation(trial: optuna.Trial) -> float:
 
     if not report_path.exists():
         study_report = StudyReport(
+            comments=COMMENTS,
             tuner_config=tuner_config,
             loss_function_weights=loss_function_weights,
             simulation_config=config,
