@@ -29,6 +29,7 @@ class Model(StrEnum):
     miniCPM = "minicpm5-1b-Q8_0"
     deepseek = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M"
     granite = "granite-4.2-3b-Q4_K_M"
+    glm = "ggml-model-Q4_K_M"
 
 
 mapping: dict[Model, str] = {
@@ -41,8 +42,8 @@ mapping: dict[Model, str] = {
     Model.LFM : "LiquidAI/LFM2.5-2.6B-GGUF",
     Model.miniCPM : "Abiray/MiniCPM5-1B-GGUF",
     Model.deepseek : "unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF",
-    Model.granite : "ibm-granite/granite-4.2-3b-GGUF"
-
+    Model.granite : "ibm-granite/granite-4.2-3b-GGUF",
+    Model.glm : "zai-org/glm-edge-4b-chat-gguf",
 }
 
 def get_model(model:Model):
