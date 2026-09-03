@@ -18,7 +18,7 @@ class Action(Enum):
 
 class PetAction(BaseModel, use_enum_values=True):
     thought: str = Field(description="The thought process of the pet.")
-    action: Action = Field(description="The action to take.")
+    # action: Action = Field(description="The action to take.")
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 

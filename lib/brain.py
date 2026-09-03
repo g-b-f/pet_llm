@@ -105,7 +105,7 @@ class Brain:
     def _fallback(self):
         fallback_decision = PetAction(
             thought=self.config.thoughts.fallback_thought,
-            action=Action.move_to,
+            # action=Action.move_to,
             target_x=random.randint(0, self.x_bounds),
             target_y=random.randint(0, self.y_bounds)
         )
