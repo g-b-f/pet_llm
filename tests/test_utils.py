@@ -42,3 +42,16 @@ class TestGetLogger:
         handler_count = len(logger1.handlers)
         logger2 = get_logger("test_recall")
         assert len(logger2.handlers) == handler_count
+
+    def test_child_loggers_use_parent_file(self, tmp_path: Path):
+        tmp_log1 = tmp_path/ "log1.txt"
+        tmp_log2 = tmp_path/ "log2.txt"
+        tmp_log3 = tmp_path/ "log3.txt"
+
+        logger_child1 = get_logger("lib.some_name1", log_file=tmp_log1)
+        logger_parent = get_logger("__main__", log_file = tmp_log2)
+        logger_child2 = get_logger("lib.some_name2", log_file = tmp_log3)
+        
+        # TODO: complete this
+        raise
+

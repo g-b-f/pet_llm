@@ -44,7 +44,6 @@ class Optimiser:
 
     def __init__(self, model: Model) -> None:
         self.model = model
-
         self.model_path = get_model(self.model)
         self.study_name = f"v{self.VERSION}_pet_llm_{self.model_path.stem}"
         self.report_path = Path(__file__).parent / f"reports/{self.study_name}.json"

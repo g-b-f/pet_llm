@@ -32,7 +32,7 @@ def get_logger(
 
     if isinstance(log_file, str):
         log_file = LOG_DIR / log_file
-        
+
     handler = RotatingFileHandler(
         log_file, maxBytes=MAX_LOG_SIZE_BYTES, backupCount=2, encoding="utf-8"
     )
@@ -56,18 +56,12 @@ def get_logger(
     return logger
 
 
-def frange(
-    start: float, stop: float, step: float, multiplier: int = 100
-) -> Iterator[float]:
-    """A floating-point range generator."""
-
-    current = int(start * multiplier)
-    stop_int = int(stop * multiplier)
-    step_int = int(step * multiplier)
-
-    while current < stop_int:
+def frange(start: float, stop: float, step: float, multiplier = 100) -> Iterator[float]:
+    """Floating-point range generator"""
+    current = start * multiplier
+    while current < stop * multiplier:
         yield current / multiplier
-        current += step_int
+        current += step * multiplier
 
 
 def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> float:

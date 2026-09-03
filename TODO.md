@@ -1,11 +1,14 @@
 # To Do
 
-## General
+## Thought guiding
 
-- Add tests
+- remove empty thoughts to prevent loops
+- improve thought loop checking algorithm
+- remove `idle` and `swim_fast` options
+- improve inserted prompt after OOB
 
 ## Features
-
+ 
 - Human can type into tank
 - Finger: only if clicked?
 - Food, energy

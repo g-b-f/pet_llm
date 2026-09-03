@@ -197,7 +197,10 @@ class Brain:
         
         if self.target_out_of_bounds(action):
             logger.info(f"tried to go to {action.target_x, action.target_y}")
-            self.memory += RoleContent.system("You can't leave the tank!")
+            self.memory += RoleContent.system(
+                "You can't leave the tank! "
+                f"Try a coordinate inside {(self.x_bounds, self.y_bounds)}."
+                )
 
             self.current_oob_count +=1
             self.report.out_of_bounds_attempts +=1
