@@ -142,19 +142,12 @@ class Brain:
         target_y = action.target_y
         if target_x > self.x_bounds or target_x < 0:
             return True
-        return bool(target_y > self.y_bounds or target_y < 0)
+        return target_y > self.y_bounds or target_y < 0
 
     def _generate_decision(self, current_x: int, current_y: int) -> None:
-        system_prompt = (
-            "You are a small pet living in a glass tank. "
-            "Formulate a thought then pick coordinates inside the tank bounds to move toward. "
-            "Keep moving and don't stay in the same place."
-            # "Do not attempt to leave the bounds of the tank."
-            "Adhere strictly to the requested JSON schema.\n"
-            f"Tank bounds: ({self.x_bounds}, {self.y_bounds}). "
-            f"Your position: ({current_x}, {current_y}).\n"
-            # f"Your owner's finger is at {self.environment_info.mouse}"
-        )
+        system_prompt = self.config.thoughts.system_prompt.format(
+            self.x_bounds, self.y_bounds, current_x, current_y
+            )
         if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
             logger.debug(f"system prompt hash: {prompt_hash}")
@@ -198,10 +191,8 @@ class Brain:
         if self.target_out_of_bounds(action):
             logger.info(f"tried to go to {action.target_x, action.target_y}")
             self.memory += RoleContent.system(
-                "You can't leave the tank! "
-                f"Try a coordinate inside {(self.x_bounds, self.y_bounds)}."
+                self.config.thoughts.out_of_bounds_message.format(self.x_bounds, self.y_bounds)
                 )
-
             self.current_oob_count +=1
             self.report.out_of_bounds_attempts +=1
 

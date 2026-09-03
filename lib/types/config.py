@@ -20,6 +20,21 @@ class ThoughtConfig(BaseModel):
         )
     initial_thought:str = Field("Waking up...", description="The initial thought to use when the pet is first created")
     initial_prompt:str = Field("Start exploring!", description="The initial prompt to use when the pet is first created")
+    out_of_bounds_message:str = Field(
+        "You can't leave the tank! Try a coordinate inside ({}, {}).",
+        description="The system prompt to send the pet when it attempts to go out of bounds. "
+        "Formatted with `.format(x_bounds, y_bounds)`"
+        )
+    system_prompt:str = Field(
+            "You are a small pet living in a glass tank. "
+            "Formulate a thought then pick coordinates inside the tank bounds to move toward. "
+            "Keep moving and don't stay in the same place."
+            # "Do not attempt to leave the bounds of the tank."
+            "Adhere strictly to the requested JSON schema.\n"
+            "Tank bounds: ({}, {}). "
+            "Your position: ({}, {}).\n"
+            # f"Your owner's finger is at {self.environment_info.mouse}"
+        )
 
 class ParamsConfig(BaseModel):
     context_size: int = Field(2048, description="The context size for the model")

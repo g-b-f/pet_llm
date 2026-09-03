@@ -15,16 +15,16 @@ from lib.tank import Tank
 from lib.utils import get_logger, loss_function
 from models.download import Model, get_model
 
-RUNTIME = 300
-N_TRIALS = 25
-N_SEEDS = 1
+RUNTIME = 200
+N_TRIALS = 20
+N_SEEDS = 3
 
 logger = get_logger(__name__, "debug", log_file="log.txt")
 
 class Optimiser:
 
-    VERSION = 6
-    COMMENTS = ""
+    version = 6
+    COMMENTS = "Improved message upon trying to leave tank"
 
     loss_function_weights = LossFunctionWeights(
     thought_loop=10.0,
@@ -41,15 +41,16 @@ class Optimiser:
         repeat_penalty=(0.2, 2.5),
     )
 
+    config = SimulationConfig.model_construct()
 
     def __init__(self, model: Model) -> None:
         self.model = model
         self.model_path = get_model(self.model)
-        self.study_name = f"v{self.VERSION}_pet_llm_{self.model_path.stem}"
+        self.study_name = f"v{self.version}_pet_llm_{self.model_path.stem}"
         self.report_path = Path(__file__).parent / f"reports/{self.study_name}.json"
 
     def evaluate_simulation(self, trial: optuna.Trial) -> float:
-        config = SimulationConfig.model_construct()
+        config = self.config
         config.tank.runtime = RUNTIME
         config.brain.params = suggest_vals(trial, self.tuner_config, config.brain.params)
 
@@ -73,8 +74,15 @@ class Optimiser:
             # make headless:
             # tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
 
-            vals = [f"{k}={v}" for k, v in config.brain.params]
-            logger.info(f"{seed=}, {', '.join(vals)}")
+            vals = ""
+            for k, v in config.brain.params:
+                if isinstance(v, float):
+                    v = round(v,2)
+                if vals:
+                    vals += ", "
+                vals += f"{k}={v}"
+            logger.info(vals)
+
             result = tank.run()
             loss = loss_function(result.report, self.loss_function_weights)
             logger.info(f"{loss=}")
@@ -87,7 +95,6 @@ class Optimiser:
         logger.info("starting optimisation")
         logger.info(f"{RUNTIME=}, {N_TRIALS=}, {N_SEEDS=}")
         eta = RUNTIME * N_TRIALS * N_SEEDS
-
         logger.info(f"eta: {humanize.naturaltime(eta, future=True)}")
 
         study = optuna.create_study(
@@ -103,5 +110,15 @@ class Optimiser:
 
 
 if __name__ == "__main__":
-    opt = Optimiser(Model.miniCPM)
-    opt.run()
+    model = Model.smollm2
+    for ver, oob in enumerate([
+        "You can't leave the tank! Try a coordinate inside ({}, {}).",
+        "You can't leave the tank! Ensure x coordinate is between 0 and {}, and y coordinate is between 0 and {}.",
+        "You can't leave the tank!",
+        ]):
+
+        logger.info(f"starting for {model.value}")
+        opt = Optimiser(model)
+        opt.version += ver
+        opt.config.brain.thoughts.out_of_bounds_message = oob
+        opt.run()
