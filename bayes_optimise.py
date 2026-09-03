@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import optuna
+import humanize
 
 from lib.brain import Brain
 from lib.types.config import (
@@ -89,8 +90,7 @@ if __name__ == "__main__":
     logger.info(f"{RUNTIME=}, {N_TRIALS=}, {N_SEEDS=}")
     eta = RUNTIME * N_TRIALS * N_SEEDS
 
-    hours, minutes = divmod(eta, 60 * 60)
-    logger.info(f"eta: {hours} hours, {minutes/15} minutes")
+    logger.info(f"eta: {humanize.naturaltime(eta, future=True)}")
 
     study = optuna.create_study(
         study_name=study_name,
