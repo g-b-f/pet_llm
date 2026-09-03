@@ -15,6 +15,9 @@ class Model(StrEnum):
     - gemma = gemma-4-E2B.i1-Q4_K_M
     - llama = llama-3.2-3b-q4_0
     - LFM = LFM2.5-8B-A1B-UD-Q4_K_M
+    - miniCPM = "minicpm5-1b-Q8_0"
+    - deepseek = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M"
+    - granite = "granite-4.2-3b-Q4_K_M"
     """
     smollm2 = "smollm2-1.7b-q8_0"
     smollm3 = "SmolLM3-3B-128K-Q4_K_M"
@@ -23,6 +26,10 @@ class Model(StrEnum):
     gemma = "gemma-4-E2B.i1-Q4_K_M"
     llama = "llama-3.2-3b-q4_0"
     LFM = "LFM2.5-2.6B-Q4_K_M"
+    miniCPM = "minicpm5-1b-Q8_0"
+    deepseek = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M"
+    granite = "granite-4.2-3b-Q4_K_M"
+
 
 mapping: dict[Model, str] = {
     Model.smollm2 : "NikolayKozloff/SmolLM2-1.7B-Q8_0-GGUF",
@@ -31,7 +38,11 @@ mapping: dict[Model, str] = {
     Model.qwen3 : "Qwen/Qwen3-4B-GGUF",
     Model.gemma : "mradermacher/gemma-4-E2B-i1-GGUF",
     Model.llama : "kaetemi/Llama-3.2-3B-Q4_0-GGUF",
-    Model.LFM : "LiquidAI/LFM2.5-2.6B-GGUF"
+    Model.LFM : "LiquidAI/LFM2.5-2.6B-GGUF",
+    Model.miniCPM : "Abiray/MiniCPM5-1B-GGUF",
+    Model.deepseek : "unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF",
+    Model.granite : "ibm-granite/granite-4.2-3b-GGUF"
+
 }
 
 def get_model(model:Model):
@@ -41,7 +52,7 @@ def get_model(model:Model):
         return filepath
 
     if token_path.exists():
-        token = json.loads(token_path.read_text())
+        token = json.loads(token_path.read_text())["download"]
     else:
         json_example = '{"download": "hf_xyz"}'
         print(f"please add a token of the form {json_example} to {token_path}")
