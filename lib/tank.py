@@ -184,7 +184,14 @@ class Tank:
         self._blit_text(self.screen, "Thought: " + self.brain.current_thought, self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR)
 
         if DEBUG:
-            brain_debug = "  ".join([f"{k}:{v}" for k,v in self.brain.debug_info.items()])
+            brain_debug = ""
+            for k, v in self.brain.debug_info.items():
+                if isinstance(v, float):
+                    v = round(v,2)
+                if brain_debug:
+                    brain_debug += "  "
+                brain_debug += f"{k}:{v}"
+
             coords = brain_debug + f"  v{version}"
             debug_surface = self.font.render(coords, True, pygame.Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)

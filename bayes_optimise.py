@@ -74,14 +74,8 @@ class Optimiser:
             # make headless:
             # tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
 
-            vals = ""
-            for k, v in config.brain.params:
-                if isinstance(v, float):
-                    v = round(v,2)
-                if vals:
-                    vals += ", "
-                vals += f"{k}={v}"
-            logger.info(vals)
+            vals = [f"{k}={v}" for k, v in config.brain.params]
+            logger.info(f"{seed=}, {', '.join(vals)}")
 
             result = tank.run()
             loss = loss_function(result.report, self.loss_function_weights)
