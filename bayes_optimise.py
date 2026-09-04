@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import optuna
@@ -97,7 +98,11 @@ class Optimiser:
             direction="minimize",
             load_if_exists=True
         )
-        study.optimize(self.evaluate_simulation, n_trials=N_TRIALS, show_progress_bar=True, catch=(RuntimeError))
+        study.optimize(
+            self.evaluate_simulation,
+            n_trials=N_TRIALS,
+            show_progress_bar=True,
+            catch=(RuntimeError))
 
         logger.info(f"Best parameters: {study.best_params}")
         logger.info(f"Best loss: {study.best_value}")
@@ -115,6 +120,11 @@ if __name__ == "__main__":
         config = SimulationConfig.model_construct()
         config.brain.thoughts.out_of_bounds_message = oob
         opt = Optimiser(model, original_version+ver, config)
-        opt.version += ver
+
+        if opt.report_path.exists():
+            data = json.loads(opt.report_path.read_text())
+            if len(StudyReport(**data).trials) >= N_TRIALS:
+                continue
+            del data
         logger.info(f"starting for {model.value}")
         opt.run()
