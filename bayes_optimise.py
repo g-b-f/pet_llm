@@ -23,7 +23,7 @@ logger = get_logger(__name__, "debug", log_file="log.txt")
 
 class Optimiser:
 
-    version = 6
+    version = 7
     COMMENTS = "Improved message upon trying to leave tank"
 
     loss_function_weights = LossFunctionWeights(
@@ -41,12 +41,12 @@ class Optimiser:
         repeat_penalty=(0.2, 2.5),
     )
 
-    config = SimulationConfig.model_construct()
 
-    def __init__(self, model: Model) -> None:
+    def __init__(self, model: Model, version:int, config: SimulationConfig) -> None:
+        self.config = config
         self.model = model
         self.model_path = get_model(self.model)
-        self.study_name = f"v{self.version}_pet_llm_{self.model_path.stem}"
+        self.study_name = f"v{version}_pet_llm_{self.model_path.stem}"
         self.report_path = Path(__file__).parent / f"reports/{self.study_name}.json"
 
     def evaluate_simulation(self, trial: optuna.Trial) -> float:
@@ -95,15 +95,16 @@ class Optimiser:
             study_name=self.study_name,
             storage=storage,
             direction="minimize",
-            load_if_exists=True,
+            load_if_exists=True
         )
-        study.optimize(self.evaluate_simulation, n_trials=N_TRIALS, show_progress_bar=True)
+        study.optimize(self.evaluate_simulation, n_trials=N_TRIALS, show_progress_bar=True, catch=(RuntimeError))
 
         logger.info(f"Best parameters: {study.best_params}")
         logger.info(f"Best loss: {study.best_value}")
 
 
 if __name__ == "__main__":
+    original_version = 7
     model = Model.smollm2
     for ver, oob in enumerate([
         "You can't leave the tank! Try a coordinate inside ({}, {}).",
@@ -111,8 +112,9 @@ if __name__ == "__main__":
         "You can't leave the tank!",
         ]):
 
-        logger.info(f"starting for {model.value}")
-        opt = Optimiser(model)
+        config = SimulationConfig.model_construct()
+        config.brain.thoughts.out_of_bounds_message = oob
+        opt = Optimiser(model, original_version+ver, config)
         opt.version += ver
-        opt.config.brain.thoughts.out_of_bounds_message = oob
+        logger.info(f"starting for {model.value}")
         opt.run()
