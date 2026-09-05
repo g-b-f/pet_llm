@@ -175,7 +175,7 @@ class Brain:
         except (json.JSONDecodeError, ValueError):
             self.report.malformed_json += 1
             try:
-                logger.warning(f"malformed JSON: {message.content}")
+                logger.warning(f"malformed JSON: {message.content!r}")
             except:
                 logger.warning(f"malformed JSON: couldn't print")
                 
