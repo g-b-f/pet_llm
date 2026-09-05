@@ -227,5 +227,3 @@ class Brain:
             self._fallback()
         finally:
             self.is_thinking = False
-
- 

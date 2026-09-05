@@ -78,7 +78,6 @@ class Tank:
     
     def generate_report(self) -> OutputReport:
         brain_report = self.brain.report
-        # brain_report.actual_runtime = pygame.time.get_ticks() / 1000
         brain_report.actual_runtime = round(time.time() - self.start_time, 1)
 
         with open(report_path, "r") as f:

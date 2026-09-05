@@ -1,5 +1,4 @@
 from textwrap import wrap
-from typing import Any
 import pygame
 from lib.drivers.base import DriverBase
 
