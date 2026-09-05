@@ -41,9 +41,13 @@ class PyGameDriver(DriverBase):
 
     def __init__(self, runtime:int|None, bounds: tuple[int, int]):
 
-        self.end_time = runtime
         self.bounds = bounds
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
+
+        if runtime is None:
+            self.end_time = None
+        else:
+            self.end_time = pygame.time.get_ticks() + runtime * 1000
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.bounds)
@@ -118,13 +122,7 @@ class PyGameDriver(DriverBase):
         pygame.display.flip()
 
     def loop(self, runtime: None|int, brain_info: RenderInfo) -> None:
-
-        if runtime is None:
-            end_time = None
-        else:
-            end_time = pygame.time.get_ticks() + runtime * 1000
-
-        if end_time is not None and pygame.time.get_ticks() < end_time:
+        if self.end_time is not None and pygame.time.get_ticks() < self.end_time:
             self.running = False
 
         for event in pygame.event.get():

@@ -186,7 +186,7 @@ class Brain:
             return
 
         thought = action.get_thought()
-        logger.info(f"thought '{thought}'")
+        logger.info(f"thought {thought!r}")
         self.memory += message
 
         if not self.is_valid_chars(thought):

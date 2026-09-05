@@ -107,7 +107,7 @@ class Tank:
 
         return compiled_report
 
-    def run(self,) -> OutputReport:
+    def run(self) -> OutputReport:
         """Runs the main game loop"""
 
         tank_bounds = (
