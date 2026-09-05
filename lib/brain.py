@@ -174,9 +174,14 @@ class Brain:
             action = parsed_response.get_action()
         except (json.JSONDecodeError, ValueError):
             self.report.malformed_json += 1
-            logger.warning("malformed LLM JSON; using fallback decision and resetting is_thinking")
+            try:
+                logger.warning(f"malformed JSON: {message.content}")
+            except:
+                logger.warning(f"malformed JSON: couldn't print")
+                
             self._fallback()
             self.is_thinking = False
+            self.iterations +=1
             return
 
         thought = action.get_thought()
@@ -190,9 +195,9 @@ class Brain:
         
         if self.target_out_of_bounds(action):
             logger.info(f"tried to go to {action.target_x, action.target_y}")
-            self.memory += RoleContent.system(
-                self.config.thoughts.out_of_bounds_message.format(self.x_bounds, self.y_bounds)
-                )
+            oob = self.config.thoughts.out_of_bounds_message
+            if oob:
+                self.memory += RoleContent.system(oob.format(self.x_bounds, self.y_bounds))
             self.current_oob_count +=1
             self.report.out_of_bounds_attempts +=1
 
