@@ -119,7 +119,8 @@ class Tank:
 
         while self.driver.running == True:
             brain_info = RenderInfo.from_brain(self.brain)
-            self.driver.loop(self.config.runtime, brain_info)
+            self.brain.update(EnvironmentalInfo(mouse=(0,0)))
+            self.driver.loop(brain_info)
 
         return self.get_report()
 

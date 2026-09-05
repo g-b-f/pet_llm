@@ -121,7 +121,7 @@ class PyGameDriver(DriverBase):
 
         pygame.display.flip()
 
-    def loop(self, runtime: None|int, brain_info: RenderInfo) -> None:
+    def loop(self, info: RenderInfo) -> None:
         if self.end_time is not None and pygame.time.get_ticks() < self.end_time:
             self.running = False
 
@@ -135,5 +135,5 @@ class PyGameDriver(DriverBase):
 
         # info = self.get_info()
         # self.brain.update(info)
-        self.render(brain_info)
+        self.render(info)
         self.clock.tick(self.FPS)
