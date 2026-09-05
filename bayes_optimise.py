@@ -92,6 +92,18 @@ class Optimiser:
         eta = RUNTIME * N_TRIALS * N_SEEDS
         logger.info(f"eta: {humanize.naturaltime(eta, future=True)}")
 
+        num_trials = 0
+        total_trials = N_TRIALS*N_SEEDS
+
+        if self.report_path.exists():
+            data = json.loads(self.report_path.read_text())
+            num_trials = len(StudyReport(**data).trials)
+            logger.info(f"{num_trials=}, {total_trials=}, {N_TRIALS - round(num_trials // N_SEEDS)=}")
+            if len(StudyReport(**data).trials) >= N_TRIALS*N_SEEDS:
+                logger.info(f"enough trials for {self.report_path.stem}, exiting")
+                return
+            del data
+
         study = optuna.create_study(
             study_name=self.study_name,
             storage=storage,
@@ -100,7 +112,7 @@ class Optimiser:
         )
         study.optimize(
             self.evaluate_simulation,
-            n_trials=N_TRIALS,
+            n_trials=N_TRIALS - num_trials // N_SEEDS,
             show_progress_bar=True,
             catch=(RuntimeError))
 
@@ -115,16 +127,12 @@ if __name__ == "__main__":
         "You can't leave the tank! Try a coordinate inside ({}, {}).",
         "You can't leave the tank! Ensure x coordinate is between 0 and {}, and y coordinate is between 0 and {}.",
         "You can't leave the tank!",
+        ""
         ]):
 
         config = SimulationConfig.model_construct()
         config.brain.thoughts.out_of_bounds_message = oob
         opt = Optimiser(model, original_version+ver, config)
 
-        if opt.report_path.exists():
-            data = json.loads(opt.report_path.read_text())
-            if len(StudyReport(**data).trials) >= N_TRIALS:
-                continue
-            del data
         logger.info(f"starting for {model.value}")
         opt.run()
