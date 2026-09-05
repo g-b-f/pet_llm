@@ -24,8 +24,7 @@ logger = get_logger(__name__, "debug", log_file="log.txt")
 
 class Optimiser:
 
-    version = 7
-    COMMENTS = "Improved message upon trying to leave tank"
+    COMMENTS = "Testing out different models"
 
     loss_function_weights = LossFunctionWeights(
     thought_loop=10.0,
@@ -121,17 +120,17 @@ class Optimiser:
 
 
 if __name__ == "__main__":
-    original_version = 7
-    model = Model.smollm2
-    for ver, oob in enumerate([
-        "You can't leave the tank! Try a coordinate inside ({}, {}).",
-        "You can't leave the tank! Ensure x coordinate is between 0 and {}, and y coordinate is between 0 and {}.",
-        "You can't leave the tank!",
-        ""
-        ]):
+    original_version = 11
+
+    options = [Model.smollm3, Model.gemma, Model.granite, Model.deepseek]
+
+    eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
+    print(f"eta: {humanize.naturaltime(eta, future=True)}")
+
+    for ver, model in enumerate(options):
+        ver = 0 # keep same version for now
 
         config = SimulationConfig.model_construct()
-        config.brain.thoughts.out_of_bounds_message = oob
         opt = Optimiser(model, original_version+ver, config)
 
         logger.info(f"starting for {model.value}")
