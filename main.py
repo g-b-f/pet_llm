@@ -5,6 +5,7 @@ from lib.types.config import SimulationConfig
 from lib.brain import Brain
 from lib.tank import Tank
 from lib.drivers.pygame_driver import PyGameDriver
+from lib.drivers.dummy import DummyDriver
 from lib.utils import get_logger
 from models.download import Model, get_model
 
@@ -33,5 +34,7 @@ if __name__ == "__main__":
     config = values_from_trial(98)
     brain = Brain(model_path, config.brain)
     bounds = (config.tank.screen_width, config.tank.screen_height)
-    simulation = Tank(brain, config.tank, PyGameDriver(config.tank.runtime, bounds))
+    # driver = PyGameDriver(config.tank.runtime, bounds)
+    driver = DummyDriver(config.tank.runtime)
+    simulation = Tank(brain, config.tank, driver)
     simulation.run()

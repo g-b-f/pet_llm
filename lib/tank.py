@@ -2,9 +2,6 @@ import json
 import time
 import tomllib
 from pathlib import Path
-from textwrap import wrap
-
-import pygame
 
 from lib.brain import Brain
 from lib.drivers.base import DriverBase
@@ -60,25 +57,19 @@ class Tank:
         self.driver = driver
 
         self.bounds = (self.config.screen_width, self.config.screen_height)
-        self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
-
-        pygame.init()
-        self.screen = pygame.display.set_mode(self.bounds)
-        pygame.display.set_caption("Pet LLM")
-        self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont(self.FONT_NAME, self.FONT_SIZE)
-
-        
+        self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2        
 
     def get_info(self) -> EnvironmentalInfo:
         """Gets information from the outside world to pass to the brain"""
         # TODO: make this a string that gets appended
-        ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
+        # ret = EnvironmentalInfo(mouse=pygame.mouse.get_pos())
+        ret = EnvironmentalInfo(mouse=(0,0))
+
         return ret
 
     def get_report(self) -> OutputReport:
         brain_report = self.brain.report
-        brain_report.actual_runtime = pygame.time.get_ticks() / 1000
+        brain_report.actual_runtime = time.time() - self.start_time
 
         return OutputReport(
             config=SimulationConfig(tank=self.config, brain=self.brain.config),
@@ -123,67 +114,3 @@ class Tank:
             self.driver.loop(brain_info)
 
         return self.get_report()
-
-    def _blit_text(
-            self,
-            surface:pygame.Surface,
-            text:str,
-            pos:tuple[int,int],
-            font:pygame.font.Font,
-            color: tuple[int,int,int] | pygame.Color
-            ):
-        space_width = font.size(' ')[0]
-        max_width, max_height = surface.get_size()
-        x, y = pos
-        max_chars = (max_width - x) // space_width
-        lines = wrap(text, max_chars)
-        for line in lines:
-            line_width, line_height = font.size(line)
-            if x + line_width > max_width:
-                break
-            surface.blit(font.render(line, True, color), (x, y))
-            y += line_height
-
-
-    def _render_scene(self):
-        self.screen.fill(self.BACKGROUND_COLOR)
-
-        offset_x, offset_y = self.bounds_offset
-        pet_screen_x = int(self.brain.current_x) + offset_x
-        pet_screen_y = int(self.brain.current_y) + offset_y
-        target_screen_x = int(self.brain.target_x) + offset_x
-        target_screen_y = int(self.brain.target_y) + offset_y
-
-        pygame.draw.circle(self.screen, self.PET_COLOR, (pet_screen_x, pet_screen_y), self.PET_RADIUS)
-        pygame.draw.circle(self.screen, self.TARGET_COLOR, (target_screen_x, target_screen_y), self.TARGET_RADIUS, self.TARGET_OUTLINE_WIDTH)
-
-        text_box_rect = pygame.Rect(
-            self.TEXT_BOX_MARGIN,
-            self.TEXT_BOX_MARGIN,
-            self.bounds[0] - 2 * self.TEXT_BOX_MARGIN,
-            self.TEXT_BOX_HEIGHT - 2 * self.TEXT_BOX_MARGIN,
-        )
-        pygame.draw.rect(self.screen, self.TEXT_BOX_COLOR, text_box_rect)
-
-        if self.brain.current_thought != self.brain.config.thoughts.initial_thought:
-            status_label = "Status: Thinking..." if self.brain.is_thinking else "Status: Swimming"
-            status_color = self.THINKING_STATUS_COLOR if self.brain.is_thinking else self.SWIMMING_STATUS_COLOR
-            status_surface = self.font.render(status_label, True, status_color)
-            self.screen.blit(status_surface, self.STATUS_LOC)
-
-        self._blit_text(self.screen, "Thought: " + self.brain.current_thought, self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR)
-
-        if DEBUG:
-            brain_debug = ""
-            for k, v in self.brain.debug_info.items():
-                if isinstance(v, float):
-                    v = round(v,2)
-                if brain_debug:
-                    brain_debug += "  "
-                brain_debug += f"{k}:{v}"
-
-            coords = brain_debug + f"  v{version}"
-            debug_surface = self.font.render(coords, True, pygame.Color("white"))
-            self.screen.blit(debug_surface, self.DEBUG_LOC)
-
-        pygame.display.flip()
