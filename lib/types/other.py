@@ -1,10 +1,12 @@
 import json
 from enum import Enum
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
 from lib.utils import get_logger
+if TYPE_CHECKING:
+    from lib.brain import Brain
 
 logger = get_logger(__name__)
 
@@ -75,3 +77,27 @@ class ChatCompletionResponse(BaseModel):
 
     def get_action(self):
         return PetAction(**json.loads(self.get_message().content))
+
+class RenderInfo(BaseModel):
+    """Stuff to render"""
+    current_x: float
+    current_y: float
+    target_x: float
+    target_y: float
+    current_thought: str
+    is_thinking: bool
+    has_started_thinking: bool
+    debug_info: dict
+
+    @classmethod
+    def from_brain(cls, brain: "Brain"):
+        return cls(
+            current_x= brain.current_x,
+            current_y= brain.current_y,
+            target_x= brain.target_x,
+            target_y= brain.target_y,
+            current_thought= brain.current_thought,
+            is_thinking= brain.is_thinking,
+            has_started_thinking = brain.current_thought != brain.config.thoughts.initial_thought,
+            debug_info = brain.debug_info
+        )

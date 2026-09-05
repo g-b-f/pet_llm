@@ -40,6 +40,7 @@ class Brain:
         self.model_path = str(model_path.resolve())
         self.config = config
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
+        self.debug_info = {}
 
     def wake_up(self, bounds:tuple[int,int]):
         self.x_bounds, self.y_bounds = bounds

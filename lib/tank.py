@@ -7,7 +7,8 @@ from textwrap import wrap
 import pygame
 
 from lib.brain import Brain
-from lib.types.other import EnvironmentalInfo
+from lib.drivers.base import DriverBase
+from lib.types.other import RenderInfo, EnvironmentalInfo
 from lib.types.config import SimulationConfig, TankConfig
 from lib.types.report import OutputReport
 
@@ -53,9 +54,10 @@ class Tank:
     FONT_SIZE = 15
     FPS = 60
 
-    def __init__(self, brain:Brain, config: TankConfig):
+    def __init__(self, brain:Brain, config: TankConfig, driver: DriverBase):
         self.brain = brain
         self.config = config
+        self.driver = driver
 
         self.bounds = (self.config.screen_width, self.config.screen_height)
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
@@ -105,40 +107,20 @@ class Tank:
 
         return compiled_report
 
-    def run(self) -> OutputReport:
-        """Runs the main game loop
-
-        Args:
-            total_seconds (int | None, optional): How long to run for. Defaults to infinite runtime.
-        """
-        total_seconds = self.config.runtime
-        if total_seconds is None:
-            end_time = None
-        else:
-            end_time = pygame.time.get_ticks() + total_seconds * 1000
+    def run(self,) -> OutputReport:
+        """Runs the main game loop"""
 
         tank_bounds = (
             self.config.screen_width - 2 * self.TANK_PADDING_X, 
             self.config.screen_height - self.TEXT_BOX_HEIGHT
         )
         self.brain.wake_up(tank_bounds)
-        running = True
         self.start_time = time.time()
 
-        # while renderer.running == True:
-        #   renderer.loop(env_info, brain_info)
+        while self.driver.running == True:
+            brain_info = RenderInfo.from_brain(self.brain)
+            self.driver.loop(self.config.runtime, brain_info)
 
-        while running and (end_time is None or pygame.time.get_ticks() < end_time):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-
-            info = self.get_info()
-            self.brain.update(info)
-            self._render_scene()
-            self.clock.tick(self.FPS)
-
-        pygame.quit()
         return self.get_report()
 
     def _blit_text(

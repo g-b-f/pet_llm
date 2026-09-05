@@ -3,6 +3,8 @@ from typing import Any
 import pygame
 from lib.drivers.base import DriverBase
 
+from lib.types.other import RenderInfo
+
 
 DEBUG = True
 
@@ -37,9 +39,9 @@ class PyGameDriver(DriverBase):
 
     
 
-    def __init__(self, end_time:int|None, bounds: tuple[int, int]):
+    def __init__(self, runtime:int|None, bounds: tuple[int, int]):
 
-        self.end_time = end_time
+        self.end_time = runtime
         self.bounds = bounds
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
@@ -49,7 +51,7 @@ class PyGameDriver(DriverBase):
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(self.FONT_NAME, self.FONT_SIZE)
 
-        super().__init__
+        super().__init__()
 
     
     def _blit_text(
@@ -73,7 +75,7 @@ class PyGameDriver(DriverBase):
             y += line_height
 
 
-    def render(self, info:Any):
+    def render(self, info: RenderInfo):
         self.screen.fill(self.BACKGROUND_COLOR)
 
         offset_x, offset_y = self.bounds_offset
@@ -93,7 +95,7 @@ class PyGameDriver(DriverBase):
         )
         pygame.draw.rect(self.screen, self.TEXT_BOX_COLOR, text_box_rect)
 
-        if info.current_thought != info.config.thoughts.initial_thought:
+        if info.has_started_thinking:
             status_label = "Status: Thinking..." if info.is_thinking else "Status: Swimming"
             status_color = self.THINKING_STATUS_COLOR if info.is_thinking else self.SWIMMING_STATUS_COLOR
             status_surface = self.font.render(status_label, True, status_color)
@@ -110,13 +112,18 @@ class PyGameDriver(DriverBase):
                     brain_debug += "  "
                 brain_debug += f"{k}:{v}"
 
-            coords = brain_debug + f"  v{info.version}"
-            debug_surface = self.font.render(coords, True, pygame.Color("white"))
+            debug_surface = self.font.render(brain_debug, True, pygame.Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
         pygame.display.flip()
 
-    def loop(self, end_time: None|int, brain_info:Any, ):
+    def loop(self, runtime: None|int, brain_info: RenderInfo) -> None:
+
+        if runtime is None:
+            end_time = None
+        else:
+            end_time = pygame.time.get_ticks() + runtime * 1000
+
         if end_time is not None and pygame.time.get_ticks() < end_time:
             self.running = False
 
