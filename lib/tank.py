@@ -124,6 +124,10 @@ class Tank:
         self.brain.wake_up(tank_bounds)
         running = True
         self.start_time = time.time()
+
+        # while renderer.running == True:
+        #   renderer.loop(env_info, brain_info)
+
         while running and (end_time is None or pygame.time.get_ticks() < end_time):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
