@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import optuna
-from optuna.storages.journal import JournalFileBackend, JournalStorage
+from optuna.storages.journal import JournalFileBackend, JournalStorage, JournalFileOpenLock
 from optuna.storages.journal._file import BaseJournalFileLock
 
 from lib.types.config import ParamsConfig, TunerConfig
@@ -22,10 +22,19 @@ class DummyLock(BaseJournalFileLock):
         pass
 
 storage_backend = Path(__file__).parent.parent /"study_backend.jsonl"
-storage = JournalStorage(
+def get_storage(n_jobs:int) -> JournalStorage:
+    string_backend = str(storage_backend.resolve())
+    if n_jobs == 1:
+        lock_obj: BaseJournalFileLock = DummyLock()
+    elif n_jobs > 1:
+        lock_obj: BaseJournalFileLock = JournalFileOpenLock(string_backend)
+    else:
+        raise ValueError(f"n_jobs must be >= 1, got {n_jobs}")
+    
+    return JournalStorage(
         JournalFileBackend(
-            str(storage_backend.resolve()),
-            lock_obj=DummyLock()
+            string_backend,
+            lock_obj=lock_obj
             )
         )
 

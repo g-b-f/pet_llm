@@ -6,7 +6,7 @@ import optuna
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver, PyGameDriver
-from lib.optimisation_helpers import append_report, storage, suggest_vals
+from lib.optimisation_helpers import append_report, get_storage, suggest_vals
 from lib.tank import Tank
 from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
 from lib.types.report import StudyReport
@@ -22,6 +22,7 @@ logger = get_logger(__name__, "debug", log_file="log.txt")
 
 class Optimiser:
     comments = "Testing out different models"
+    n_jobs = 2
 
     loss_function_weights = LossFunctionWeights(
         thought_loop=10.0,
@@ -107,14 +108,19 @@ class Optimiser:
                 return
             del data
 
+        storage = get_storage(self.n_jobs)
         study = optuna.create_study(
-            study_name=self.study_name, storage=storage, direction="minimize", load_if_exists=True
+            study_name=self.study_name,
+            storage=storage,
+            direction="minimize",
+            load_if_exists=True
         )
         study.optimize(
             self.evaluate_simulation,
             n_trials=N_TRIALS - num_trials // N_SEEDS,
             show_progress_bar=True,
             catch=(RuntimeError),
+            n_jobs=self.n_jobs
         )
 
         logger.info(f"Best parameters: {study.best_params}")
@@ -124,7 +130,7 @@ class Optimiser:
 if __name__ == "__main__":
     original_version = 12
 
-    options = [Model.llama, Model.granite, Model.deepseek, Model.smollm3, Model.gemma]
+    options = [Model.smollm3, Model.llama, Model.granite, Model.deepseek, Model.smollm3, Model.gemma]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")
