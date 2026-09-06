@@ -68,7 +68,7 @@ class PyGameDriver(DriverBase):
             line_width, line_height = font.size(line)
             if x + line_width > max_width:
                 break
-            surface.blit(font.render(line, antialias=True, color=color), (x, y))
+            surface.blit(font.render(line, True, color), (x, y))
             y += line_height
 
     def render(self, info: RenderInfo):
@@ -104,7 +104,7 @@ class PyGameDriver(DriverBase):
             status_color = (
                 self.THINKING_STATUS_COLOR if info.is_thinking else self.SWIMMING_STATUS_COLOR
             )
-            status_surface = self.font.render(status_label, antialias=True, color=status_color)
+            status_surface = self.font.render(status_label, True, status_color)
             self.screen.blit(status_surface, self.STATUS_LOC)
 
         self._blit_text(
@@ -124,7 +124,7 @@ class PyGameDriver(DriverBase):
                     brain_debug += "  "
                 brain_debug += f"{k}:{v}"
 
-            debug_surface = self.font.render(brain_debug, antialias=True, color=Color("white"))
+            debug_surface = self.font.render(brain_debug, True, Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
         pygame.display.flip()
