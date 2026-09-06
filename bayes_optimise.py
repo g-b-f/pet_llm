@@ -33,6 +33,7 @@ class Optimiser:
     out_of_bounds=10.0,
     malformed_json=100.0,
     invalid_chars=10.0,
+    similar_messages=10.0,
     )
 
     tuner_config = TunerConfig(

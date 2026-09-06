@@ -4,7 +4,7 @@ import pytest
 
 from lib.types.other import Action, PetAction, RoleContent
 from lib.types.config import MemoryConfig
-from lib.memory import Memory, ThoughtLoopError
+from lib.memory import Memory, ThoughtLoopError, SimilarMessageError
 
 
 @pytest.fixture
@@ -111,12 +111,13 @@ class TestSupervise:
         assert exc_info.value.last_thought == "I want to swim"
 
     def test_different_thoughts_no_error(self, memory: Memory):
-        for i in range(3):
+        thoughts = ["I want to swim", "drifting near the surface", "chasing a bubble"]
+        for thought in thoughts:
             action = PetAction(
-                thought=f"thought {i}",
+                thought=thought,
                 action=Action.move_to,
-                target_x=i,
-                target_y=i,
+                target_x=10,
+                target_y=20,
             )
             memory += RoleContent.assistant(action.model_dump_json())
         memory.supervise()
@@ -126,3 +127,61 @@ class TestSupervise:
         memory += RoleContent.user("also not json")
         memory += RoleContent.user("still not json")
         memory.supervise()
+
+
+class TestCheckSimilarMessages:
+    def _fill(self, memory: Memory, thoughts: list[str]):
+        for thought in thoughts:
+            action = PetAction(
+                thought=thought,
+                action=Action.move_to,
+                target_x=10,
+                target_y=20,
+            )
+            memory += RoleContent.assistant(action.model_dump_json())
+
+    def test_similar_thoughts_raise_error(self, memory: Memory):
+        # "I want to swim" vs "I want to swim now" -> ratio 0.875 >= 0.8
+        self._fill(memory, ["I want to swim"] * 4 + ["I want to swim now"])
+        with pytest.raises(SimilarMessageError) as exc_info:
+            memory.check_similar_messages()
+        assert exc_info.value.first_thought == "I want to swim"
+        assert exc_info.value.last_thought == "I want to swim now"
+        assert memory.similar_messages == 1
+
+    def test_different_thoughts_no_error(self, memory: Memory):
+        # "I want to swim" vs "drifting along the glass" -> ratio ~0.37 < 0.8
+        self._fill(memory, ["I want to swim"] * 4 + ["drifting along the glass"])
+        memory.check_similar_messages()
+        assert memory.similar_messages == 0
+
+    def test_none_actions_no_error(self, memory: Memory):
+        memory += RoleContent.user("not json")
+        memory += RoleContent.user("also not json")
+        memory += RoleContent.user("still not json")
+        memory.check_similar_messages()
+        assert memory.similar_messages == 0
+
+    def test_supervise_raises_on_similar(self, memory: Memory):
+        self._fill(memory, ["I want to swim"] * 4 + ["I want to swim fast"])
+        with pytest.raises(SimilarMessageError):
+            memory.supervise()
+
+    def test_supervise_no_error_when_different(self, memory: Memory):
+        self._fill(memory, ["I want to swim"] * 4 + ["drifting along the glass"])
+        memory.supervise()
+        assert memory.similar_messages == 0
+
+    def test_threshold_respected(self):
+        # ratio 0.875 is below a 0.9 threshold, so no error
+        strict = Memory(MemoryConfig(max_length=3, similarity_threshold=0.9))
+        for thought in ["I want to swim"] * 2 + ["I want to swim now"]:
+            action = PetAction(
+                thought=thought,
+                action=Action.move_to,
+                target_x=10,
+                target_y=20,
+            )
+            strict += RoleContent.assistant(action.model_dump_json())
+        strict.check_similar_messages()
+        assert strict.similar_messages == 0

@@ -73,6 +73,7 @@ def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> floa
         empty_thought_weight: Multiplier for uninformative or empty outputs.
         out_of_bounds_weight: Multiplier for safety and constraint violations.
         malformed_json_weight: Multiplier for unparseable LLM outputs.
+        similar_messages_weight: Multiplier for near-duplicate (similar) thoughts.
         inactivity_penalty: Penalty returned if no iterations were executed.
 
     Returns:
@@ -87,6 +88,7 @@ def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> floa
         + (report.out_of_bounds_attempts * weights.out_of_bounds)
         + (report.non_alphanumeric * weights.invalid_chars)
         + (report.malformed_json * weights.malformed_json)
+        + (report.similar_messages * weights.similar_messages)
     )
 
     error_rate = weighted_error_score / float(report.iterations)

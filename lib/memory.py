@@ -1,6 +1,7 @@
 import json
 from collections import deque
 
+import Levenshtein
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
 from lib.types.other import PetAction, RoleContent
@@ -17,11 +18,18 @@ class ThoughtLoopError(MemoryHandlerError):
         self.last_thought = last_thought
         super().__init__(*args)
 
+class SimilarMessageError(MemoryHandlerError):
+    def __init__(self, first_thought, last_thought, *args) -> None:
+        self.first_thought = first_thought
+        self.last_thought = last_thought
+        super().__init__(*args)
+
 class Memory:
     def __init__(self, config: MemoryConfig):
         self.config = config
         self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
         self.thought_loops = 0
+        self.similar_messages = 0
 
     def get_messages(self, system_prompt:str) -> list[ChatCompletionRequestMessage]:
         sys_prompt = RoleContent.system(system_prompt)
@@ -47,12 +55,25 @@ class Memory:
             self.thought_loops += 1
             raise ThoughtLoopError(last_action.thought)
 
+    def check_similar_messages(self):
+        first_action = self.get_action(0)
+        last_action = self.get_action(-1)
+
+        if first_action is None or last_action is None:
+            return
+
+        similarity = Levenshtein.ratio(first_action.thought, last_action.thought)
+        if similarity >= self.config.similarity_threshold:
+            self.similar_messages += 1
+            raise SimilarMessageError(first_action.thought, last_action.thought)
+
     def supervise(self):
         if not self.is_full:
             logger.debug("memory not full, returning")
             return
 
         self.check_memory_loops()
+        self.check_similar_messages()
 
     @property
     def length(self) -> int:

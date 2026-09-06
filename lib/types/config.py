@@ -9,9 +9,11 @@ class LossFunctionWeights(BaseModel):
     out_of_bounds: float
     malformed_json: float
     invalid_chars: float
+    similar_messages: float = Field(10.0, description="Multiplier for near-duplicate (similar) thoughts")
 
 class MemoryConfig(BaseModel):
     max_length: int = Field(5, description="The maximum number of messages to store in memory")
+    similarity_threshold: float = Field(0.8, description="Levenshtein ratio at or above which two thoughts are considered similar")
 
 class ThoughtConfig(BaseModel):
     fallback_thought:str = Field(

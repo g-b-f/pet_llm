@@ -145,6 +145,29 @@ class Brain:
             return True
         return target_y > self.y_bounds or target_y < 0
 
+    def _supervise_memory(self):
+        try:
+            self.memory.supervise()
+        except memory.ThoughtLoopError as e:
+            self.report.thought_loops +=1
+            logger.info(
+                f"thought loop detected after {self.iterations} iterations, clearing memory"
+                )
+            logger.info(f"thought was: '{e.last_thought}'")
+            # self.memory.append(RoleContent.system("you'd like to do something else now"))
+            self.memory.clear()
+            self._fallback()
+        except memory.SimilarMessageError as e:
+            self.report.similar_messages +=1
+            logger.info(
+                f"similar message detected after {self.iterations} iterations, clearing memory"
+                )
+            logger.info(f"thoughts were: '{e.first_thought}' and '{e.last_thought}'")
+            self.memory.clear()
+            self._fallback()
+        finally:
+            self.is_thinking = False
+
     def _generate_decision(self, current_x: int, current_y: int):
         system_prompt = self.config.thoughts.system_prompt.format(
             self.x_bounds, self.y_bounds, current_x, current_y
@@ -214,16 +237,4 @@ class Brain:
         self.iterations += 1
         self.report.iterations +=1
 
-        try:
-            self.memory.supervise()
-        except memory.ThoughtLoopError as e:
-            self.report.thought_loops +=1
-            logger.info(
-                f"thought loop detected after {self.iterations} iterations, clearing memory"
-                )
-            logger.info(f"thought was: '{e.last_thought}'")
-            # self.memory.append(RoleContent.system("you'd like to do something else now"))
-            self.memory.clear()
-            self._fallback()
-        finally:
-            self.is_thinking = False
+        self._supervise_memory()

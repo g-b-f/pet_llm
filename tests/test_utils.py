@@ -3,7 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from lib.utils import get_logger, namer
+from lib.utils import get_logger, loss_function, namer
+from lib.types.config import LossFunctionWeights
+from lib.types.report import BrainReport
 
 
 class TestNamer:
@@ -56,4 +58,37 @@ class TestGetLogger:
         
         # TODO: complete this
         raise
+
+
+class TestLossFunction:
+    @pytest.fixture
+    def weights(self) -> LossFunctionWeights:
+        return LossFunctionWeights(
+            thought_loop=10.0,
+            empty_thought=10.0,
+            out_of_bounds=10.0,
+            malformed_json=100.0,
+            invalid_chars=10.0,
+            similar_messages=10.0,
+        )
+
+    def test_no_iterations_raises(self, weights: LossFunctionWeights):
+        report = BrainReport(iterations=0)
+        with pytest.raises(RuntimeError, match="no iterations"):
+            loss_function(report, weights)
+
+    def test_zero_errors_zero_loss(self, weights: LossFunctionWeights):
+        report = BrainReport(iterations=10)
+        assert loss_function(report, weights) == 0.0
+
+    def test_similar_messages_penalized(self, weights: LossFunctionWeights):
+        base = BrainReport(iterations=10)
+        with_similar = BrainReport(iterations=10, similar_messages=2)
+        assert loss_function(with_similar, weights) > loss_function(base, weights)
+
+    def test_similar_messages_weighted_correctly(self, weights: LossFunctionWeights):
+        # 2 similar messages * weight 10 = 20 weighted score
+        # error_rate = 20 / 10 = 2.0, absolute = 20 / 100 = 0.2 -> 2.2
+        report = BrainReport(iterations=10, similar_messages=2)
+        assert loss_function(report, weights) == pytest.approx(2.2)
 

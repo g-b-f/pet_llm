@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lib.brain import Brain
-from lib.types.other import Action, EnvironmentalInfo, PetAction
+from lib.types.other import Action, EnvironmentalInfo, PetAction, RoleContent
 from lib.types.config import BrainConfig
 
 
@@ -241,3 +241,34 @@ class TestGenerateDecision:
         assert not awake_brain.result_queue.empty()
         decision = awake_brain.result_queue.get()
         assert decision.thought == awake_brain.config.thoughts.fallback_thought
+
+    def _fill_memory_with_similar_thoughts(self, awake_brain: Brain):
+        # Fill memory so that, after the new decision is appended, the first and
+        # last thoughts are similar (ratio 0.875 >= 0.8) but not identical.
+        for thought in ["I want to swim"] * 4 + ["I want to swim now"]:
+            action = PetAction(
+                thought=thought,
+                action=Action.move_to,
+                target_x=10,
+                target_y=20,
+            )
+            awake_brain.memory += RoleContent.assistant(action.model_dump_json())
+
+    def test_similar_message_counts_and_clears(self, awake_brain: Brain):
+        self._fill_memory_with_similar_thoughts(awake_brain)
+        self._setup_brain_for_generation(awake_brain, response_thought="I want to swim fast")
+
+        assert awake_brain.report.similar_messages == 1
+        assert awake_brain.memory.length == 0
+        # The triggering action is queued before supervise() runs, then the
+        # fallback is queued by the handler, so the fallback is the last item.
+        assert awake_brain.result_queue.qsize() == 2
+        awake_brain.result_queue.get()  # the triggering (similar) action
+        fallback = awake_brain.result_queue.get()
+        assert fallback.thought == awake_brain.config.thoughts.fallback_thought
+
+    def test_similar_message_resets_thinking_flag(self, awake_brain: Brain):
+        self._fill_memory_with_similar_thoughts(awake_brain)
+        awake_brain.is_thinking = True
+        self._setup_brain_for_generation(awake_brain, response_thought="I want to swim fast")
+        assert not awake_brain.is_thinking

@@ -8,6 +8,7 @@ class BrainReport(BaseModel):
     out_of_bounds_attempts: int = Field(0, description="The number of times the LLM has attempted to go out of bounds")
     malformed_json: int = Field(0, description="The number of times the LLM returned unparseable JSON")
     non_alphanumeric: int = Field(0, description="The number of times the LLM has had a non-alphanumeric thought")
+    similar_messages: int = Field(0, description="The number of times the LLM produced a thought similar to an earlier one")
     actual_runtime: None | float = Field(None, description="The actual runtime of the simulation in seconds")
 
     @classmethod
@@ -40,6 +41,7 @@ class BrainReport(BaseModel):
             out_of_bounds_attempts=avg("out_of_bounds_attempts"),
             malformed_json=avg("malformed_json"),
             non_alphanumeric=avg("non_alphanumeric"),
+            similar_messages=avg("similar_messages"),
             actual_runtime=(sum(valid_runtimes) / len(valid_runtimes) if valid_runtimes else None)
             )
     
