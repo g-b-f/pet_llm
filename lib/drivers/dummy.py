@@ -8,7 +8,6 @@ class DummyDriver(DriverBase):
     def loop(self, info: RenderInfo) -> None:
         if self.end_time is not None and time.time() > self.end_time:
             self.running = False
-        # time.sleep(0.01)
 
 
     def __init__(self, runtime:int|float|None, *args, **kwargs):

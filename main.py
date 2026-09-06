@@ -12,7 +12,12 @@ from models.download import Model, get_model
 model_path = get_model(Model.smollm2)
 logger = get_logger(__name__)
 
-def values_from_trial(trial_id:int, config = SimulationConfig.model_construct(), fpath=Path(__file__).parent/"study_backend.jsonl"):
+def values_from_trial(
+        trial_id:int,
+        config = SimulationConfig.model_construct(),
+        fpath=Path(__file__).parent/"study_backend.jsonl"
+        ) -> SimulationConfig:
+    
     with open(fpath) as f:
         for line in f.readlines():
             d = json.loads(line)
