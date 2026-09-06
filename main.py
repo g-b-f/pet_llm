@@ -1,11 +1,10 @@
 import json
 from pathlib import Path
 
-from lib.types.config import SimulationConfig
 from lib.brain import Brain
-from lib.tank import Tank
 from lib.drivers.pygame_driver import PyGameDriver
-from lib.drivers.dummy import DummyDriver
+from lib.tank import Tank
+from lib.types.config import SimulationConfig
 from lib.utils import get_logger
 from models.download import Model, get_model
 

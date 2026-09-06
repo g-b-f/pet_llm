@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 from lib.types.other import RenderInfo
 
+
 class DriverBase(metaclass=ABCMeta):
     """Base for a driver that displays information from the LLM and Brain"""
 

@@ -2,9 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.types.other import RenderInfo
-from lib.types.config import BrainConfig, TankConfig
 from lib.drivers.pygame_driver import PyGameDriver
+from lib.types.other import RenderInfo
 
 BOUNDS = (100, 100)
 

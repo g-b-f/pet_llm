@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.types.other import EnvironmentalInfo
-from lib.types.config import BrainConfig, TankConfig
 from lib.tank import Tank
+from lib.types.config import BrainConfig, TankConfig
+from lib.types.other import EnvironmentalInfo
 
 
 @pytest.fixture
@@ -32,7 +32,7 @@ def tank_config() -> TankConfig:
 def tank(mock_brain: MagicMock, tank_config: TankConfig, mocker: MagicMock):
     mocker.running = False
     t = Tank(mock_brain, tank_config, mocker)
-    yield t
+    return t
 
 
 class TestTankInit:

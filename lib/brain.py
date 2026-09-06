@@ -10,14 +10,13 @@ from typing import Iterator
 from llama_cpp import Llama
 
 from lib import memory
+from lib.types.config import BrainConfig
 from lib.types.other import (
-    Action,
     ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
 )
-from lib.types.config import BrainConfig
 from lib.types.report import BrainReport
 from lib.utils import get_logger
 
@@ -178,7 +177,7 @@ class Brain:
             try:
                 logger.warning(f"malformed JSON: {message.content!r}")
             except:
-                logger.warning(f"malformed JSON: couldn't print")
+                logger.warning("malformed JSON: couldn't print")
                 
             self._fallback()
             self.is_thinking = False

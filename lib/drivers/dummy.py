@@ -1,6 +1,8 @@
+import time
+
 from lib.drivers.base import DriverBase
 from lib.types.other import RenderInfo
-import time
+
 
 class DummyDriver(DriverBase):
     """Driver that has no output"""
@@ -11,9 +13,6 @@ class DummyDriver(DriverBase):
 
 
     def __init__(self, runtime:int|float|None, *args, **kwargs):
-        if runtime is None:
-            end_time = None
-        else:
-            end_time = time.time() + runtime
+        end_time = None if runtime is None else time.time() + runtime
         self.running = True
         super().__init__(end_time)

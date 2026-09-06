@@ -1,10 +1,11 @@
 import json
 from enum import Enum
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from pydantic import BaseModel, Field
 
 from lib.utils import get_logger
+
 if TYPE_CHECKING:
     from lib.brain import Brain
 

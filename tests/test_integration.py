@@ -11,6 +11,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from llama_cpp.llama_types import CreateChatCompletionResponse
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver
@@ -18,7 +19,6 @@ from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.types.other import PetAction
 from lib.types.report import OutputReport
-from llama_cpp.llama_types import CreateChatCompletionResponse
 
 RUNTIME_SECONDS = 2
 

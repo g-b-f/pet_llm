@@ -1,6 +1,6 @@
 from lib.brain import Brain
-from lib.types.config import SimulationConfig
 from lib.tank import Tank
+from lib.types.config import SimulationConfig
 from lib.utils import frange, get_logger
 from models.download import Model, get_model
 

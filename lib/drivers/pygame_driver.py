@@ -1,9 +1,10 @@
 from textwrap import wrap
+
 import pygame
+from pygame import Color
+
 from lib.drivers.base import DriverBase
-
 from lib.types.other import RenderInfo
-
 
 DEBUG = True
 
@@ -43,10 +44,7 @@ class PyGameDriver(DriverBase):
         self.bounds = bounds
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
-        if runtime is None:
-            end_time = None
-        else:
-            end_time = pygame.time.get_ticks() + runtime * 1000
+        end_time = None if runtime is None else pygame.time.get_ticks() + runtime * 1000
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.bounds)
@@ -74,7 +72,7 @@ class PyGameDriver(DriverBase):
             line_width, line_height = font.size(line)
             if x + line_width > max_width:
                 break
-            surface.blit(font.render(line, True, color), (x, y))
+            surface.blit(font.render(line, antialias=True, color=color), (x, y))
             y += line_height
 
 
@@ -101,7 +99,7 @@ class PyGameDriver(DriverBase):
         if info.has_started_thinking:
             status_label = "Status: Thinking..." if info.is_thinking else "Status: Swimming"
             status_color = self.THINKING_STATUS_COLOR if info.is_thinking else self.SWIMMING_STATUS_COLOR
-            status_surface = self.font.render(status_label, True, status_color)
+            status_surface = self.font.render(status_label, antialias=True, color=status_color)
             self.screen.blit(status_surface, self.STATUS_LOC)
 
         self._blit_text(
@@ -118,7 +116,7 @@ class PyGameDriver(DriverBase):
                     brain_debug += "  "
                 brain_debug += f"{k}:{v}"
 
-            debug_surface = self.font.render(brain_debug, True, pygame.Color("white"))
+            debug_surface = self.font.render(brain_debug, antialias=True, color=Color("white"))
             self.screen.blit(debug_surface, self.DEBUG_LOC)
 
         pygame.display.flip()

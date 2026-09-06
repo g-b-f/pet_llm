@@ -8,9 +8,9 @@ import pytest
 
 from lib.background_trainer import BackgroundTrainer
 from lib.experience_buffer import ExperienceBuffer
-from lib.types.other import RoleContent
-from lib.types.config import MemoryConfig
 from lib.memory import Memory
+from lib.types.config import MemoryConfig
+from lib.types.other import RoleContent
 
 
 @pytest.fixture

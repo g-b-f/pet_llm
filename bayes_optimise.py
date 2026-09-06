@@ -1,19 +1,19 @@
 import json
 from pathlib import Path
 
-import optuna
 import humanize
+import optuna
 
 from lib.brain import Brain
-from lib.drivers import PyGameDriver, DummyDriver
+from lib.drivers import DummyDriver, PyGameDriver
+from lib.optimisation_helpers import append_report, storage, suggest_vals
+from lib.tank import Tank
 from lib.types.config import (
     LossFunctionWeights,
     SimulationConfig,
     TunerConfig,
 )
 from lib.types.report import StudyReport
-from lib.optimisation_helpers import append_report, storage, suggest_vals
-from lib.tank import Tank
 from lib.utils import get_logger, loss_function
 from models.download import Model, get_model
 

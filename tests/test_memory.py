@@ -2,9 +2,9 @@ import json
 
 import pytest
 
-from lib.types.other import Action, PetAction, RoleContent
-from lib.types.config import MemoryConfig
 from lib.memory import Memory, ThoughtLoopError
+from lib.types.config import MemoryConfig
+from lib.types.other import Action, PetAction, RoleContent
 
 
 @pytest.fixture

@@ -2,8 +2,8 @@ import threading
 from collections import deque
 from typing import Iterator
 
-from lib.types.other import RoleContent
 from lib.memory import Memory
+from lib.types.other import RoleContent
 from lib.utils import get_logger
 
 logger = get_logger(__name__)

@@ -1,5 +1,12 @@
 from pydantic import BaseModel, Field
-from lib.types.config import SimulationConfig, LossFunctionWeights, TunerConfig, ParamsConfig
+
+from lib.types.config import (
+    LossFunctionWeights,
+    ParamsConfig,
+    SimulationConfig,
+    TunerConfig,
+)
+
 
 class BrainReport(BaseModel):
     iterations: int = Field(0, description="The total number of request/responses by the LLM")
@@ -21,7 +28,7 @@ class BrainReport(BaseModel):
             A new BrainReport instance containing the averaged metric values.
         """
         if not reports:
-            raise ValueError(f"expected values")
+            raise ValueError("expected values")
 
         total_reports = len(reports)
         valid_runtimes = [

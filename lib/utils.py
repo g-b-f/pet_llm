@@ -45,8 +45,7 @@ def get_logger(
 
     if name == "__main__":
         for logger_name, logger_obj in logging.root.manager.loggerDict.items():
-            if logger_name.startswith("lib"):
-                if isinstance(logger_obj, logging.Logger):
+            if logger_name.startswith("lib") and isinstance(logger_obj, logging.Logger):
                     logger_obj.handlers = [handler]
 
     logger = logging.getLogger(name)
