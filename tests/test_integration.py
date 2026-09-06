@@ -5,6 +5,7 @@ DummyDriver) and only mock the expensive LLM call, so the threading,
 queue, memory, and report machinery all run for real.
 """
 
+from pathlib import Path
 import time
 from unittest.mock import MagicMock, patch
 
@@ -18,10 +19,7 @@ from lib.types.other import PetAction
 from lib.types.report import OutputReport
 from models.download import Model, get_model
 
-model_path = get_model(Model.smollm2)
-
 RUNTIME_SECONDS = 2
-
 
 def _make_llm_response(content: str) -> dict:
     return {
@@ -40,6 +38,12 @@ def _make_llm_response(content: str) -> dict:
         "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
     }
 
+
+@pytest.fixture
+def model_path(tmp_path: Path) -> Path:
+    file = tmp_path / "model.gguf"
+    file.touch()
+    return file
 
 @pytest.fixture
 def config() -> SimulationConfig:
@@ -61,7 +65,9 @@ def mock_llm():
 
 class TestEndToEnd:
     def test_full_simulation_runs_and_reports(
-        self, config: SimulationConfig, mock_llm: MagicMock
+        self, config: SimulationConfig,
+        mock_llm: MagicMock,
+        model_path: Path
     ):
         with patch("lib.brain.Llama", return_value=mock_llm):
             brain = Brain(model_path, config.brain)
@@ -85,7 +91,9 @@ class TestEndToEnd:
         assert brain.memory.length > 1
 
     def test_pet_moves_and_stays_in_bounds(
-        self, config: SimulationConfig, mock_llm: MagicMock
+        self, config: SimulationConfig,
+        mock_llm: MagicMock,
+        model_path: Path
     ):
         with patch("lib.brain.Llama", return_value=mock_llm):
             brain = Brain(model_path, config.brain)
@@ -100,7 +108,9 @@ class TestEndToEnd:
         assert 0 <= brain.current_y <= expected_h
 
     def test_malformed_llm_output_uses_fallback(
-        self, config: SimulationConfig, mock_llm: MagicMock
+        self, config: SimulationConfig,
+        mock_llm: MagicMock,
+        model_path: Path
     ):
         mock_llm.create_chat_completion.return_value = _make_llm_response(
             "not valid json {"
