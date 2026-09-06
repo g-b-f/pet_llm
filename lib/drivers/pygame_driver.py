@@ -128,11 +128,8 @@ class PyGameDriver(DriverBase):
             if event.type == pygame.QUIT:
                 self.running = False
 
-        if self.running == False:
-            pygame.quit()
-
-
-        # info = self.get_info()
-        # self.brain.update(info)
         self.render(info)
         self.clock.tick(self.FPS)
+
+        if not self.running:
+            pygame.quit()
