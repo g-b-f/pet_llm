@@ -2,10 +2,11 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from llama_cpp.llama_types import CreateChatCompletionResponse
 
 from lib.brain import Brain
 from lib.types.config import BrainConfig
-from lib.types.other import Action, EnvironmentalInfo, PetAction
+from lib.types.other import EnvironmentalInfo, PetAction
 
 
 @pytest.fixture
@@ -31,8 +32,8 @@ def env_info() -> EnvironmentalInfo:
     return EnvironmentalInfo(mouse=(0, 0))
 
 
-def _make_llm_response(thought: str, x: int, y: int) -> dict:
-    action = PetAction(thought=thought, action=Action.move_to, target_x=x, target_y=y)
+def _make_llm_response(thought: str, x: int, y: int) -> CreateChatCompletionResponse:
+    action = PetAction(thought=thought, target_x=x, target_y=y)
     return {
         "id": "chatcmpl-test",
         "object": "chat.completion",
@@ -96,9 +97,7 @@ class TestUpdate:
     def test_queued_decision_applied(
         self, awake_brain: Brain, env_info: EnvironmentalInfo
     ):
-        decision = PetAction(
-            thought="new thought", action=Action.move_to, target_x=10, target_y=20
-        )
+        decision = PetAction(thought="new thought", target_x=10, target_y=20)
         awake_brain.result_queue.put(decision)
         awake_brain.update(env_info)
         assert awake_brain.current_thought == "new thought"
@@ -158,21 +157,15 @@ class TestTargetOutOfBounds:
     @pytest.mark.parametrize(
         ("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)]
     )
-    def test_target_out_of_bounds(
-        self, awake_brain: Brain, target_x: int, target_y: int
-    ):
-        action = PetAction(
-            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
-        )
+    def test_target_out_of_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
+        action = PetAction(thought="t", target_x=target_x, target_y=target_y)
         assert awake_brain.target_out_of_bounds(action)
 
     @pytest.mark.parametrize(
         ("target_x", "target_y"), [(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
     )
     def test_target_in_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
-        action = PetAction(
-            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
-        )
+        action = PetAction(thought="t", target_x=target_x, target_y=target_y)
         assert not awake_brain.target_out_of_bounds(action)
 
 
