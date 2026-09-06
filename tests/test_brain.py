@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lib.brain import Brain
-from lib.types.other import Action, EnvironmentalInfo, PetAction, RoleContent
 from lib.types.config import BrainConfig
+from lib.types.other import Direction, EnvironmentalInfo, PetAction, RoleContent
 
 
 @pytest.fixture
@@ -31,8 +31,8 @@ def env_info() -> EnvironmentalInfo:
     return EnvironmentalInfo(mouse=(0, 0))
 
 
-def _make_llm_response(thought: str, x: int, y: int) -> dict:
-    action = PetAction(thought=thought, action=Action.move_to, target_x=x, target_y=y)
+def _make_llm_response(thought: str, direction: Direction, distance: int) -> dict:
+    action = PetAction(thought=thought, direction=direction, distance=distance)
     return {
         "id": "chatcmpl-test",
         "object": "chat.completion",
@@ -96,14 +96,16 @@ class TestUpdate:
     def test_queued_decision_applied(
         self, awake_brain: Brain, env_info: EnvironmentalInfo
     ):
+        start_x, start_y = awake_brain.current_x, awake_brain.current_y
         decision = PetAction(
-            thought="new thought", action=Action.move_to, target_x=10, target_y=20
+            thought="new thought", direction=Direction.southwest, distance=40
         )
         awake_brain.result_queue.put(decision)
         awake_brain.update(env_info)
         assert awake_brain.current_thought == "new thought"
-        assert awake_brain.target_x == 10
-        assert awake_brain.target_y == 20
+        dx, dy = Direction.southwest.vector
+        assert awake_brain.target_x == pytest.approx(start_x + dx * 40)
+        assert awake_brain.target_y == pytest.approx(start_y + dy * 40)
 
     def test_arrival_triggers_decision_request(
         self, awake_brain: Brain, env_info: EnvironmentalInfo
@@ -125,8 +127,9 @@ class TestFallback:
     def test_fallback_within_bounds(self, awake_brain: Brain):
         awake_brain._fallback()
         decision = awake_brain.result_queue.get()
-        assert 0 <= decision.target_x <= awake_brain.x_bounds
-        assert 0 <= decision.target_y <= awake_brain.y_bounds
+        # use_enum_values stores the raw string, so validate it round-trips
+        assert Direction(decision.direction) in Direction
+        assert decision.distance >= 1
 
 
 class TestRequestDecisionAsync:
@@ -155,34 +158,52 @@ class TestRequestDecisionAsync:
 
 
 class TestTargetOutOfBounds:
+    """The brain starts at (50, 50) in a (100, 100) tank, so a long swim in any
+    direction leaves the tank while a short one stays inside."""
+
     @pytest.mark.parametrize(
-        ("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)]
+        ("direction", "distance"),
+        [
+            (Direction.north, 60),
+            (Direction.south, 60),
+            (Direction.northeast, 100),
+            (Direction.southwest, 100),
+        ],
     )
     def test_target_out_of_bounds(
-        self, awake_brain: Brain, target_x: int, target_y: int
+        self, awake_brain: Brain, direction: Direction, distance: int
     ):
-        action = PetAction(
-            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
-        )
+        action = PetAction(thought="t", direction=direction, distance=distance)
         assert awake_brain.target_out_of_bounds(action)
 
     @pytest.mark.parametrize(
-        ("target_x", "target_y"), [(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
+        ("direction", "distance"),
+        [
+            (Direction.north, 40),
+            (Direction.south, 40),
+            (Direction.northeast, 40),
+            (Direction.southwest, 40),
+            (Direction.northwest, 40),
+        ],
     )
-    def test_target_in_bounds(self, awake_brain: Brain, target_x: int, target_y: int):
-        action = PetAction(
-            thought="t", action=Action.move_to, target_x=target_x, target_y=target_y
-        )
+    def test_target_in_bounds(
+        self, awake_brain: Brain, direction: Direction, distance: int
+    ):
+        action = PetAction(thought="t", direction=direction, distance=distance)
         assert not awake_brain.target_out_of_bounds(action)
 
 
 class TestGenerateDecision:
     def _setup_brain_for_generation(
-        self, brain: Brain, response_thought: str = "hello", x: int = 10, y: int = 20
+        self,
+        brain: Brain,
+        response_thought: str = "hello",
+        direction: Direction = Direction.southeast,
+        distance: int = 10,
     ):
         brain.llm = MagicMock()
         brain.llm.create_chat_completion.return_value = _make_llm_response(
-            response_thought, x, y
+            response_thought, direction, distance
         )
         brain._generate_decision(50, 50)
 
@@ -202,16 +223,16 @@ class TestGenerateDecision:
         assert not awake_brain.is_thinking
 
     def test_oob_decision_not_queued(self, awake_brain: Brain):
-        self._setup_brain_for_generation(awake_brain, x=999, y=999)
+        self._setup_brain_for_generation(awake_brain, direction=Direction.south, distance=999)
         assert awake_brain.result_queue.empty()
 
     def test_oob_increments_oob_count(self, awake_brain: Brain):
-        self._setup_brain_for_generation(awake_brain, x=999, y=999)
+        self._setup_brain_for_generation(awake_brain, direction=Direction.south, distance=999)
         assert awake_brain.current_oob_count == 1
 
     def test_max_oob_triggers_fallback(self, awake_brain: Brain):
         awake_brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
-        self._setup_brain_for_generation(awake_brain, x=999, y=999)
+        self._setup_brain_for_generation(awake_brain, direction=Direction.south, distance=999)
         assert awake_brain.current_oob_count == 0
         assert not awake_brain.result_queue.empty()
         decision = awake_brain.result_queue.get()
@@ -219,7 +240,7 @@ class TestGenerateDecision:
 
     def test_memory_cleared_on_max_oob(self, awake_brain: Brain):
         awake_brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
-        self._setup_brain_for_generation(awake_brain, x=999, y=999)
+        self._setup_brain_for_generation(awake_brain, direction=Direction.south, distance=999)
         assert awake_brain.memory.length == 0
 
     def test_memory_updated_on_success(self, awake_brain: Brain):
@@ -228,7 +249,7 @@ class TestGenerateDecision:
         assert awake_brain.memory.length > initial_len
 
     def test_malformed_json_resets_thinking_and_counts(self, awake_brain: Brain):
-        response = _make_llm_response("hello", 10, 20)
+        response = _make_llm_response("hello", Direction.southeast, 10)
         response["choices"][0]["message"]["content"] = "not valid json {{"
         awake_brain.llm = MagicMock()
         awake_brain.llm.create_chat_completion.return_value = response
@@ -248,9 +269,8 @@ class TestGenerateDecision:
         for thought in ["I want to swim"] * 4 + ["I want to swim now"]:
             action = PetAction(
                 thought=thought,
-                action=Action.move_to,
-                target_x=10,
-                target_y=20,
+                direction=Direction.southeast,
+                distance=10,
             )
             awake_brain.memory += RoleContent.assistant(action.model_dump_json())
 

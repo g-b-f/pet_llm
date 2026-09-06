@@ -1,10 +1,11 @@
 import json
-from enum import Enum
-from typing import Optional, TYPE_CHECKING
+from enum import Enum, StrEnum
+from typing import TYPE_CHECKING, Optional
 
 from pydantic import BaseModel, Field
 
 from lib.utils import get_logger
+
 if TYPE_CHECKING:
     from lib.brain import Brain
 
@@ -18,11 +19,48 @@ class Action(Enum):
     idle = "idle"
     swim_fast = "swim_fast"
 
+class Direction(StrEnum):
+    """A 6-point compass the pet can swim toward.
+
+    Screen coordinates grow downward, so "north" is up (negative y) and
+    "south" is down (positive y).
+    """
+    north = "north"
+    northeast = "northeast"
+    southeast = "southeast"
+    south = "south"
+    southwest = "southwest"
+    northwest = "northwest"
+
+    @property
+    def vector(self) -> tuple[float, float]:
+        """Unit (dx, dy) displacement for this direction in tank-local coords."""
+        return _DIRECTION_VECTORS[self]
+
+# Unit vectors for each compass point. Diagonals are normalised to length 1 so
+# a given `distance` covers the same ground regardless of direction.
+_DIRECTION_VECTORS: dict[Direction, tuple[float, float]] = {
+    Direction.north: (0.0, -1.0),
+    Direction.northeast: (0.7071, -0.7071),
+    Direction.southeast: (0.7071, 0.7071),
+    Direction.south: (0.0, 1.0),
+    Direction.southwest: (-0.7071, 0.7071),
+    Direction.northwest: (-0.7071, -0.7071),
+}
+
+def direction_vector(direction: Direction) -> tuple[float, float]:
+    """Unit (dx, dy) displacement for a compass direction in tank-local coords."""
+    return _DIRECTION_VECTORS[Direction(direction)]
+
 class PetAction(BaseModel, use_enum_values=True):
     thought: str = Field(description="The thought process of the pet.")
     # action: Action = Field(description="The action to take.")
-    target_x: int = Field(description="Target X coordinate.")
-    target_y: int = Field(description="Target Y coordinate.")
+    direction: Direction = Field(
+        description="The compass direction to swim toward: one of north, northeast, southeast, south, southwest, northwest."
+    )
+    distance: int = Field(
+        description="How far to swim, in pixels, toward the chosen direction."
+    )
 
     def get_thought(self):
         try:

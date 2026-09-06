@@ -2,9 +2,9 @@ import json
 
 import pytest
 
-from lib.types.other import Action, PetAction, RoleContent
+from lib.memory import Memory, SimilarMessageError, ThoughtLoopError
 from lib.types.config import MemoryConfig
-from lib.memory import Memory, ThoughtLoopError, SimilarMessageError
+from lib.types.other import Direction, PetAction, RoleContent
 
 
 @pytest.fixture
@@ -16,9 +16,8 @@ def memory() -> Memory:
 def sample_action() -> PetAction:
     return PetAction(
         thought="I want to swim",
-        action=Action.move_to,
-        target_x=10,
-        target_y=20,
+        direction=Direction.southeast,
+        distance=10,
     )
 
 
@@ -82,7 +81,8 @@ class TestGetAction:
         action = memory.get_action(0)
         assert action is not None
         assert action.thought == "I want to swim"
-        assert action.target_x == 10
+        assert action.direction == Direction.southeast
+        assert action.distance == 10
 
     def test_invalid_json_returns_none(self, memory: Memory):
         memory += RoleContent.user("not json")
@@ -115,9 +115,8 @@ class TestSupervise:
         for thought in thoughts:
             action = PetAction(
                 thought=thought,
-                action=Action.move_to,
-                target_x=10,
-                target_y=20,
+                direction=Direction.southeast,
+                distance=10,
             )
             memory += RoleContent.assistant(action.model_dump_json())
         memory.supervise()
@@ -134,9 +133,8 @@ class TestCheckSimilarMessages:
         for thought in thoughts:
             action = PetAction(
                 thought=thought,
-                action=Action.move_to,
-                target_x=10,
-                target_y=20,
+                direction=Direction.southeast,
+                distance=10,
             )
             memory += RoleContent.assistant(action.model_dump_json())
 
@@ -178,9 +176,8 @@ class TestCheckSimilarMessages:
         for thought in ["I want to swim"] * 2 + ["I want to swim now"]:
             action = PetAction(
                 thought=thought,
-                action=Action.move_to,
-                target_x=10,
-                target_y=20,
+                direction=Direction.southeast,
+                distance=10,
             )
             strict += RoleContent.assistant(action.model_dump_json())
         strict.check_similar_messages()

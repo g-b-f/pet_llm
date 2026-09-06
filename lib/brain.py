@@ -10,14 +10,15 @@ from typing import Iterator
 from llama_cpp import Llama
 
 from lib import memory
+from lib.types.config import BrainConfig
 from lib.types.other import (
-    Action,
     ChatCompletionResponse,
+    Direction,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
+    direction_vector,
 )
-from lib.types.config import BrainConfig
 from lib.types.report import BrainReport
 from lib.utils import get_logger
 
@@ -79,8 +80,11 @@ class Brain:
         if not self.result_queue.empty():
             decision = self.result_queue.get()
             self.current_thought = decision.get_thought()
-            self.target_x = decision.target_x
-            self.target_y = decision.target_y
+            dx, dy = direction_vector(decision.direction)
+            # Clamp the target to the tank so a decision (or fallback) that
+            # points off-screen still keeps the pet inside the bounds.
+            self.target_x = min(max(self.current_x + dx * decision.distance, 0.0), float(self.x_bounds))
+            self.target_y = min(max(self.current_y + dy * decision.distance, 0.0), float(self.y_bounds))
 
         delta_x = self.target_x - self.current_x
         delta_y = self.target_y - self.current_y
@@ -107,8 +111,8 @@ class Brain:
         fallback_decision = PetAction(
             thought=self.config.thoughts.fallback_thought,
             # action=Action.move_to,
-            target_x=random.randint(0, self.x_bounds),
-            target_y=random.randint(0, self.y_bounds)
+            direction=random.choice(list(Direction)),
+            distance=random.randint(1, max(self.x_bounds, self.y_bounds))
         )
         self.result_queue.put(fallback_decision)
 
@@ -139,8 +143,9 @@ class Brain:
         worker_thread.start()
 
     def target_out_of_bounds(self, action:PetAction) -> bool:
-        target_x = action.target_x
-        target_y = action.target_y
+        dx, dy = direction_vector(action.direction)
+        target_x = self.current_x + dx * action.distance
+        target_y = self.current_y + dy * action.distance
         if target_x > self.x_bounds or target_x < 0:
             return True
         return target_y > self.y_bounds or target_y < 0
@@ -218,7 +223,7 @@ class Brain:
             self.report.empty_thoughts +=1
         
         if self.target_out_of_bounds(action):
-            logger.info(f"tried to go to {action.target_x, action.target_y}")
+            logger.info(f"tried to go {action.direction} for {action.distance} px")
             oob = self.config.thoughts.out_of_bounds_message
             if oob:
                 self.memory += RoleContent.system(oob.format(self.x_bounds, self.y_bounds))

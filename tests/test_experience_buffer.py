@@ -1,16 +1,16 @@
 import pytest
 
 from lib.experience_buffer import ExperienceBuffer
-from lib.types.other import RoleContent
-from lib.types.config import MemoryConfig
 from lib.memory import Memory
+from lib.types.config import MemoryConfig
+from lib.types.other import RoleContent
 
 
 @pytest.fixture
 def memory() -> Memory:
     mem = Memory(MemoryConfig(max_length=5))
     mem += RoleContent.user("Start exploring!")
-    mem += RoleContent.assistant('{"thought": "hi", "action": "move_to", "target_x": 1, "target_y": 2}')
+    mem += RoleContent.assistant('{"thought": "hi", "direction": "southeast", "distance": 1}')
     return mem
 
 

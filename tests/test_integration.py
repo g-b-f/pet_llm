@@ -10,14 +10,14 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from llama_cpp.llama_types import CreateChatCompletionResponse
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
-from lib.types.other import PetAction
+from lib.types.other import Direction, PetAction
 from lib.types.report import OutputReport
-from llama_cpp.llama_types import CreateChatCompletionResponse
 
 RUNTIME_SECONDS = 2
 
@@ -58,7 +58,7 @@ def config() -> SimulationConfig:
 @pytest.fixture
 def mock_llm():
     """Mock LLM returning a valid, in-bounds decision for every call."""
-    action = PetAction(thought="swimming along", target_x=100, target_y=100)
+    action = PetAction(thought="swimming along", direction=Direction.southeast, distance=100)
     llm = MagicMock()
     llm.create_chat_completion.return_value = _make_llm_response(
         action.model_dump_json()
