@@ -29,6 +29,10 @@ extend-select = [
     "I",    # isort
     "C901", # flake8-c901 complexity
 ]
+ignore = [
+    "G004",  # logging uses f-string
+    "E722"   # bare `Except`
+]
 
 [dependency-groups]
 dev = [

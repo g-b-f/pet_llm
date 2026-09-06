@@ -5,6 +5,7 @@ import optuna
 import humanize
 
 from lib.brain import Brain
+from lib.drivers.pygame_driver import PyGameDriver
 from lib.types.config import (
     LossFunctionWeights,
     SimulationConfig,
@@ -68,8 +69,10 @@ class Optimiser:
 
         for seed in range(N_SEEDS):
             config.brain.params.seed = seed
+            bounds = (config.tank.screen_width, config.tank.screen_height)
             brain = Brain(self.model_path, config.brain)
-            tank = Tank(brain, config.tank)
+            driver = PyGameDriver(config.tank.runtime, bounds)
+            tank = Tank(brain, config.tank, driver)
 
             # make headless:
             # tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
@@ -122,7 +125,7 @@ class Optimiser:
 if __name__ == "__main__":
     original_version = 11
 
-    options = [Model.smollm3, Model.gemma, Model.granite, Model.deepseek]
+    options = [Model.llama, Model.granite, Model.deepseek, Model.smollm3, Model.gemma]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")

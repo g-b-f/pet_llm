@@ -104,7 +104,10 @@ class PyGameDriver(DriverBase):
             status_surface = self.font.render(status_label, True, status_color)
             self.screen.blit(status_surface, self.STATUS_LOC)
 
-        self._blit_text(self.screen, "Thought: " + info.current_thought, self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR)
+        self._blit_text(
+            self.screen, f"Thought: {info.current_thought}",
+            self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR
+            )
 
         if DEBUG:
             brain_debug = ""
@@ -121,7 +124,7 @@ class PyGameDriver(DriverBase):
         pygame.display.flip()
 
     def loop(self, info: RenderInfo) -> None:
-        if self.end_time is not None and pygame.time.get_ticks() < self.end_time:
+        if self.end_time is not None and pygame.time.get_ticks() > self.end_time:
             self.running = False
 
         for event in pygame.event.get():

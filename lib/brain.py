@@ -96,11 +96,11 @@ class Brain:
             )
 
         self.debug_info = {
-            # "current": (round(self.current_x,1), round(self.current_y,1)),
-            # "target": (round(self.target_x,1), round(self.target_y,1)),
+            "current": (round(self.current_x,1), round(self.current_y,1)),
+            "target": (round(self.target_x,1), round(self.target_y,1)),
             "iteration": self.iterations,
             "temperature": self.config.params.temperature,
-            "seed": self.config.params.seed
+            # "seed": self.config.params.seed
             }
 
     def _fallback(self):
@@ -145,7 +145,7 @@ class Brain:
             return True
         return target_y > self.y_bounds or target_y < 0
 
-    def _generate_decision(self, current_x: int, current_y: int) -> None:
+    def _generate_decision(self, current_x: int, current_y: int):
         system_prompt = self.config.thoughts.system_prompt.format(
             self.x_bounds, self.y_bounds, current_x, current_y
             )
