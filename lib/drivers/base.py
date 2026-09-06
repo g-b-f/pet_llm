@@ -6,12 +6,9 @@ class DriverBase(metaclass=ABCMeta):
     """Base for a driver that displays information from the LLM and Brain"""
 
     @abstractmethod
-    def render(self, info: RenderInfo) -> None:
-        raise RuntimeError("Must be subclassed!")
-
-    @abstractmethod
     def loop(self, info: RenderInfo) -> None:
         raise RuntimeError("Must be subclassed!")
 
-    def __init__(self) -> None:
+    def __init__(self, end_time: int|float|None) -> None:
         self.running = True
+        self.end_time = end_time

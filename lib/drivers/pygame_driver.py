@@ -44,9 +44,9 @@ class PyGameDriver(DriverBase):
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
         if runtime is None:
-            self.end_time = None
+            end_time = None
         else:
-            self.end_time = pygame.time.get_ticks() + runtime * 1000
+            end_time = pygame.time.get_ticks() + runtime * 1000
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.bounds)
@@ -54,7 +54,7 @@ class PyGameDriver(DriverBase):
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(self.FONT_NAME, self.FONT_SIZE)
 
-        super().__init__()
+        super().__init__(end_time)
 
     
     def _blit_text(
