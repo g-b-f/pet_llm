@@ -5,8 +5,8 @@ DummyDriver) and only mock the expensive LLM call, so the threading,
 queue, memory, and report machinery all run for real.
 """
 
-from pathlib import Path
 import time
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -17,11 +17,13 @@ from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.types.other import PetAction
 from lib.types.report import OutputReport
-from models.download import Model, get_model
+from llama_cpp.llama_types import CreateChatCompletionResponse
 
 RUNTIME_SECONDS = 2
 
-def _make_llm_response(content: str) -> dict:
+
+
+def _make_llm_response(content: str) -> CreateChatCompletionResponse:
     return {
         "id": "chatcmpl-e2e",
         "object": "chat.completion",
@@ -45,6 +47,7 @@ def model_path(tmp_path: Path) -> Path:
     file.touch()
     return file
 
+
 @pytest.fixture
 def config() -> SimulationConfig:
     cfg = SimulationConfig.model_construct()
@@ -64,10 +67,22 @@ def mock_llm():
 
 
 class TestEndToEnd:
-    def test_full_simulation_runs_and_reports(
-        self, config: SimulationConfig,
-        mock_llm: MagicMock,
-        model_path: Path
+    def test_simulation_wakes_brain_and_produces_output_report(
+        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+    ):
+        with patch("lib.brain.Llama", return_value=mock_llm):
+            brain = Brain(model_path, config.brain)
+            driver = DummyDriver(config.tank.runtime)
+            tank = Tank(brain, config.tank, driver)
+            report = tank.run()
+
+        assert brain.awake
+        assert isinstance(report, OutputReport)
+        assert report.report.iterations > 0
+        assert report.report.actual_runtime is not None
+
+    def test_simulation_honors_requested_runtime(
+        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
     ):
         with patch("lib.brain.Llama", return_value=mock_llm):
             brain = Brain(model_path, config.brain)
@@ -75,25 +90,13 @@ class TestEndToEnd:
             tank = Tank(brain, config.tank, driver)
 
             start = time.time()
-            report = tank.run()
+            tank.run()
             elapsed = time.time() - start
 
-        # brain was woken and produced a real report
-        assert brain.awake
-        assert isinstance(report, OutputReport)
-        assert report.report.iterations > 0
-        assert report.report.actual_runtime is not None
-
-        # roughly honored the requested runtime
         assert elapsed >= RUNTIME_SECONDS - 0.5
 
-        # memory accumulated LLM messages
-        assert brain.memory.length > 1
-
-    def test_pet_moves_and_stays_in_bounds(
-        self, config: SimulationConfig,
-        mock_llm: MagicMock,
-        model_path: Path
+    def test_simulation_accumulates_llm_messages_in_memory(
+        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
     ):
         with patch("lib.brain.Llama", return_value=mock_llm):
             brain = Brain(model_path, config.brain)
@@ -101,16 +104,24 @@ class TestEndToEnd:
             tank = Tank(brain, config.tank, driver)
             tank.run()
 
-        # position stays within tank-local bounds
+        assert brain.memory.length > 1
+
+    def test_pet_moves_and_stays_in_bounds(
+        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+    ):
+        with patch("lib.brain.Llama", return_value=mock_llm):
+            brain = Brain(model_path, config.brain)
+            driver = DummyDriver(config.tank.runtime)
+            tank = Tank(brain, config.tank, driver)
+            tank.run()
+
         expected_w = config.tank.screen_width - 2 * Tank.TANK_PADDING_X
         expected_h = config.tank.screen_height - Tank.TEXT_BOX_HEIGHT
         assert 0 <= brain.current_x <= expected_w
         assert 0 <= brain.current_y <= expected_h
 
     def test_malformed_llm_output_uses_fallback(
-        self, config: SimulationConfig,
-        mock_llm: MagicMock,
-        model_path: Path
+        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
     ):
         mock_llm.create_chat_completion.return_value = _make_llm_response(
             "not valid json {"
@@ -122,5 +133,4 @@ class TestEndToEnd:
             tank = Tank(brain, config.tank, driver)
             report = tank.run()
 
-        # malformed responses were counted and fell back without crashing
         assert report.report.malformed_json > 0
