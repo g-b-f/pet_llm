@@ -5,7 +5,7 @@ import optuna
 import humanize
 
 from lib.brain import Brain
-from lib.drivers.pygame_driver import PyGameDriver
+from lib.drivers import PyGameDriver, DummyDriver
 from lib.types.config import (
     LossFunctionWeights,
     SimulationConfig,
@@ -25,7 +25,7 @@ logger = get_logger(__name__, "debug", log_file="log.txt")
 
 class Optimiser:
 
-    COMMENTS = "Testing out different models"
+    comments = "Testing out different models"
 
     loss_function_weights = LossFunctionWeights(
     thought_loop=10.0,
@@ -43,9 +43,12 @@ class Optimiser:
     )
 
 
-    def __init__(self, model: Model, version:int, config: SimulationConfig) -> None:
+    def __init__(self, model: Model, version:int, config: SimulationConfig, comments:str,* , visual:bool):
         self.config = config
         self.model = model
+        self.comments = comments
+        self.visual = visual
+
         self.model_path = get_model(self.model)
         self.study_name = f"v{version}_pet_llm_{self.model_path.stem}"
         self.report_path = Path(__file__).parent / f"reports/{self.study_name}.json"
@@ -59,7 +62,7 @@ class Optimiser:
 
         if not self.report_path.exists():
             study_report = StudyReport(
-                comments=self.COMMENTS,
+                comments=self.comments,
                 tuner_config=self.tuner_config,
                 loss_function_weights=self.loss_function_weights,
                 simulation_config=config,
@@ -68,17 +71,16 @@ class Optimiser:
             self.report_path.write_text(study_report.model_dump_json(indent=2))
 
         for seed in range(N_SEEDS):
+            runtime = config.tank.runtime
+            visual_bounds = (config.tank.screen_width, config.tank.screen_height)
+            driver = PyGameDriver(runtime, visual_bounds) if self.visual else DummyDriver(runtime)
+
             config.brain.params.seed = seed
-            bounds = (config.tank.screen_width, config.tank.screen_height)
             brain = Brain(self.model_path, config.brain)
-            driver = PyGameDriver(config.tank.runtime, bounds)
             tank = Tank(brain, config.tank, driver)
 
-            # make headless:
-            # tank._render_scene = lambda: None  # type: ignore[attr-defined, method-assign]
-
-            vals = [f"{k}={v}" for k, v in config.brain.params]
-            logger.info(f"{seed=}, {', '.join(vals)}")
+            params = [f"{k}={v}" for k, v in config.brain.params]
+            logger.info(f"{seed=}, {', '.join(params)}")
 
             result = tank.run()
             loss = loss_function(result.report, self.loss_function_weights)
@@ -123,18 +125,23 @@ class Optimiser:
 
 
 if __name__ == "__main__":
-    original_version = 11
+    original_version = 12
 
     options = [Model.llama, Model.granite, Model.deepseek, Model.smollm3, Model.gemma]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")
 
-    for ver, model in enumerate(options):
-        ver = 0 # keep same version for now
+    for version_increment, model in enumerate(options):
+        version_increment = 0 # keep same version for now
 
-        config = SimulationConfig.model_construct()
-        opt = Optimiser(model, original_version+ver, config)
+        opt = Optimiser(
+            model,
+            original_version + version_increment,
+            SimulationConfig.model_construct(),
+            "Testing out different models, with dummy driver",
+            visual=False
+        )
 
         logger.info(f"starting for {model.value}")
         opt.run()
