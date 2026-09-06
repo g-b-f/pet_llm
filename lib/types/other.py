@@ -2,7 +2,7 @@ import json
 from enum import Enum, StrEnum
 from typing import TYPE_CHECKING, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from lib.utils import get_logger
 
@@ -52,6 +52,41 @@ def direction_vector(direction: Direction) -> tuple[float, float]:
     """Unit (dx, dy) displacement for a compass direction in tank-local coords."""
     return _DIRECTION_VECTORS[Direction(direction)]
 
+# Alternate spellings the LLM might emit, mapped to the canonical member name.
+# These are *fallbacks only*: they are never advertised to the LLM (the JSON
+# schema lists just the six canonical values), but are accepted so a slightly
+# off response still parses. Matching is case-insensitive and ignores spaces,
+# hyphens and underscores, so "NW", "north-west" and "north west" all work.
+_DIRECTION_ALIASES: dict[str, str] = {
+    "n": "north",
+    "ne": "northeast",
+    "se": "southeast",
+    "s": "south",
+    "sw": "southwest",
+    "nw": "northwest",
+    "north": "north",
+    "northeast": "northeast",
+    "southeast": "southeast",
+    "south": "south",
+    "southwest": "southwest",
+    "northwest": "northwest",
+}
+
+def normalize_direction(value: object) -> Direction:
+    """Coerce a direction (any spelling/case) to its canonical ``Direction``.
+
+    Raises ``ValueError`` if the value does not map to a known compass point.
+    """
+    if isinstance(value, Direction):
+        return value
+    if not isinstance(value, str):
+        raise ValueError(f"direction must be a string, got {type(value).__name__}")
+    key = value.strip().lower().replace(" ", "").replace("-", "").replace("_", "")
+    name = _DIRECTION_ALIASES.get(key)
+    if name is None:
+        raise ValueError(f"unknown direction: {value!r}")
+    return Direction[name]
+
 class PetAction(BaseModel, use_enum_values=True):
     thought: str = Field(description="The thought process of the pet.")
     # action: Action = Field(description="The action to take.")
@@ -61,6 +96,14 @@ class PetAction(BaseModel, use_enum_values=True):
     distance: int = Field(
         description="How far to swim, in pixels, toward the chosen direction."
     )
+
+    @field_validator("direction", mode="before")
+    @classmethod
+    def _coerce_direction(cls, value: object) -> Direction:
+        # Accept alternate spellings (e.g. "NW", "north-west") as fallbacks.
+        # Runs before enum validation; the schema still only lists the six
+        # canonical values, so the LLM never sees the aliases.
+        return normalize_direction(value)
 
     def get_thought(self):
         try:
