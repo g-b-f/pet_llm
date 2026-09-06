@@ -37,23 +37,28 @@ class TestGetLogger:
         with pytest.raises(ValueError, match="Invalid log level"):
             get_logger("test_bad_level", "NOTALEVEL")
 
-    @pytest.mark.skip
     def test_handlers_cleared_on_recall(self):
         logger1 = get_logger("test_recall")
         handler_count = len(logger1.handlers)
         logger2 = get_logger("test_recall")
         assert len(logger2.handlers) == handler_count
 
-    @pytest.mark.skip
     def test_child_loggers_use_parent_file(self, tmp_path: Path):
-        tmp_log1 = tmp_path/ "log1.txt"
-        tmp_log2 = tmp_path/ "log2.txt"
-        tmp_log3 = tmp_path/ "log3.txt"
+        tmp_log1 = tmp_path / "log1.txt"
+        tmp_log2 = tmp_path / "log2.txt"
+        tmp_log3 = tmp_path / "log3.txt"
 
         logger_child1 = get_logger("lib.some_name1", log_file=tmp_log1)
-        logger_parent = get_logger("__main__", log_file = tmp_log2)
-        logger_child2 = get_logger("lib.some_name2", log_file = tmp_log3)
-        
-        # TODO: complete this
-        raise
+        logger_parent = get_logger("__main__", log_file=tmp_log2)
+        logger_child2 = get_logger("lib.some_name2", log_file=tmp_log3)
+
+        # The "__main__" logger writes to its own file.
+        assert logger_parent.handlers[0].baseFilename == str(tmp_log2)
+
+        # Creating "__main__" reassigns every existing lib.* logger to the
+        # parent's file.
+        assert logger_child1.handlers[0].baseFilename == str(tmp_log2)
+
+        # A lib.* logger created after "__main__" keeps its own file.
+        assert logger_child2.handlers[0].baseFilename == str(tmp_log3)
 

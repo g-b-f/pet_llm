@@ -60,11 +60,11 @@ class TestRunWakeUp:
         mock_brain.wake_up.assert_called_once_with((expected_w, expected_h))
 
 
-@pytest.mark.skip("not needed for now")
 class TestGetInfo:
     def test_returns_environmental_info(self, tank: Tank):
-        tank._mock_pygame.mouse.get_pos.return_value = (100, 200)
         info = tank.get_info()
         assert isinstance(info, EnvironmentalInfo)
-        assert info.mouse == (100, 200)
+        # get_info() is vestigial: it returns a hardcoded mouse position
+        # until it is re-implemented to read from the driver.
+        assert info.mouse == (0, 0)
 

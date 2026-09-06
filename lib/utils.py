@@ -50,6 +50,9 @@ def get_logger(
                     logger_obj.handlers = [handler]
 
     logger = logging.getLogger(name)
+    # Clear existing handlers so repeated calls don't stack them
+    for existing in list(logger.handlers):
+        logger.removeHandler(existing)
     logger.setLevel(level_int)
     logger.addHandler(handler)
 
