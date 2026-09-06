@@ -11,13 +11,16 @@ if TYPE_CHECKING:
 
 logger = get_logger(__name__)
 
+
 class EnvironmentalInfo(BaseModel):
-    mouse: tuple[int,int] = Field(description="the location of the user's mouse")
+    mouse: tuple[int, int] = Field(description="the location of the user's mouse")
+
 
 class Action(Enum):
     move_to = "move_to"
     idle = "idle"
     swim_fast = "swim_fast"
+
 
 class PetAction(BaseModel, use_enum_values=True):
     thought: str = Field(description="The thought process of the pet.")
@@ -38,21 +41,23 @@ class Role(Enum):
     system = "system"
     assistant = "assistant"
 
+
 class RoleContent(BaseModel, use_enum_values=True):
     role: Role
     content: str
 
     @classmethod
-    def user(cls, content:str):
+    def user(cls, content: str):
         return cls(role=Role.user, content=content)
 
     @classmethod
-    def system(cls, content:str):
+    def system(cls, content: str):
         return cls(role=Role.system, content=content)
 
     @classmethod
-    def assistant(cls, content:str):
+    def assistant(cls, content: str):
         return cls(role=Role.assistant, content=content)
+
 
 class MessageChoice(BaseModel):
     index: int
@@ -60,10 +65,12 @@ class MessageChoice(BaseModel):
     logprobs: Optional[dict]
     finish_reason: str
 
+
 class Usage(BaseModel):
     prompt_tokens: int
     completion_tokens: int
     total_tokens: int
+
 
 class ChatCompletionResponse(BaseModel):
     id: str
@@ -79,8 +86,10 @@ class ChatCompletionResponse(BaseModel):
     def get_action(self):
         return PetAction(**json.loads(self.get_message().content))
 
+
 class RenderInfo(BaseModel):
     """Stuff to render"""
+
     current_x: float
     current_y: float
     target_x: float
@@ -93,12 +102,12 @@ class RenderInfo(BaseModel):
     @classmethod
     def from_brain(cls, brain: "Brain"):
         return cls(
-            current_x= brain.current_x,
-            current_y= brain.current_y,
-            target_x= brain.target_x,
-            target_y= brain.target_y,
-            current_thought= brain.current_thought,
-            is_thinking= brain.is_thinking,
-            has_started_thinking = brain.current_thought != brain.config.thoughts.initial_thought,
-            debug_info = brain.debug_info
+            current_x=brain.current_x,
+            current_y=brain.current_y,
+            target_x=brain.target_x,
+            target_y=brain.target_y,
+            current_thought=brain.current_thought,
+            is_thinking=brain.is_thinking,
+            has_started_thinking=brain.current_thought != brain.config.thoughts.initial_thought,
+            debug_info=brain.debug_info,
         )

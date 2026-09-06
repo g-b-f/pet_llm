@@ -20,7 +20,8 @@ from lib.types.other import (
 from lib.types.report import BrainReport
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "debug") 
+logger = get_logger(__name__, "debug")
+
 
 class Brain:
     """Manages pet state and background inference using llama_cpp.
@@ -41,7 +42,7 @@ class Brain:
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
         self.debug_info = {}
 
-    def wake_up(self, bounds:tuple[int,int]):
+    def wake_up(self, bounds: tuple[int, int]):
         self.x_bounds, self.y_bounds = bounds
 
         self.current_x = float(self.x_bounds // 2)
@@ -89,18 +90,15 @@ class Brain:
             self.current_x += (delta_x / distance) * self.PET_SPEED
             self.current_y += (delta_y / distance) * self.PET_SPEED
         else:
-            self.request_decision_async(
-                int(self.current_x),
-                int(self.current_y)
-            )
+            self.request_decision_async(int(self.current_x), int(self.current_y))
 
         self.debug_info = {
-            "current": (round(self.current_x,1), round(self.current_y,1)),
-            "target": (round(self.target_x,1), round(self.target_y,1)),
+            "current": (round(self.current_x, 1), round(self.current_y, 1)),
+            "target": (round(self.target_x, 1), round(self.target_y, 1)),
             "iteration": self.iterations,
             "temperature": self.config.params.temperature,
             # "seed": self.config.params.seed
-            }
+        }
 
     def _fallback(self):
         fallback_decision = PetAction(
@@ -111,7 +109,7 @@ class Brain:
         )
         self.result_queue.put(fallback_decision)
 
-    def is_valid_chars(self, thought:str) -> bool:
+    def is_valid_chars(self, thought: str) -> bool:
         thought_chars = set(thought)
         valid_chars = string.ascii_letters + " ,.?!'"
         valid_chars_set = set(valid_chars)
@@ -137,7 +135,7 @@ class Brain:
         )
         worker_thread.start()
 
-    def target_out_of_bounds(self, action:PetAction) -> bool:
+    def target_out_of_bounds(self, action: PetAction) -> bool:
         target_x = action.target_x
         target_y = action.target_y
         if target_x > self.x_bounds or target_x < 0:
@@ -147,7 +145,7 @@ class Brain:
     def _generate_decision(self, current_x: int, current_y: int):
         system_prompt = self.config.thoughts.system_prompt.format(
             self.x_bounds, self.y_bounds, current_x, current_y
-            )
+        )
         if self.current_thought == self.config.thoughts.initial_thought:
             prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
             logger.debug(f"system prompt hash: {prompt_hash}")
@@ -163,11 +161,11 @@ class Brain:
             seed=self.config.params.seed,
             response_format={
                 "type": "json_object",
-                "schema": PetAction.model_json_schema(), #type:ignore
+                "schema": PetAction.model_json_schema(),  # type:ignore
             },
         )
         assert not isinstance(response, Iterator)
-        parsed_response = ChatCompletionResponse(**response) #type:ignore[arg-type]
+        parsed_response = ChatCompletionResponse(**response)  # type:ignore[arg-type]
         message = parsed_response.get_message()
 
         try:
@@ -178,10 +176,10 @@ class Brain:
                 logger.warning(f"malformed JSON: {message.content!r}")
             except:
                 logger.warning("malformed JSON: couldn't print")
-                
+
             self._fallback()
             self.is_thinking = False
-            self.iterations +=1
+            self.iterations += 1
             return
 
         thought = action.get_thought()
@@ -189,17 +187,17 @@ class Brain:
         self.memory += message
 
         if not self.is_valid_chars(thought):
-            self.report.non_alphanumeric +=1
+            self.report.non_alphanumeric += 1
         if not thought.strip():
-            self.report.empty_thoughts +=1
-        
+            self.report.empty_thoughts += 1
+
         if self.target_out_of_bounds(action):
             logger.info(f"tried to go to {action.target_x, action.target_y}")
             oob = self.config.thoughts.out_of_bounds_message
             if oob:
                 self.memory += RoleContent.system(oob.format(self.x_bounds, self.y_bounds))
-            self.current_oob_count +=1
-            self.report.out_of_bounds_attempts +=1
+            self.current_oob_count += 1
+            self.report.out_of_bounds_attempts += 1
 
             if self.current_oob_count >= self.MAX_OOB_COUNT:
                 logger.info("attempted out-of-bounds too much, clearing memory")
@@ -211,15 +209,15 @@ class Brain:
             self.current_oob_count = 0
 
         self.iterations += 1
-        self.report.iterations +=1
+        self.report.iterations += 1
 
         try:
             self.memory.supervise()
         except memory.ThoughtLoopError as e:
-            self.report.thought_loops +=1
+            self.report.thought_loops += 1
             logger.info(
                 f"thought loop detected after {self.iterations} iterations, clearing memory"
-                )
+            )
             logger.info(f"thought was: '{e.last_thought}'")
             # self.memory.append(RoleContent.system("you'd like to do something else now"))
             self.memory.clear()

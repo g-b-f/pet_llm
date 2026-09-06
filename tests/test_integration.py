@@ -23,7 +23,6 @@ from lib.types.report import OutputReport
 RUNTIME_SECONDS = 2
 
 
-
 def _make_llm_response(content: str) -> CreateChatCompletionResponse:
     return {
         "id": "chatcmpl-e2e",
@@ -61,9 +60,7 @@ def mock_llm():
     """Mock LLM returning a valid, in-bounds decision for every call."""
     action = PetAction(thought="swimming along", target_x=100, target_y=100)
     llm = MagicMock()
-    llm.create_chat_completion.return_value = _make_llm_response(
-        action.model_dump_json()
-    )
+    llm.create_chat_completion.return_value = _make_llm_response(action.model_dump_json())
     return llm
 
 
@@ -105,9 +102,7 @@ class TestEndToEnd:
 
         def _varying_response(*_args, **_kwargs):
             action = PetAction(
-                thought=f"swimming along {next(counter)}",
-                target_x=100,
-                target_y=100,
+                thought=f"swimming along {next(counter)}", target_x=100, target_y=100
             )
             return _make_llm_response(action.model_dump_json())
 
@@ -139,9 +134,7 @@ class TestEndToEnd:
     def test_malformed_llm_output_uses_fallback(
         self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
     ):
-        mock_llm.create_chat_completion.return_value = _make_llm_response(
-            "not valid json {"
-        )
+        mock_llm.create_chat_completion.return_value = _make_llm_response("not valid json {")
 
         with patch("lib.brain.Llama", return_value=mock_llm):
             brain = Brain(model_path, config.brain)

@@ -26,8 +26,6 @@ def tank_config() -> TankConfig:
     return TankConfig.model_construct()
 
 
-
-
 @pytest.fixture
 def tank(mock_brain: MagicMock, tank_config: TankConfig, mocker: MagicMock):
     mocker.running = False
@@ -67,4 +65,3 @@ class TestGetInfo:
         # get_info() is vestigial: it returns a hardcoded mouse position
         # until it is re-implemented to read from the driver.
         assert info.mouse == (0, 0)
-

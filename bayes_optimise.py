@@ -8,11 +8,7 @@ from lib.brain import Brain
 from lib.drivers import DummyDriver, PyGameDriver
 from lib.optimisation_helpers import append_report, storage, suggest_vals
 from lib.tank import Tank
-from lib.types.config import (
-    LossFunctionWeights,
-    SimulationConfig,
-    TunerConfig,
-)
+from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
 from lib.types.report import StudyReport
 from lib.utils import get_logger, loss_function
 from models.download import Model, get_model
@@ -23,16 +19,16 @@ N_SEEDS = 3
 
 logger = get_logger(__name__, "debug", log_file="log.txt")
 
-class Optimiser:
 
+class Optimiser:
     comments = "Testing out different models"
 
     loss_function_weights = LossFunctionWeights(
-    thought_loop=10.0,
-    empty_thought=10.0,
-    out_of_bounds=10.0,
-    malformed_json=100.0,
-    invalid_chars=10.0,
+        thought_loop=10.0,
+        empty_thought=10.0,
+        out_of_bounds=10.0,
+        malformed_json=100.0,
+        invalid_chars=10.0,
     )
 
     tuner_config = TunerConfig(
@@ -42,8 +38,9 @@ class Optimiser:
         repeat_penalty=(0.2, 2.5),
     )
 
-
-    def __init__(self, model: Model, version:int, config: SimulationConfig, comments:str,* , visual:bool):
+    def __init__(
+        self, model: Model, version: int, config: SimulationConfig, comments: str, *, visual: bool
+    ):
         self.config = config
         self.model = model
         self.comments = comments
@@ -97,28 +94,28 @@ class Optimiser:
         logger.info(f"eta: {humanize.naturaltime(eta, future=True)}")
 
         num_trials = 0
-        total_trials = N_TRIALS*N_SEEDS
+        total_trials = N_TRIALS * N_SEEDS
 
         if self.report_path.exists():
             data = json.loads(self.report_path.read_text())
             num_trials = len(StudyReport(**data).trials)
-            logger.info(f"{num_trials=}, {total_trials=}, {N_TRIALS - round(num_trials // N_SEEDS)=}")
-            if len(StudyReport(**data).trials) >= N_TRIALS*N_SEEDS:
+            logger.info(
+                f"{num_trials=}, {total_trials=}, {N_TRIALS - round(num_trials // N_SEEDS)=}"
+            )
+            if len(StudyReport(**data).trials) >= N_TRIALS * N_SEEDS:
                 logger.info(f"enough trials for {self.report_path.stem}, exiting")
                 return
             del data
 
         study = optuna.create_study(
-            study_name=self.study_name,
-            storage=storage,
-            direction="minimize",
-            load_if_exists=True
+            study_name=self.study_name, storage=storage, direction="minimize", load_if_exists=True
         )
         study.optimize(
             self.evaluate_simulation,
             n_trials=N_TRIALS - num_trials // N_SEEDS,
             show_progress_bar=True,
-            catch=(RuntimeError))
+            catch=(RuntimeError),
+        )
 
         logger.info(f"Best parameters: {study.best_params}")
         logger.info(f"Best loss: {study.best_value}")
@@ -133,14 +130,14 @@ if __name__ == "__main__":
     print(f"eta: {humanize.naturaltime(eta, future=True)}")
 
     for version_increment, model in enumerate(options):
-        version_increment = 0 # keep same version for now
+        version_increment = 0  # keep same version for now
 
         opt = Optimiser(
             model,
             original_version + version_increment,
             SimulationConfig.model_construct(),
             "Testing out different models, with dummy driver",
-            visual=False
+            visual=False,
         )
 
         logger.info(f"starting for {model.value}")

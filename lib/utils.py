@@ -24,7 +24,7 @@ def namer(default_name: str) -> str:
 
 
 def get_logger(
-    name: str, level=DEFAULT_LOG_LEVEL, log_file: str|Path="log.txt"
+    name: str, level=DEFAULT_LOG_LEVEL, log_file: str | Path = "log.txt"
 ) -> logging.Logger:
     if level.upper() not in logging._nameToLevel:
         raise ValueError(f"Invalid log level: {level}")
@@ -46,7 +46,7 @@ def get_logger(
     if name == "__main__":
         for logger_name, logger_obj in logging.root.manager.loggerDict.items():
             if logger_name.startswith("lib") and isinstance(logger_obj, logging.Logger):
-                    logger_obj.handlers = [handler]
+                logger_obj.handlers = [handler]
 
     logger = logging.getLogger(name)
     # Clear existing handlers so repeated calls don't stack them
@@ -58,7 +58,7 @@ def get_logger(
     return logger
 
 
-def frange(start: float, stop: float, step: float, multiplier = 100) -> Iterator[float]:
+def frange(start: float, stop: float, step: float, multiplier=100) -> Iterator[float]:
     """Floating-point range generator"""
     current = start * multiplier
     while current < stop * multiplier:

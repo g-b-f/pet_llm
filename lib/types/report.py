@@ -37,7 +37,7 @@ class BrainReport(BaseModel):
             if report.actual_runtime is not None
         ]
 
-        def avg(item:str):
+        def avg(item: str):
             return round(sum(getattr(report, item) for report in reports) / total_reports)
 
         return cls(
@@ -48,20 +48,24 @@ class BrainReport(BaseModel):
             malformed_json=avg("malformed_json"),
             non_alphanumeric=avg("non_alphanumeric"),
             actual_runtime=(sum(valid_runtimes) / len(valid_runtimes) if valid_runtimes else None)
-            )
-    
+        )
+
+
 class OutputReport(BaseModel):
     config: SimulationConfig
     report: BrainReport
+
 
 class Trial(BaseModel):
     params: ParamsConfig
     report: BrainReport
 
+
 class TrialCollection(BaseModel):
     params: ParamsConfig
-    seeds: list[int|None]
+    seeds: list[int | None]
     reports: list[BrainReport]
+
 
 class StudyReport(BaseModel):
     comments: str = Field("")
@@ -80,8 +84,7 @@ class StudyReportCollection(BaseModel):
 
     @classmethod
     def collect(cls, data: StudyReport) -> "StudyReportCollection":
-        """Converts a StudyReport into a StudyReportCollection by grouping trials with matching parameters.
-        """
+        """Converts a StudyReport into a StudyReportCollection by grouping trials with matching parameters."""
         grouped_trials: dict[str, TrialCollection] = {}
 
         for trial in data.trials:
@@ -90,9 +93,7 @@ class StudyReportCollection(BaseModel):
 
             if group_key not in grouped_trials:
                 grouped_trials[group_key] = TrialCollection(
-                    params=normalized_params,
-                    seeds=[],
-                    reports=[],
+                    params=normalized_params, seeds=[], reports=[]
                 )
 
             grouped_trials[group_key].seeds.append(trial.params.seed)

@@ -8,8 +8,8 @@ from lib.types.other import RenderInfo
 
 DEBUG = True
 
-class PyGameDriver(DriverBase):
 
+class PyGameDriver(DriverBase):
     # Layout (pixels)
     TEXT_BOX_HEIGHT = 100
     TEXT_BOX_MARGIN = 10
@@ -17,7 +17,7 @@ class PyGameDriver(DriverBase):
     STATUS_LOC = (20, 10)
     THOUGHT_LOC = (20, 30)
     DEBUG_LOC = (20, 110)
-    
+
     # Colors (R, G, B)
     BACKGROUND_COLOR = (18, 26, 38)
     TEXT_BOX_COLOR = (10, 15, 25)
@@ -37,10 +37,7 @@ class PyGameDriver(DriverBase):
     FONT_SIZE = 15
     FPS = 60
 
-    
-
-    def __init__(self, runtime:int|None, bounds: tuple[int, int]):
-
+    def __init__(self, runtime: int | None, bounds: tuple[int, int]):
         self.bounds = bounds
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
@@ -54,16 +51,15 @@ class PyGameDriver(DriverBase):
 
         super().__init__(end_time)
 
-    
     def _blit_text(
-            self,
-            surface:pygame.Surface,
-            text:str,
-            pos:tuple[int,int],
-            font:pygame.font.Font,
-            color: tuple[int,int,int] | pygame.Color
-            ):
-        space_width = font.size(' ')[0]
+        self,
+        surface: pygame.Surface,
+        text: str,
+        pos: tuple[int, int],
+        font: pygame.font.Font,
+        color: tuple[int, int, int] | pygame.Color
+    ):
+        space_width = font.size(" ")[0]
         max_width, max_height = surface.get_size()
         x, y = pos
         max_chars = (max_width - x) // space_width
@@ -75,7 +71,6 @@ class PyGameDriver(DriverBase):
             surface.blit(font.render(line, antialias=True, color=color), (x, y))
             y += line_height
 
-
     def render(self, info: RenderInfo):
         self.screen.fill(self.BACKGROUND_COLOR)
 
@@ -85,8 +80,16 @@ class PyGameDriver(DriverBase):
         target_screen_x = int(info.target_x) + offset_x
         target_screen_y = int(info.target_y) + offset_y
 
-        pygame.draw.circle(self.screen, self.PET_COLOR, (pet_screen_x, pet_screen_y), self.PET_RADIUS)
-        pygame.draw.circle(self.screen, self.TARGET_COLOR, (target_screen_x, target_screen_y), self.TARGET_RADIUS, self.TARGET_OUTLINE_WIDTH)
+        pygame.draw.circle(
+            self.screen, self.PET_COLOR, (pet_screen_x, pet_screen_y), self.PET_RADIUS
+        )
+        pygame.draw.circle(
+            self.screen,
+            self.TARGET_COLOR,
+            (target_screen_x, target_screen_y),
+            self.TARGET_RADIUS,
+            self.TARGET_OUTLINE_WIDTH,
+        )
 
         text_box_rect = pygame.Rect(
             self.TEXT_BOX_MARGIN,
@@ -98,20 +101,25 @@ class PyGameDriver(DriverBase):
 
         if info.has_started_thinking:
             status_label = "Status: Thinking..." if info.is_thinking else "Status: Swimming"
-            status_color = self.THINKING_STATUS_COLOR if info.is_thinking else self.SWIMMING_STATUS_COLOR
+            status_color = (
+                self.THINKING_STATUS_COLOR if info.is_thinking else self.SWIMMING_STATUS_COLOR
+            )
             status_surface = self.font.render(status_label, antialias=True, color=status_color)
             self.screen.blit(status_surface, self.STATUS_LOC)
 
         self._blit_text(
-            self.screen, f"Thought: {info.current_thought}",
-            self.THOUGHT_LOC, self.font, self.THOUGHT_TEXT_COLOR
-            )
+            self.screen,
+            f"Thought: {info.current_thought}",
+            self.THOUGHT_LOC,
+            self.font,
+            self.THOUGHT_TEXT_COLOR,
+        )
 
         if DEBUG:
             brain_debug = ""
             for k, v in info.debug_info.items():
                 if isinstance(v, float):
-                    v = round(v,2)
+                    v = round(v, 2)
                 if brain_debug:
                     brain_debug += "  "
                 brain_debug += f"{k}:{v}"

@@ -7,6 +7,7 @@ from lib.types.other import RenderInfo
 
 BOUNDS = (100, 100)
 
+
 @pytest.fixture
 def render_info():
     return RenderInfo(
@@ -18,8 +19,8 @@ def render_info():
         is_thinking=True,
         has_started_thinking=True,
         debug_info={}
-        )
-    
+    )
+
 
 @pytest.fixture
 def driver():
@@ -38,7 +39,10 @@ def driver():
 
 class TestTankInit:
     def test_bounds_offset(self, driver: PyGameDriver):
-        assert driver.bounds_offset == (PyGameDriver.TANK_PADDING_X, PyGameDriver.TEXT_BOX_HEIGHT // 2)
+        assert driver.bounds_offset == (
+            PyGameDriver.TANK_PADDING_X,
+            PyGameDriver.TEXT_BOX_HEIGHT // 2
+        )
 
     def test_pygame_init_called(self, driver: PyGameDriver):
         driver._mock_pygame.init.assert_called_once()
@@ -63,14 +67,18 @@ class TestRenderScene:
         driver.render(render_info)
         assert driver._mock_pygame.draw.circle.call_count >= 2
 
-    def test_status_shown_when_started_thinking(self, driver: PyGameDriver, render_info: RenderInfo):
+    def test_status_shown_when_started_thinking(
+        self, driver: PyGameDriver, render_info: RenderInfo
+    ):
         render_info.has_started_thinking = True
         driver.render(render_info)
         render_calls = driver.font.render.call_args_list
         status_calls = [call for call in render_calls if "Status:" in str(call)]
         assert len(status_calls) > 0
 
-    def test_status_hidden_when_not_started_thinking(self, driver: PyGameDriver, render_info: RenderInfo):
+    def test_status_hidden_when_not_started_thinking(
+        self, driver: PyGameDriver, render_info: RenderInfo
+    ):
         render_info.has_started_thinking = False
         driver.render(render_info)
         render_calls = driver.font.render.call_args_list

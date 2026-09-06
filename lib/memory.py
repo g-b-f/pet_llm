@@ -7,15 +7,18 @@ from lib.types.config import MemoryConfig
 from lib.types.other import PetAction, RoleContent
 from lib.utils import get_logger
 
-logger = get_logger(__name__, "info", log_file="log_bayes.txt") 
+logger = get_logger(__name__, "info", log_file="log_bayes.txt")
+
 
 class MemoryHandlerError(Exception):
     pass
+
 
 class ThoughtLoopError(MemoryHandlerError):
     def __init__(self, last_thought, *args) -> None:
         self.last_thought = last_thought
         super().__init__(*args)
+
 
 class Memory:
     def __init__(self, config: MemoryConfig):
@@ -23,13 +26,13 @@ class Memory:
         self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
         self.thought_loops = 0
 
-    def get_messages(self, system_prompt:str) -> list[ChatCompletionRequestMessage]:
+    def get_messages(self, system_prompt: str) -> list[ChatCompletionRequestMessage]:
         sys_prompt = RoleContent.system(system_prompt)
         pydantic_messages = [sys_prompt] + list(self._memory_queue)
         messages = [msg.model_dump() for msg in pydantic_messages]
-        return messages # type:ignore[report-return-type]
+        return messages  # type:ignore[report-return-type]
 
-    def get_action(self, index:int) -> PetAction|None:
+    def get_action(self, index: int) -> PetAction | None:
         memory = self._memory_queue[index].content
         try:
             return PetAction(**json.loads(memory))
@@ -40,7 +43,7 @@ class Memory:
         if not self.is_full:
             logger.debug("memory not full, returning")
             return
-        
+
         first_action = self.get_action(0)
         last_action = self.get_action(-1)
 
@@ -62,11 +65,11 @@ class Memory:
     @property
     def is_full(self) -> bool:
         return self.length == self.config.max_length
-    
+
     def clear(self):
         self._memory_queue.clear()
 
-    def __add__(self, message:RoleContent) -> "Memory":
+    def __add__(self, message: RoleContent) -> "Memory":
         self._memory_queue.append(message)
         return self
 

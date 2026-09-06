@@ -120,9 +120,7 @@ class TestScaleLora:
 
 
 class TestClearLora:
-    def test_clear(
-        self, llm: DynamicAdapterLLM, adapter_path: Path, mock_llama_cpp: MagicMock
-    ):
+    def test_clear(self, llm: DynamicAdapterLLM, adapter_path: Path, mock_llama_cpp: MagicMock):
         llm.apply_lora_from_path(adapter_path)
         llm.clear_lora()
         assert not llm.has_adapter
@@ -130,9 +128,7 @@ class TestClearLora:
         assert llm.adapter_scale == 1.0
         mock_llama_cpp.llama_adapter_lora_free.assert_called_once()
 
-    def test_clear_without_adapter_is_noop(
-        self, llm: DynamicAdapterLLM, mock_llama_cpp: MagicMock
-    ):
+    def test_clear_without_adapter_is_noop(self, llm: DynamicAdapterLLM, mock_llama_cpp: MagicMock):
         llm.clear_lora()
         mock_llama_cpp.llama_set_adapters_lora.assert_not_called()
 
@@ -147,13 +143,9 @@ class TestClearLora:
 
 
 class TestInference:
-    def test_create_chat_completion_delegates(
-        self, llm: DynamicAdapterLLM, mock_llama: MagicMock
-    ):
+    def test_create_chat_completion_delegates(self, llm: DynamicAdapterLLM, mock_llama: MagicMock):
         mock_llama.create_chat_completion.return_value = {"ok": True}
-        result = llm.create_chat_completion(
-            [{"role": "user", "content": "hi"}], temperature=0.5
-        )
+        result = llm.create_chat_completion([{"role": "user", "content": "hi"}], temperature=0.5)
         assert result == {"ok": True}
         mock_llama.create_chat_completion.assert_called_once_with(
             [{"role": "user", "content": "hi"}], temperature=0.5

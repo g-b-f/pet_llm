@@ -14,7 +14,7 @@ if __name__ == "__main__":
     config.tank.runtime = RUNTIME
 
     for temperature in frange(1.5, 2.5, 0.3):
-        for seed in range(1,6):
+        for seed in range(1, 6):
             logger.info(f"{temperature=}, {seed=}")
 
             config.brain.params.temperature = temperature
