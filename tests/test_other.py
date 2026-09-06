@@ -9,9 +9,11 @@ class TestNormalizeDirection:
         [
             ("north", Direction.north),
             ("northeast", Direction.northeast),
+            ("east", Direction.east),
             ("southeast", Direction.southeast),
             ("south", Direction.south),
             ("southwest", Direction.southwest),
+            ("west", Direction.west),
             ("northwest", Direction.northwest),
         ],
     )
@@ -35,6 +37,10 @@ class TestNormalizeDirection:
             ("s_w", Direction.southwest),
             ("n", Direction.north),
             ("S", Direction.south),
+            ("e", Direction.east),
+            ("E", Direction.east),
+            ("w", Direction.west),
+            ("W", Direction.west),
             ("  northwest  ", Direction.northwest),
         ],
     )
@@ -44,7 +50,7 @@ class TestNormalizeDirection:
     def test_passthrough_enum(self):
         assert normalize_direction(Direction.north) is Direction.north
 
-    @pytest.mark.parametrize("raw", ["up", "east", "west", "northwestt", "", "diagonal"])
+    @pytest.mark.parametrize("raw", ["up", "northwestt", "", "diagonal"])
     def test_unknown_raises(self, raw: str):
         with pytest.raises(ValueError, match="unknown direction"):
             normalize_direction(raw)
@@ -68,6 +74,8 @@ class TestPetActionDirection:
             ("NorthWest", "northwest"),
             ("ne", "northeast"),
             ("s_w", "southwest"),
+            ("E", "east"),
+            ("W", "west"),
         ],
     )
     def test_alternate_spellings_accepted(self, raw: str, expected: str):
@@ -75,7 +83,7 @@ class TestPetActionDirection:
         # use_enum_values stores the canonical string value
         assert action.direction == expected
 
-    @pytest.mark.parametrize("raw", ["up", "east", "west", ""])
+    @pytest.mark.parametrize("raw", ["up", "northwestt", ""])
     def test_invalid_rejected(self, raw: str):
         with pytest.raises(ValueError, match="unknown direction"):
             PetAction(thought="t", direction=raw, distance=5)

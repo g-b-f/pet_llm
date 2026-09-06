@@ -66,6 +66,43 @@ def mock_llm():
     return llm
 
 
+def _chatty_llm() -> MagicMock:
+    """A mock LLM that cycles through distinct thoughts and all 8 directions.
+
+    Cycling the directions makes the pet trace a closed path (net displacement
+    over a full cycle is zero), so it never reaches the tank wall and the
+    out-of-bounds handler never clears memory. Distinct thoughts keep the
+    thought-loop / similar-message supervision from firing. This makes the
+    memory-accumulation assertion deterministic regardless of wall-clock timing.
+    """
+    directions = list(Direction)
+    thoughts = [
+        "chasing a bubble",
+        "drifting by the glass",
+        "darting to the light",
+        "circling the tank",
+        "napping on the gravel",
+        "exploring the corner",
+        "resting in the current",
+        "watching the owner",
+    ]
+    state = {"n": 0}
+
+    def _respond(*args, **kwargs):
+        i = state["n"]
+        state["n"] += 1
+        action = PetAction(
+            thought=thoughts[i % len(thoughts)],
+            direction=directions[i % len(directions)],
+            distance=20,
+        )
+        return _make_llm_response(action.model_dump_json())
+
+    llm = MagicMock()
+    llm.create_chat_completion.side_effect = _respond
+    return llm
+
+
 class TestEndToEnd:
     def test_simulation_wakes_brain_and_produces_output_report(
         self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
@@ -96,9 +133,9 @@ class TestEndToEnd:
         assert elapsed >= RUNTIME_SECONDS - 0.5
 
     def test_simulation_accumulates_llm_messages_in_memory(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, model_path: Path
     ):
-        with patch("lib.brain.Llama", return_value=mock_llm):
+        with patch("lib.brain.Llama", return_value=_chatty_llm()):
             brain = Brain(model_path, config.brain)
             driver = DummyDriver(config.tank.runtime)
             tank = Tank(brain, config.tank, driver)

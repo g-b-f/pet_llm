@@ -20,16 +20,18 @@ class Action(Enum):
     swim_fast = "swim_fast"
 
 class Direction(StrEnum):
-    """A 6-point compass the pet can swim toward.
+    """An 8-point compass the pet can swim toward.
 
     Screen coordinates grow downward, so "north" is up (negative y) and
     "south" is down (positive y).
     """
     north = "north"
     northeast = "northeast"
+    east = "east"
     southeast = "southeast"
     south = "south"
     southwest = "southwest"
+    west = "west"
     northwest = "northwest"
 
     @property
@@ -42,9 +44,11 @@ class Direction(StrEnum):
 _DIRECTION_VECTORS: dict[Direction, tuple[float, float]] = {
     Direction.north: (0.0, -1.0),
     Direction.northeast: (0.7071, -0.7071),
+    Direction.east: (1.0, 0.0),
     Direction.southeast: (0.7071, 0.7071),
     Direction.south: (0.0, 1.0),
     Direction.southwest: (-0.7071, 0.7071),
+    Direction.west: (-1.0, 0.0),
     Direction.northwest: (-0.7071, -0.7071),
 }
 
@@ -54,21 +58,25 @@ def direction_vector(direction: Direction) -> tuple[float, float]:
 
 # Alternate spellings the LLM might emit, mapped to the canonical member name.
 # These are *fallbacks only*: they are never advertised to the LLM (the JSON
-# schema lists just the six canonical values), but are accepted so a slightly
+# schema lists just the eight canonical values), but are accepted so a slightly
 # off response still parses. Matching is case-insensitive and ignores spaces,
 # hyphens and underscores, so "NW", "north-west" and "north west" all work.
 _DIRECTION_ALIASES: dict[str, str] = {
     "n": "north",
     "ne": "northeast",
+    "e": "east",
     "se": "southeast",
     "s": "south",
     "sw": "southwest",
+    "w": "west",
     "nw": "northwest",
     "north": "north",
     "northeast": "northeast",
+    "east": "east",
     "southeast": "southeast",
     "south": "south",
     "southwest": "southwest",
+    "west": "west",
     "northwest": "northwest",
 }
 
@@ -91,7 +99,7 @@ class PetAction(BaseModel, use_enum_values=True):
     thought: str = Field(description="The thought process of the pet.")
     # action: Action = Field(description="The action to take.")
     direction: Direction = Field(
-        description="The compass direction to swim toward: one of north, northeast, southeast, south, southwest, northwest."
+        description="The compass direction to swim toward: one of north, northeast, east, southeast, south, southwest, west, northwest."
     )
     distance: int = Field(
         description="How far to swim, in pixels, toward the chosen direction."
@@ -101,7 +109,7 @@ class PetAction(BaseModel, use_enum_values=True):
     @classmethod
     def _coerce_direction(cls, value: object) -> Direction:
         # Accept alternate spellings (e.g. "NW", "north-west") as fallbacks.
-        # Runs before enum validation; the schema still only lists the six
+        # Runs before enum validation; the schema still only lists the eight
         # canonical values, so the LLM never sees the aliases.
         return normalize_direction(value)
 
