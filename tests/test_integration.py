@@ -5,6 +5,7 @@ DummyDriver) and only mock the expensive LLM call, so the threading,
 queue, memory, and report machinery all run for real.
 """
 
+import itertools
 import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -96,9 +97,24 @@ class TestEndToEnd:
         assert elapsed >= RUNTIME_SECONDS - 0.5
 
     def test_simulation_accumulates_llm_messages_in_memory(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, model_path: Path
     ):
-        with patch("lib.brain.Llama", return_value=mock_llm):
+        # Return a distinct thought each call so the thought-loop detector
+        # never clears memory, letting it accumulate deterministically.
+        counter = itertools.count()
+
+        def _varying_response(*_args, **_kwargs):
+            action = PetAction(
+                thought=f"swimming along {next(counter)}",
+                target_x=100,
+                target_y=100,
+            )
+            return _make_llm_response(action.model_dump_json())
+
+        llm = MagicMock()
+        llm.create_chat_completion.side_effect = _varying_response
+
+        with patch("lib.brain.Llama", return_value=llm):
             brain = Brain(model_path, config.brain)
             driver = DummyDriver(config.tank.runtime)
             tank = Tank(brain, config.tank, driver)
