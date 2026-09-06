@@ -70,6 +70,8 @@ Model selection is hardcoded in [main.py](main.py): `get_model(Model.smollm2)`, 
 - Config models in tests: `BrainConfig.model_construct()` / `TankConfig.model_construct()` (skips building nested defaults).
 - Tests use `unittest.mock` directly (though `pytest-mock` is installed).
 - `Brain("fake/model/path.gguf")` constructs fine without a real model — loading is deferred to `wake_up`.
+- Mock surgically, to avoid expensive calls to `llama.cpp` et al, while still ensuring that the tests are representative of common usage
+
 
 ## Known Quirks (don't "fix" without checking)
 
