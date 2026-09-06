@@ -36,11 +36,7 @@ class Memory:
         except:
             return None
 
-    def supervise(self):
-        if not self.is_full:
-            logger.debug("memory not full, returning")
-            return
-        
+    def check_memory_loops(self):
         first_action = self.get_action(0)
         last_action = self.get_action(-1)
 
@@ -50,6 +46,13 @@ class Memory:
         if first_action.thought == last_action.thought:
             self.thought_loops += 1
             raise ThoughtLoopError(last_action.thought)
+
+    def supervise(self):
+        if not self.is_full:
+            logger.debug("memory not full, returning")
+            return
+
+        self.check_memory_loops()
 
     @property
     def length(self) -> int:
