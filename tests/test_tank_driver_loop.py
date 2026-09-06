@@ -28,7 +28,7 @@ class ScriptedDriver(DriverBase):
     RenderInfo snapshots it receives."""
 
     def __init__(self, n_frames: int):
-        super().__init__()
+        super().__init__(None)
         self.n_frames = n_frames
         self.received: list[RenderInfo] = []
         self.frames = 0
