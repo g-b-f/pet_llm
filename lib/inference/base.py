@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-from lib.types.other import RoleContent
 from lib.types.config import ParamsConfig
+from lib.types.other import RoleContent
 
 
 class InferenceBase(metaclass=ABCMeta):

@@ -1,31 +1,13 @@
+from pathlib import Path
 from typing import Iterator, cast
 
-from lib.inference import InferenceBase
-from lib.types.other import RoleContent
-from lib.types.config import ParamsConfig
-import json
-import queue
-import random
-import string
-import threading
-from hashlib import md5
-from pathlib import Path
-from typing import Iterator
-
 from llama_cpp import Llama
-
-from lib import memory
-from lib.types.config import BrainConfig
-from lib.types.other import (
-    ChatCompletionResponse,
-    EnvironmentalInfo,
-    PetAction,
-    RoleContent,
-)
 from llama_cpp.llama_types import ChatCompletionRequestMessage
 
-from lib.types.report import BrainReport
-from lib.utils import get_logger
+from lib.inference import InferenceBase
+from lib.types.config import ParamsConfig
+from lib.types.other import ChatCompletionResponse, PetAction, RoleContent
+
 
 class LlamaCppPython(InferenceBase):
     """Inference adapter that uses llama-cpp-python"""
@@ -52,7 +34,6 @@ class LlamaCppPython(InferenceBase):
 
         return parsed_response.get_message()
 
-
     def __init__(self, config: ParamsConfig, model_path: Path):
         self.config = config
         self.model_path = str(model_path.resolve())
@@ -60,5 +41,5 @@ class LlamaCppPython(InferenceBase):
             model_path=self.model_path,
             n_ctx=self.config.context_size,
             n_gpu_layers=-1,
-            verbose=False
+            verbose=False,
         )
