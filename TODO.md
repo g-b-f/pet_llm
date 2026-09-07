@@ -6,6 +6,24 @@ Make `target_x` and `target_y` reflect in the system prompt
 - now, `render()` in `PyGameDriver` doesn't have access to superclasses so can't move it
 - Need to make movement more deterministic
 
+Decouple inference
+
+- eg vLLM
+- make it work regardless of file
+    - gguf, safetensors, etc
+
+Tests
+
+- make the LLM say to move, check that the pygame driver moved
+
+Lazy load drivers
+
+- using `__lazy_modules__ = ["PyGameDriver"]` etc
+
+Make inter-class communication more lightweight
+
+- toggle between validation and not?
+
 ## Thought guiding
 
 - remove empty thoughts to prevent loops

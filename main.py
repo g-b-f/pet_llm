@@ -8,7 +8,7 @@ from lib.types.config import SimulationConfig
 from lib.utils import get_logger
 from models.download import Model, get_model
 
-model_path = get_model(Model.smollm2)
+model_path = get_model(Model.smollm3)
 logger = get_logger(__name__)
 
 

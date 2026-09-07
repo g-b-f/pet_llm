@@ -17,12 +17,12 @@ RUNTIME = 200
 N_TRIALS = 20
 N_SEEDS = 3
 
-logger = get_logger(__name__, "debug", log_file="log.txt")
+logger = get_logger(__name__, "info", log_file="log.txt")
 
 
 class Optimiser:
     comments = "Testing out different models"
-    n_jobs = 2
+    n_jobs = 1
 
     loss_function_weights = LossFunctionWeights(
         thought_loop=10.0,
@@ -130,7 +130,7 @@ class Optimiser:
 if __name__ == "__main__":
     original_version = 12
 
-    options = [Model.smollm3, Model.llama, Model.granite, Model.deepseek, Model.smollm3, Model.gemma]
+    options = [Model.smollm3, Model.smollm2, Model.llama, Model.granite, Model.deepseek, Model.gemma]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")

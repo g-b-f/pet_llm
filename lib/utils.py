@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from lib.types.report import BrainReport
 
 DEFAULT_LOG_LEVEL = "INFO"
-MAX_LOG_SIZE_BYTES = 1024 * 1024  # 1 MB
+MAX_LOG_SIZE_BYTES = 1024 * 1024 * 10 # 10 MB
 LOG_DIR = Path(__file__).parent.parent
 
 
