@@ -5,42 +5,22 @@ DummyDriver) and only mock the expensive LLM call, so the threading,
 queue, memory, and report machinery all run for real.
 """
 
-import itertools
 import time
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-from llama_cpp.llama_types import CreateChatCompletionResponse
 
+from tests.mocks import ScriptedInference, MockInference
 from lib.brain import Brain
 from lib.drivers import DummyDriver
-from lib.inference import LlamaCppPython
+from lib.drivers.pygame_driver import PyGameDriver
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport
 
 RUNTIME_SECONDS = 2
-
-
-def _make_llm_response(content: str) -> CreateChatCompletionResponse:
-    return {
-        "id": "chatcmpl-e2e",
-        "object": "chat.completion",
-        "created": 1234567890,
-        "model": "test",
-        "choices": [
-            {
-                "index": 0,
-                "message": {"role": "assistant", "content": content},
-                "logprobs": None,
-                "finish_reason": "stop",
-            }
-        ],
-        "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
-    }
-
 
 @pytest.fixture
 def model_path(tmp_path: Path) -> Path:
@@ -55,30 +35,11 @@ def config() -> SimulationConfig:
     cfg.tank.runtime = RUNTIME_SECONDS
     return cfg
 
-
-@pytest.fixture
-def mock_llm():
-    """Mock LLM returning a valid, in-bounds decision for every call."""
-    action = PetAction(thought="swimming along", target_x=100, target_y=100)
-    llm = MagicMock()
-    llm.create_chat_completion.return_value = RoleContent.assistant(action.model_dump_json())
-    return llm
-
-
-@pytest.fixture
-def mock_inference(mock_llm):
-    inference = MagicMock(spec=LlamaCppPython)
-    inference.create_chat_completion.side_effect = mock_llm.create_chat_completion
-    inference.llm = mock_llm
-    return inference
-
-
-
 class TestEndToEnd:
     def test_simulation_wakes_brain_and_produces_output_report(
-        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
+        self, config: SimulationConfig, model_path: Path
     ):
-        brain = Brain(model_path, config.brain, inference=mock_inference)
+        brain = Brain(model_path, config.brain, MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         report = tank.run()
@@ -89,9 +50,9 @@ class TestEndToEnd:
         assert report.report.actual_runtime is not None
 
     def test_simulation_honors_requested_runtime(
-        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
+        self, config: SimulationConfig, model_path: Path
     ):
-        brain = Brain(model_path, config.brain, inference=mock_inference)
+        brain = Brain(model_path, config.brain, MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
 
@@ -104,18 +65,12 @@ class TestEndToEnd:
     def test_simulation_accumulates_llm_messages_in_memory(
         self, config: SimulationConfig, model_path: Path
     ):
-        # Return a distinct thought each call so the thought-loop detector
-        # never clears memory, letting it accumulate deterministically.
-        counter = itertools.count()
-
-        def _varying_response(*_args, **_kwargs):
-            action = PetAction(
-                thought=f"swimming along {next(counter)}", target_x=100, target_y=100
-            )
-            return RoleContent.assistant(action.model_dump_json())
-
-        inference = MagicMock(spec=LlamaCppPython)
-        inference.create_chat_completion.side_effect = _varying_response
+        # Return distinct thoughts to prevent thought-loop detector clearing memory
+        actions = [
+            PetAction(thought=f"swimming {i}", target_x=100, target_y=100) for i in range(10)
+            ]
+        thoughts = [RoleContent.assistant(action.model_dump_json()) for action in actions]
+        inference = ScriptedInference(thoughts)
 
         brain = Brain(model_path, config.brain, inference=inference)
         driver = DummyDriver(config.tank.runtime)
@@ -125,9 +80,9 @@ class TestEndToEnd:
         assert brain.memory.length > 1
 
     def test_pet_moves_and_stays_in_bounds(
-        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
+        self, config: SimulationConfig, model_path: Path
     ):
-        brain = Brain(model_path, config.brain, inference=mock_inference)
+        brain = Brain(model_path, config.brain, MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         tank.run()
@@ -137,14 +92,53 @@ class TestEndToEnd:
         assert 0 <= brain.current_x <= expected_w
         assert 0 <= brain.current_y <= expected_h
 
-    def test_malformed_llm_output_uses_fallback(
-        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
-    ):
-        mock_inference.create_chat_completion.return_value = RoleContent.assistant("not valid json {")
-
-        brain = Brain(model_path, config.brain, inference=mock_inference)
+    def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig, model_path: Path):
+        inference = ScriptedInference(RoleContent.assistant("not valid json {"))
+        brain = Brain(model_path, config.brain, inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
-        report = tank.run()
+        res = tank.run()
 
-        assert report.report.malformed_json > 0
+        assert res.report.malformed_json > 0
+
+    @pytest.mark.skip("not ready yet")
+    def test_pygame_driver_displays_coordinates(
+        self, config: SimulationConfig, model_path: Path
+        ):
+        target_x, target_y = 150, 200
+        action = PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
+        inference = ScriptedInference([RoleContent.assistant(action)])
+
+
+        # actions = [
+        #     PetAction(thought=f"swimming {i}", target_x=100+1, target_y=101+1) for i in range(100)
+        # ]
+        # thoughts = [RoleContent.assistant(action.model_dump_json()) for action in actions]
+        # inference = ScriptedInference(thoughts)
+
+        brain = Brain(model_path, config.brain, inference=inference)
+
+        driver = PyGameDriver(10, (config.tank.screen_width, config.tank.screen_height))
+
+        offset_x, offset_y = driver.bounds_offset
+        expected_x = int(target_x) + offset_x
+        expected_y = int(target_y) + offset_y
+
+        with patch("pygame.draw") as mock_pg:
+            tank = Tank(brain, config.tank, driver)
+            tank.run()
+        
+            draw_circle_calls = mock_pg.draw.circle.call_args_list
+            target_drawn = False
+            actual:list[tuple[int,int]] = []
+
+            for call_args in draw_circle_calls:
+                args, _kwargs = call_args
+                if len(args) >= 3 and args[2] == (expected_x, expected_y):
+                    target_drawn = True
+                    break
+                actual.append( args[2] )
+
+                
+        assert target_drawn, f"Coordinate ({expected_x}, {expected_y}) was not drawn, actual: {actual}"
+
