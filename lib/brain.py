@@ -5,14 +5,12 @@ import string
 import threading
 from hashlib import md5
 from pathlib import Path
-from typing import Iterator
-
-from llama_cpp import Llama
+from typing import Optional
 
 from lib import memory
+from lib.inference import InferenceBase, LlamaCppPython
 from lib.types.config import BrainConfig
 from lib.types.other import (
-    ChatCompletionResponse,
     EnvironmentalInfo,
     PetAction,
     RoleContent,
@@ -35,10 +33,11 @@ class Brain:
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
 
-    def __init__(self, model_path: Path, config: BrainConfig) -> None:
+    def __init__(self, model_path: Path, config: BrainConfig, inference: InferenceBase) -> None:
         self.awake = False
         self.model_path = str(model_path.resolve())
         self.config = config
+        self.inference = inference
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
         self.debug_info = {}
 
@@ -61,12 +60,6 @@ class Brain:
 
         self.report = BrainReport.model_construct()
 
-        self.llm = Llama(
-            model_path=self.model_path,
-            n_ctx=self.config.params.context_size,
-            n_gpu_layers=-1,
-            verbose=False
-        )
         self.awake = True
 
     def update(self, environment_info: EnvironmentalInfo) -> None:
@@ -151,25 +144,10 @@ class Brain:
             logger.debug(f"system prompt hash: {prompt_hash}")
 
         messages = self.memory.get_messages(system_prompt)
-        response = self.llm.create_chat_completion(
-            messages,
-            temperature=self.config.params.temperature,
-            presence_penalty=self.config.params.presence_penalty,
-            frequency_penalty=self.config.params.frequency_penalty,
-            repeat_penalty=self.config.params.repeat_penalty,
-            min_p=self.config.params.min_p,
-            seed=self.config.params.seed,
-            response_format={
-                "type": "json_object",
-                "schema": PetAction.model_json_schema(),  # type:ignore
-            },
-        )
-        assert not isinstance(response, Iterator)
-        parsed_response = ChatCompletionResponse(**response)  # type:ignore[arg-type]
-        message = parsed_response.get_message()
+        message = self.inference.create_chat_completion(messages)
 
         try:
-            action = parsed_response.get_action()
+            action = PetAction.model_validate_json(message.content) if message.content else PetAction(thought="", target_x=0, target_y=0)
         except (json.JSONDecodeError, ValueError):
             self.report.malformed_json += 1
             try:

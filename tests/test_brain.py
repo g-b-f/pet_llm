@@ -173,10 +173,9 @@ class TestGenerateDecision:
     def _setup_brain_for_generation(
         self, brain: Brain, response_thought: str = "hello", x: int = 10, y: int = 20
     ):
-        brain.llm = MagicMock()
-        brain.llm.create_chat_completion.return_value = _make_llm_response(
-            response_thought, x, y
-        )
+        brain.inference = MagicMock()
+        action = PetAction(thought=response_thought, target_x=x, target_y=y)
+        brain.inference.create_chat_completion.return_value = RoleContent.assistant(action.model_dump_json())
         brain._generate_decision(50, 50)
 
     def test_successful_decision_queued(self, awake_brain: Brain):

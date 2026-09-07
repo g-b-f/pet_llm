@@ -3,6 +3,7 @@ from pathlib import Path
 
 from lib.brain import Brain
 from lib.drivers.pygame_driver import PyGameDriver
+from lib.inference.llama_cpp_python import LlamaCppPython
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.utils import get_logger
@@ -37,7 +38,8 @@ def values_from_trial(
 
 if __name__ == "__main__":
     config = values_from_trial(98)
-    brain = Brain(model_path, config.brain)
+    inference = LlamaCppPython(config.brain.params, model_path)
+    brain = Brain(model_path, config.brain, inference)
     bounds = (config.tank.screen_width, config.tank.screen_height)
     driver = PyGameDriver(config.tank.runtime, bounds)
     # driver = DummyDriver(config.tank.runtime)
