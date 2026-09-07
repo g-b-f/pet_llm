@@ -6,7 +6,7 @@ from llama_cpp.llama_types import CreateChatCompletionResponse
 
 from lib.brain import Brain
 from lib.types.config import BrainConfig
-from lib.types.other import EnvironmentalInfo, PetAction
+from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 
 
 @pytest.fixture
@@ -16,14 +16,13 @@ def brain_config() -> BrainConfig:
 
 @pytest.fixture
 def brain(brain_config: BrainConfig) -> Brain:
-    return Brain(Path("fake/model/path.gguf"), brain_config)
+    inference = MagicMock()
+    return Brain(Path("fake/model/path.gguf"), brain_config, inference=inference)
 
 
 @pytest.fixture
 def awake_brain(brain: Brain) -> Brain:
-    with patch("lib.brain.Llama") as mock_llama:
-        mock_llama.return_value = MagicMock()
-        brain.wake_up((100, 100))
+    brain.wake_up((100, 100))
     return brain
 
 

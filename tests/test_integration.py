@@ -15,9 +15,10 @@ from llama_cpp.llama_types import CreateChatCompletionResponse
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver
+from lib.inference import LlamaCppPython
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
-from lib.types.other import PetAction
+from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport
 
 RUNTIME_SECONDS = 2
@@ -60,19 +61,27 @@ def mock_llm():
     """Mock LLM returning a valid, in-bounds decision for every call."""
     action = PetAction(thought="swimming along", target_x=100, target_y=100)
     llm = MagicMock()
-    llm.create_chat_completion.return_value = _make_llm_response(action.model_dump_json())
+    llm.create_chat_completion.return_value = RoleContent.assistant(action.model_dump_json())
     return llm
+
+
+@pytest.fixture
+def mock_inference(mock_llm):
+    inference = MagicMock(spec=LlamaCppPython)
+    inference.create_chat_completion.side_effect = mock_llm.create_chat_completion
+    inference.llm = mock_llm
+    return inference
+
 
 
 class TestEndToEnd:
     def test_simulation_wakes_brain_and_produces_output_report(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
     ):
-        with patch("lib.brain.Llama", return_value=mock_llm):
-            brain = Brain(model_path, config.brain)
-            driver = DummyDriver(config.tank.runtime)
-            tank = Tank(brain, config.tank, driver)
-            report = tank.run()
+        brain = Brain(model_path, config.brain, inference=mock_inference)
+        driver = DummyDriver(config.tank.runtime)
+        tank = Tank(brain, config.tank, driver)
+        report = tank.run()
 
         assert brain.awake
         assert isinstance(report, OutputReport)
@@ -80,16 +89,15 @@ class TestEndToEnd:
         assert report.report.actual_runtime is not None
 
     def test_simulation_honors_requested_runtime(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
     ):
-        with patch("lib.brain.Llama", return_value=mock_llm):
-            brain = Brain(model_path, config.brain)
-            driver = DummyDriver(config.tank.runtime)
-            tank = Tank(brain, config.tank, driver)
+        brain = Brain(model_path, config.brain, inference=mock_inference)
+        driver = DummyDriver(config.tank.runtime)
+        tank = Tank(brain, config.tank, driver)
 
-            start = time.time()
-            tank.run()
-            elapsed = time.time() - start
+        start = time.time()
+        tank.run()
+        elapsed = time.time() - start
 
         assert elapsed >= RUNTIME_SECONDS - 0.5
 
@@ -104,27 +112,25 @@ class TestEndToEnd:
             action = PetAction(
                 thought=f"swimming along {next(counter)}", target_x=100, target_y=100
             )
-            return _make_llm_response(action.model_dump_json())
+            return RoleContent.assistant(action.model_dump_json())
 
-        llm = MagicMock()
-        llm.create_chat_completion.side_effect = _varying_response
+        inference = MagicMock(spec=LlamaCppPython)
+        inference.create_chat_completion.side_effect = _varying_response
 
-        with patch("lib.brain.Llama", return_value=llm):
-            brain = Brain(model_path, config.brain)
-            driver = DummyDriver(config.tank.runtime)
-            tank = Tank(brain, config.tank, driver)
-            tank.run()
+        brain = Brain(model_path, config.brain, inference=inference)
+        driver = DummyDriver(config.tank.runtime)
+        tank = Tank(brain, config.tank, driver)
+        tank.run()
 
         assert brain.memory.length > 1
 
     def test_pet_moves_and_stays_in_bounds(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
     ):
-        with patch("lib.brain.Llama", return_value=mock_llm):
-            brain = Brain(model_path, config.brain)
-            driver = DummyDriver(config.tank.runtime)
-            tank = Tank(brain, config.tank, driver)
-            tank.run()
+        brain = Brain(model_path, config.brain, inference=mock_inference)
+        driver = DummyDriver(config.tank.runtime)
+        tank = Tank(brain, config.tank, driver)
+        tank.run()
 
         expected_w = config.tank.screen_width - 2 * Tank.TANK_PADDING_X
         expected_h = config.tank.screen_height - Tank.TEXT_BOX_HEIGHT
@@ -132,14 +138,13 @@ class TestEndToEnd:
         assert 0 <= brain.current_y <= expected_h
 
     def test_malformed_llm_output_uses_fallback(
-        self, config: SimulationConfig, mock_llm: MagicMock, model_path: Path
+        self, config: SimulationConfig, mock_inference: MagicMock, model_path: Path
     ):
-        mock_llm.create_chat_completion.return_value = _make_llm_response("not valid json {")
+        mock_inference.create_chat_completion.return_value = RoleContent.assistant("not valid json {")
 
-        with patch("lib.brain.Llama", return_value=mock_llm):
-            brain = Brain(model_path, config.brain)
-            driver = DummyDriver(config.tank.runtime)
-            tank = Tank(brain, config.tank, driver)
-            report = tank.run()
+        brain = Brain(model_path, config.brain, inference=mock_inference)
+        driver = DummyDriver(config.tank.runtime)
+        tank = Tank(brain, config.tank, driver)
+        report = tank.run()
 
         assert report.report.malformed_json > 0
