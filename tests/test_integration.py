@@ -126,3 +126,5 @@ class TestEndToEnd:
         # TODO: check seperately for drawing of big and little circle
         target_drawn = any(call.args[2] == (expected_x, expected_y) for call in circle_calls)
         assert target_drawn, f"Coordinate ({expected_x}, {expected_y}) was not drawn, actual: {actual}"
+
+# TODO: add test that co-ord from LLM appears in next system prompt
