@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tests.mocks import ScriptedInference, MockInference, BlockingBrain
+from tests.mocks import MockValidInference, ScriptedInference, MockInference, BlockingBrain
 from lib.brain import Brain
 from lib.drivers import DummyDriver
 from lib.drivers.pygame_driver import PyGameDriver
@@ -39,10 +39,7 @@ class TestEndToEnd:
     def test_simulation_wakes_brain_and_produces_output_report(
         self, config: SimulationConfig, model_path: Path
     ):
-        inference = ScriptedInference.from_actions(
-            PetAction(thought="", target_y=1, target_x=1)
-        )
-        brain = Brain(model_path, config.brain, inference)
+        brain = Brain(model_path, config.brain, MockValidInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         report = tank.run()
@@ -63,7 +60,7 @@ class TestEndToEnd:
         tank.run()
         elapsed = time.time() - start
 
-        assert elapsed >= RUNTIME_SECONDS - 0.5
+        assert abs(elapsed - RUNTIME_SECONDS) < 0.5
 
     def test_simulation_accumulates_llm_messages_in_memory(
         self, config: SimulationConfig, model_path: Path
