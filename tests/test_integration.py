@@ -10,7 +10,6 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pytest_mock import MockerFixture
 
 from tests.mocks import ScriptedInference, MockInference, BlockingBrain
 from lib.brain import Brain
@@ -109,7 +108,7 @@ class TestEndToEnd:
         target_x, target_y = 150, 200
         action = PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
         brain = BlockingBrain(RoleContent.assistant(action))
-        driver = PyGameDriver(5, (config.tank.screen_width, config.tank.screen_height))
+        driver = PyGameDriver(2, (config.tank.screen_width, config.tank.screen_height))
 
         with patch("lib.drivers.pygame_driver.pygame.draw", wraps=pygame.draw) as mock_draw:
             tank = Tank(brain, config.tank, driver)
@@ -127,4 +126,29 @@ class TestEndToEnd:
         target_drawn = any(call.args[2] == (expected_x, expected_y) for call in circle_calls)
         assert target_drawn, f"Coordinate ({expected_x}, {expected_y}) was not drawn, actual: {actual}"
 
-# TODO: add test that co-ord from LLM appears in next system prompt
+    @pytest.mark.slow
+    def test_previous_response_appears_in_system_prompt(self, config: SimulationConfig):
+        target_x, target_y = 150, 200
+        action1= PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
+        action2 = PetAction(thought="moving", target_x=10, target_y=10).model_dump_json()
+
+        brain = BlockingBrain([RoleContent.assistant(action1),RoleContent.assistant(action2)])
+        driver = DummyDriver(0.1)
+
+        real_worker = getattr(Brain, "_generate_decision")
+
+        def spy(self_brain, cx, cy):
+            return real_worker(self_brain, cx, cy)
+
+        with patch.object(Brain, "_generate_decision", autospec=True, side_effect=spy) as mock_gen:
+            tank = Tank(brain, config.tank, driver)
+            tank.run()
+
+        arrived = any(
+            Brain.near((call.args[1], call.args[2]), (target_x, target_y))
+            for call in mock_gen.call_args_list
+        )
+        assert arrived, (
+            f"no decision requested near ({target_x}, {target_y}); "
+            f"calls: {mock_gen.call_args_list}"
+        )

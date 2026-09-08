@@ -62,6 +62,10 @@ class Brain:
 
         self.awake = True
 
+    @classmethod
+    def near(cls, coord1: tuple[int|float, int|float], coord2: tuple[int|float, int|float]):
+        return ((coord1[0] - coord2[0]) **2 + (coord1[1] - coord2[1]))  <= cls.ARRIVAL_THRESHOLD**2
+
     def update(self, environment_info: EnvironmentalInfo) -> None:
         """Applies queued LLM decisions and advances the pet toward its target.
 
@@ -147,7 +151,7 @@ class Brain:
         message = self.inference.create_chat_completion(messages)
 
         try:
-            action = PetAction.model_validate_json(message.content) if message.content else PetAction(thought="", target_x=0, target_y=0)
+            action = PetAction.model_validate_json(message.content)
         except (json.JSONDecodeError, ValueError):
             self.report.malformed_json += 1
             try:
