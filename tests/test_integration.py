@@ -7,11 +7,12 @@ queue, memory, and report machinery all run for real.
 
 import time
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
+from pytest_mock import MockerFixture
 
-from tests.mocks import ScriptedInference, MockInference
+from tests.mocks import ScriptedInference, MockInference, BlockingBrain
 from lib.brain import Brain
 from lib.drivers import DummyDriver
 from lib.drivers.pygame_driver import PyGameDriver
@@ -101,44 +102,27 @@ class TestEndToEnd:
 
         assert res.report.malformed_json > 0
 
-    @pytest.mark.skip("not ready yet")
-    def test_pygame_driver_displays_coordinates(
-        self, config: SimulationConfig, model_path: Path
-        ):
+    @pytest.mark.slow
+    def test_pygame_driver_displays_coordinates(self, config: SimulationConfig):
+        import pygame
+
         target_x, target_y = 150, 200
         action = PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
-        inference = ScriptedInference([RoleContent.assistant(action)])
+        brain = BlockingBrain(RoleContent.assistant(action))
+        driver = PyGameDriver(5, (config.tank.screen_width, config.tank.screen_height))
 
-
-        # actions = [
-        #     PetAction(thought=f"swimming {i}", target_x=100+1, target_y=101+1) for i in range(100)
-        # ]
-        # thoughts = [RoleContent.assistant(action.model_dump_json()) for action in actions]
-        # inference = ScriptedInference(thoughts)
-
-        brain = Brain(model_path, config.brain, inference=inference)
-
-        driver = PyGameDriver(10, (config.tank.screen_width, config.tank.screen_height))
+        with patch("lib.drivers.pygame_driver.pygame.draw", wraps=pygame.draw) as mock_draw:
+            tank = Tank(brain, config.tank, driver)
+            tank.run()
+            assert mock_draw.circle.called
 
         offset_x, offset_y = driver.bounds_offset
         expected_x = int(target_x) + offset_x
         expected_y = int(target_y) + offset_y
 
-        with patch("pygame.draw") as mock_pg:
-            tank = Tank(brain, config.tank, driver)
-            tank.run()
-        
-            draw_circle_calls = mock_pg.draw.circle.call_args_list
-            target_drawn = False
-            actual:list[tuple[int,int]] = []
+        circle_calls = mock_draw.circle.call_args_list
+        actual = [call.args[2] for call in circle_calls]
 
-            for call_args in draw_circle_calls:
-                args, _kwargs = call_args
-                if len(args) >= 3 and args[2] == (expected_x, expected_y):
-                    target_drawn = True
-                    break
-                actual.append( args[2] )
-
-                
+        # TODO: check seperately for drawing of big and little circle
+        target_drawn = any(call.args[2] == (expected_x, expected_y) for call in circle_calls)
         assert target_drawn, f"Coordinate ({expected_x}, {expected_y}) was not drawn, actual: {actual}"
-
