@@ -39,7 +39,10 @@ class TestEndToEnd:
     def test_simulation_wakes_brain_and_produces_output_report(
         self, config: SimulationConfig, model_path: Path
     ):
-        brain = Brain(model_path, config.brain, MockInference())
+        inference = ScriptedInference.from_actions(
+            PetAction(thought="", target_y=1, target_x=1)
+        )
+        brain = Brain(model_path, config.brain, inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         report = tank.run()

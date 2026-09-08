@@ -2,7 +2,7 @@ from pathlib import Path
 
 from lib.inference.base import InferenceBase
 from lib.types.config import BrainConfig
-from lib.types.other import RoleContent
+from lib.types.other import PetAction, RoleContent
 from lib.brain import Brain
 
 
@@ -11,6 +11,11 @@ class ScriptedInference(InferenceBase):
         if not isinstance(thoughts, list): thoughts = [thoughts]
         self.thoughts = iter(thoughts)
 
+    @classmethod
+    def from_actions(cls, actions: list[PetAction] | PetAction):
+        if not isinstance(actions, list): actions = [actions]
+        return cls( [RoleContent.assistant(a.model_dump_json()) for a in actions] )
+
     def create_chat_completion(self, *args, **kwargs):
         return next(self.thoughts)
 
@@ -18,7 +23,6 @@ class MockInference(InferenceBase):
     def __init__(self): pass
     def create_chat_completion(self, *args, **kwargs):
         return RoleContent.assistant("")
-
 
 class BlockingBrain(Brain):
     """returns inference until the iterator is empty, then blocks with is_thinking=True"""

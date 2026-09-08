@@ -37,7 +37,7 @@ class PyGameDriver(DriverBase):
     FONT_SIZE = 15
     FPS = 60
 
-    def __init__(self, runtime: int | None, bounds: tuple[int, int]):
+    def __init__(self, runtime: float | None, bounds: tuple[int, int]):
         self.bounds = bounds
         self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
 
