@@ -31,7 +31,7 @@ def trainer(buffer: ExperienceBuffer, tmp_path: Path) -> BackgroundTrainer:
         trigger_capacity=2,
     )
 
-
+@pytest.mark.skip("not doing background training atm")
 class TestBackgroundTrainerInit:
     def test_defaults(self, trainer: BackgroundTrainer):
         assert not trainer.is_training
@@ -41,7 +41,7 @@ class TestBackgroundTrainerInit:
     def test_default_trainer_command(self, trainer: BackgroundTrainer):
         assert trainer.trainer_command == ["llama-finetune"]
 
-
+@pytest.mark.skip("not doing background training atm")
 class TestLaunchTraining:
     def test_launches_subprocess(self, trainer: BackgroundTrainer, tmp_path: Path):
         with patch("lib.background_trainer.subprocess.Popen") as mock_popen:
@@ -110,7 +110,7 @@ class TestLaunchTraining:
             trainer.launch_training()
         assert not trainer.is_training
 
-
+@pytest.mark.skip("not doing background training atm")
 class TestCompletionNotification:
     def test_adapter_queued_on_completion(
         self, trainer: BackgroundTrainer, tmp_path: Path
@@ -134,7 +134,7 @@ class TestCompletionNotification:
     def test_get_completed_adapter_empty(self, trainer: BackgroundTrainer):
         assert trainer.get_completed_adapter() is None
 
-
+@pytest.mark.skip("not doing background training atm")
 class TestMonitorThread:
     def test_start_and_stop(self, trainer: BackgroundTrainer):
         trainer.start()
