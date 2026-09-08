@@ -5,7 +5,8 @@ from lib.types.config import BrainConfig
 from lib.types.other import PetAction, RoleContent
 from lib.brain import Brain
 
-
+# TODO: swap things round so __init__ is passed `PetAction`,
+# and there's also a `from_thoughts` method
 class ScriptedInference(InferenceBase):
     def __init__(self, thoughts: list[RoleContent] | RoleContent):
         if not isinstance(thoughts, list): thoughts = [thoughts]
@@ -20,9 +21,19 @@ class ScriptedInference(InferenceBase):
         return next(self.thoughts)
 
 class MockInference(InferenceBase):
+    """Returns an (invalid) chat completion, regardless of args"""
     def __init__(self): pass
     def create_chat_completion(self, *args, **kwargs):
         return RoleContent.assistant("")
+
+class MockValidInference(InferenceBase):
+    """Same as MockInference, but guaranteed to be valid"""
+    def __init__(self):
+        pass
+    def create_chat_completion(self, *args, **kwargs):
+        return RoleContent.assistant(
+            PetAction(thought="hello", target_y=10, target_x=10).model_dump_json()
+        )
 
 class BlockingBrain(Brain):
     """returns inference until the iterator is empty, then blocks with is_thinking=True"""

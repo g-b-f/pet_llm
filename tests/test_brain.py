@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from llama_cpp.llama_types import CreateChatCompletionResponse
 
-from tests.mocks import MockInference, ScriptedInference
+from tests.mocks import MockInference, MockValidInference, ScriptedInference
 from lib.brain import Brain
 from lib.types.config import BrainConfig
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
@@ -207,6 +207,7 @@ class TestGenerateDecision:
         assert brain.memory.length == 0
 
     def test_memory_updated_on_success(self, brain: Brain):
+        brain.inference = MockValidInference()
         initial_len = brain.memory.length
         brain._generate_decision(10,10)
         assert brain.memory.length > initial_len
