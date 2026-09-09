@@ -40,14 +40,14 @@ def driver():
 
 def test_drivers_give_same_results():
     config = TankConfig.model_construct()
-
-    py_driver = PyGameDriver(10, (500,500))
-    py_brain = BlockingBrain.generate_valid_thoughts(15)
+    runtime = 11
+    py_driver = PyGameDriver(runtime, (500,500))
+    py_brain = BlockingBrain.generate_valid_thoughts(14)
     py_brain.memory.total_recall = True
     py_tank = Tank(py_brain, config, py_driver)
 
-    dummy_driver = DummyDriver(5)
-    dummy_brain = BlockingBrain.generate_valid_thoughts(15)
+    dummy_driver = DummyDriver(runtime)
+    dummy_brain = BlockingBrain.generate_valid_thoughts(14)
     dummy_brain.memory.total_recall = True
     dummy_tank = Tank(dummy_brain, config, dummy_driver)
 

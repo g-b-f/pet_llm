@@ -1,12 +1,9 @@
-from pathlib import Path
-import random
+from random import Random
 
 from lib.brain import Brain
 from lib.inference.base import InferenceBase
 from lib.types.config import BrainConfig
 from lib.types.other import PetAction, RoleContent
-
-random.seed(42)
 
 class ScriptedInference(InferenceBase):
     def __init__(self, actions: list[PetAction] | PetAction):
@@ -29,9 +26,10 @@ class ScriptedInference(InferenceBase):
         obj = cls([])
 
         def response():
+            rng = Random(42)
             i = 0
             while limit is None or i < limit:
-                target_x = target_y = random.randint(0, max_target)
+                target_x = target_y = rng.randint(0, max_target)
                 thought = f"thought {i}"
                 i += 1
                 action = PetAction(thought=thought, target_x=target_x, target_y=target_y)

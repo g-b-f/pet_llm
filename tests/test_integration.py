@@ -59,8 +59,7 @@ class TestEndToEnd:
         assert abs(elapsed - RUNTIME_SECONDS) < 0.5
 
     def test_simulation_accumulates_llm_messages_in_memory(self, config: SimulationConfig):
-        # distinct thoughts to prevent thought-loop detector clearing memory
-        inference = ScriptedInference.infinite(limit=10)
+        inference = ScriptedInference.infinite()
         brain = Brain(config.brain, (500,500), inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
