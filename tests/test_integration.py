@@ -11,8 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tests.mocks import InfiniteBrain, MockValidInference, ScriptedInference, MockInference, BlockingBrain
-from tests.snapshots.old_files import OldTank
+from tests.mocks import MockValidInference, ScriptedInference, MockInference, BlockingBrain
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver

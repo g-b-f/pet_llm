@@ -47,7 +47,7 @@ class TestMemoryBasics:
         assert memory.length == 3
         assert memory.is_full
         messages = memory.get_messages("system")
-        contents = [m["content"] for m in messages]
+        contents = [m.content for m in messages]
         assert "msg0" not in contents
         assert "msg1" not in contents
         assert "msg2" in contents
@@ -65,15 +65,13 @@ class TestGetMessages:
         memory += RoleContent.user("Hello")
         messages = memory.get_messages("Be a pet")
         assert len(messages) == 2
-        assert messages[0]["role"] == "system"
-        assert messages[0]["content"] == "Be a pet"
-        assert messages[1]["role"] == "user"
-        assert messages[1]["content"] == "Hello"
+        assert messages[0] == RoleContent.system("Be a pet")
+        assert messages[1] == RoleContent.user("Hello")
 
     def test_empty_memory_returns_only_system(self, memory: Memory):
         messages = memory.get_messages("Be a pet")
         assert len(messages) == 1
-        assert messages[0]["role"] == "system"
+        assert messages[0].role == "system"
 
 
 class TestGetAction:

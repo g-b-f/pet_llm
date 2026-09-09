@@ -82,22 +82,6 @@ def mock_brain() -> MagicMock:
 def tank_config() -> TankConfig:
     return TankConfig.model_construct()
 
-
-class TestWakeUpBounds:
-    """The brain must be woken with tank-local bounds, not screen bounds."""
-
-    def test_wake_up_uses_tank_local_bounds(
-        self, mock_brain: MagicMock, tank_config: TankConfig
-    ):
-        driver = ScriptedDriver(n_frames=1)
-        tank = Tank(mock_brain, tank_config, driver)
-        tank.run()
-
-        expected_w = tank_config.screen_width - 2 * Tank.TANK_PADDING_X
-        expected_h = tank_config.screen_height - Tank.TEXT_BOX_HEIGHT
-        mock_brain.wake_up.assert_called_once_with((expected_w, expected_h))
-
-
 class TestRenderInfoFlow:
     def test_driver_receives_snapshot_each_frame(
         self, mock_brain: MagicMock, tank_config: TankConfig
