@@ -63,13 +63,8 @@ class MockValidInference(MockInference):
         )
 
 class InfiniteBrain(Brain):
-    def __init__(self,
-        model_path = Path("fake/path/model.gguf"),
-        config = BrainConfig.model_construct(),
-        bounds = (500,500)
-    ):
-        super().__init__(model_path, config, ScriptedInference.infinite())
-        self.wake_up(bounds)
+    def __init__(self, config = BrainConfig.model_construct(), bounds = (500,500)):
+        super().__init__(config, bounds, ScriptedInference.infinite())
 
 class BlockingBrain(Brain):
     """returns inference until the iterator is empty, then blocks with is_thinking=True"""
@@ -77,39 +72,33 @@ class BlockingBrain(Brain):
     def __init__(
         self,
         actions: list[PetAction] | PetAction,
-        model_path=Path("fake/path/model.gguf"),
         config=BrainConfig.model_construct(),
         bounds = (500, 500)
     ):
-        super().__init__(model_path, config, ScriptedInference(actions))
-        self.wake_up(bounds)
-
+        super().__init__(config, bounds, ScriptedInference(actions))
+    
     @classmethod
     def from_thoughts(
         cls,
         thoughts: list[RoleContent] | RoleContent,
-        model_path=Path("fake/path/model.gguf"),
         config=BrainConfig.model_construct(),
         bounds = (500, 500)
     ):
         if not isinstance(thoughts, list):
             thoughts = [thoughts]
-        obj = cls([], model_path, config)
+        obj = cls([], bounds, config)
         obj.inference = ScriptedInference.from_thoughts(thoughts)
-        obj.wake_up(bounds)
         return obj
 
     @classmethod
     def generate_valid_thoughts(
         cls,
         amount: int,
-        model_path=Path("fake/path/model.gguf"),
         config=BrainConfig.model_construct(),
         bounds = (500, 500)
     ):
-        obj = cls([], model_path, config)
+        obj = cls([], bounds, config)
         obj.inference = ScriptedInference.infinite(limit=amount)
-        obj.wake_up(bounds)
         return obj
 
     def _generate_decision(self, current_x: int, current_y: int):

@@ -1,4 +1,6 @@
 from lib.brain import Brain
+from lib.drivers import DummyDriver
+from lib.inference import LlamaCpp
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.utils import frange, get_logger
@@ -19,6 +21,8 @@ if __name__ == "__main__":
 
             config.brain.params.temperature = temperature
 
-            brain = Brain(model_path, config.brain)
-            simulation = Tank(brain, config.tank)
+            bounds = Tank.get_bounds(config.tank)
+            inference = LlamaCpp(config.brain.params, model_path)
+            brain = Brain(config.brain, bounds, inference)
+            simulation = Tank(brain, config.tank, DummyDriver(RUNTIME))
             simulation.run()

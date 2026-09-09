@@ -6,7 +6,7 @@ import optuna
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver, PyGameDriver
-from lib.inference.llama_cpp_python import LlamaCppPython
+from lib.inference.llama_cpp_python import LlamaCpp
 from lib.optimisation_helpers import append_report, get_storage, suggest_vals
 from lib.tank import Tank
 from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
@@ -75,8 +75,10 @@ class Optimiser:
             driver = PyGameDriver(runtime, visual_bounds) if self.visual else DummyDriver(runtime)
 
             config.brain.params.seed = seed
-            inference = LlamaCppPython(self.config.brain.params, self.model_path)
-            brain = Brain(self.model_path, config.brain, inference)
+            inference = LlamaCpp(self.config.brain.params, self.model_path)
+
+            bounds = Tank.get_bounds(config.tank)
+            brain = Brain(config.brain, bounds, inference)
             tank = Tank(brain, config.tank, driver)
 
             params = [f"{k}={v}" for k, v in config.brain.params]

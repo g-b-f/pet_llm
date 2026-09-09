@@ -4,11 +4,9 @@ import random
 import string
 import threading
 from hashlib import md5
-from pathlib import Path
-from typing import Optional
 
 from lib import memory
-from lib.inference import InferenceBase, LlamaCppPython
+from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
 from lib.types.other import (
     EnvironmentalInfo,
@@ -33,17 +31,13 @@ class Brain:
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
 
-    def __init__(self, model_path: Path, config: BrainConfig, inference: InferenceBase) -> None:
-        self.awake = False
-        self.model_path = str(model_path.resolve())
+    def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
         self.config = config
         self.inference = inference
         self.initial_memory = RoleContent.user(self.config.thoughts.initial_prompt)
         self.debug_info = {}
 
-    def wake_up(self, bounds: tuple[int, int]):
         self.x_bounds, self.y_bounds = bounds
-
         self.current_x = float(self.x_bounds // 2)
         self.current_y = float(self.y_bounds // 2)
         self.target_x = self.current_x
@@ -57,10 +51,8 @@ class Brain:
         self.memory += self.initial_memory
         self.iterations = 0
         self.current_oob_count = 0
-
         self.report = BrainReport.model_construct()
 
-        self.awake = True
 
     @classmethod
     def near(cls, coord1: tuple[int|float, int|float], coord2: tuple[int|float, int|float]):
@@ -120,7 +112,6 @@ class Brain:
             current_x: Current horizontal position of the pet.
             current_y: Current vertical position of the pet.
         """
-        assert self.awake, "still asleep!"
         if self.is_thinking:
             return
 

@@ -54,12 +54,6 @@ class Tank:
 
     def run(self) -> OutputReport:
         """Runs the main rendering loop"""
-
-        tank_bounds = (
-            self.config.screen_width - 2 * self.TANK_PADDING_X,
-            self.config.screen_height - self.TEXT_BOX_HEIGHT
-        )
-        self.brain.wake_up(tank_bounds)
         self.start_time = time.time()
 
         while self.driver.running:
@@ -68,3 +62,10 @@ class Tank:
             self.driver.loop(render_info)
 
         return self.get_report()
+
+    @classmethod
+    def get_bounds(cls, config: TankConfig):
+        return (
+            config.screen_width - 2 * cls.TANK_PADDING_X,
+            config.screen_height - cls.TEXT_BOX_HEIGHT
+        )

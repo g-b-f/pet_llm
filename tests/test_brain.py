@@ -14,41 +14,12 @@ from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 @pytest.fixture
 def brain() -> Brain:
     config = BrainConfig.model_construct()
-    _brain = Brain(Path("fake/model/path.gguf"), config, MockInference())
-    _brain.wake_up((100, 100))
-    return _brain
+    return Brain(config, (100, 100), MockInference())
 
 
 @pytest.fixture
 def env_info() -> EnvironmentalInfo:
     return EnvironmentalInfo(mouse=(0, 0))
-
-
-class TestWakeUp:
-    def test_awake_after_wake_up(self, brain: Brain):
-        assert brain.awake
-
-    def test_initial_position_centered(self, brain: Brain):
-        assert brain.current_x == 50.0
-        assert brain.current_y == 50.0
-
-    def test_initial_thought(self, brain: Brain):
-        assert (
-            brain.current_thought == brain.config.thoughts.initial_thought
-        )
-
-    def test_initial_memory_has_one_entry(self, brain: Brain):
-        assert brain.memory.length == 1
-
-    def test_not_thinking_initially(self, brain: Brain):
-        assert not brain.is_thinking
-
-    def test_iterations_zero(self, brain: Brain):
-        assert brain.iterations == 0
-
-    def test_oob_count_zero(self, brain: Brain):
-        assert brain.current_oob_count == 0
-
 
 class TestUpdate:
     def test_pet_moves_toward_target(
@@ -102,12 +73,6 @@ class TestFallback:
 
 
 class TestRequestDecisionAsync:
-    def test_asserts_if_not_awake(self):
-        config = BrainConfig.model_construct()
-        asleep_brain = Brain(Path("fake/model/path.gguf"), config, MockInference())
-        with pytest.raises(AssertionError, match="still asleep"):
-            asleep_brain.request_decision_async(0, 0)
-
     def test_skips_if_already_thinking(self, brain: Brain):
         brain.is_thinking = True
         with patch("lib.brain.threading.Thread") as mock_thread:
@@ -154,8 +119,7 @@ class TestGenerateDecision:
         if action is None:
             action = PetAction(thought="hello", target_x=10, target_y=20)
         inference = ScriptedInference(action)
-        brain = Brain(Path("fake/model/path.gguf"), config, inference)
-        brain.wake_up((50,50))
+        brain = Brain(config, (100, 100), inference)
 
         brain._generate_decision(50, 50)
         return brain

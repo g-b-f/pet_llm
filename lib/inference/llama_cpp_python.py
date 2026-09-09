@@ -9,7 +9,7 @@ from lib.types.config import ParamsConfig
 from lib.types.other import ChatCompletionResponse, PetAction, RoleContent
 
 
-class LlamaCppPython(InferenceBase):
+class LlamaCpp(InferenceBase):
     """Inference adapter that uses llama-cpp-python"""
 
     def create_chat_completion(self, messages: list[RoleContent]) -> RoleContent:

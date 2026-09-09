@@ -38,23 +38,18 @@ def config() -> SimulationConfig:
     return cfg
 
 class TestEndToEnd:
-    def test_simulation_wakes_brain_and_produces_output_report(
-        self, config: SimulationConfig, model_path: Path
-    ):
-        brain = Brain(model_path, config.brain, MockValidInference())
+    def test_simulation_produces_output_report(self, config: SimulationConfig):
+        brain = Brain(config.brain, (500,500), MockValidInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         report = tank.run()
 
-        assert brain.awake
         assert isinstance(report, OutputReport)
         assert report.report.iterations > 0
         assert report.report.actual_runtime is not None
 
-    def test_simulation_honors_requested_runtime(
-        self, config: SimulationConfig, model_path: Path
-    ):
-        brain = Brain(model_path, config.brain, MockInference())
+    def test_simulation_honors_requested_runtime(self, config: SimulationConfig):
+        brain = Brain(config.brain, (500,500), MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
 
@@ -64,16 +59,10 @@ class TestEndToEnd:
 
         assert abs(elapsed - RUNTIME_SECONDS) < 0.5
 
-    def test_simulation_accumulates_llm_messages_in_memory(
-        self, config: SimulationConfig, model_path: Path
-    ):
-        # Return distinct thoughts to prevent thought-loop detector clearing memory
-        actions = [
-            PetAction(thought=f"swimming {i}", target_x=100, target_y=100) for i in range(10)
-            ]
-        inference = ScriptedInference(actions)
-
-        brain = Brain(model_path, config.brain, inference=inference)
+    def test_simulation_accumulates_llm_messages_in_memory(self, config: SimulationConfig):
+        # distinct thoughts to prevent thought-loop detector clearing memory
+        inference = ScriptedInference.infinite(limit=10)
+        brain = Brain(config.brain, (500,500), inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         tank.run()
@@ -83,7 +72,7 @@ class TestEndToEnd:
     def test_pet_moves_and_stays_in_bounds(
         self, config: SimulationConfig, model_path: Path
     ):
-        brain = Brain(model_path, config.brain, MockInference())
+        brain = Brain(config.brain, (500,500), MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         tank.run()
@@ -93,9 +82,9 @@ class TestEndToEnd:
         assert 0 <= brain.current_x <= expected_w
         assert 0 <= brain.current_y <= expected_h
 
-    def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig, model_path: Path):
+    def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig,):
         inference = ScriptedInference.from_thoughts(RoleContent.assistant("not valid json {"))
-        brain = Brain(model_path, config.brain, inference)
+        brain = Brain(config.brain, (500,500), inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         res = tank.run()
