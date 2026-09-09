@@ -23,13 +23,13 @@ class ScriptedInference(InferenceBase):
         return obj
 
     @classmethod
-    def infinite(cls, max_target = 100):
+    def infinite(cls, max_target = 100, limit: int|None = None):
         """Returns an inference object that will infinitely give valid responses"""
         obj = cls([])
 
         def response():
             i = 0
-            while True:
+            while limit is None or i < limit:
                 target_x = target_y = randint(0, max_target)
                 thought = f"thought {i}"
                 i += 1
@@ -64,10 +64,12 @@ class MockValidInference(MockInference):
 
 class InfiniteBrain(Brain):
     def __init__(self,
-        model_path=Path("fake/path/model.gguf"),
-        config=BrainConfig.model_construct(),
+        model_path = Path("fake/path/model.gguf"),
+        config = BrainConfig.model_construct(),
+        bounds = (500,500)
     ):
         super().__init__(model_path, config, ScriptedInference.infinite())
+        self.wake_up(bounds)
 
 class BlockingBrain(Brain):
     """returns inference until the iterator is empty, then blocks with is_thinking=True"""

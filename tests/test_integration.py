@@ -7,16 +7,18 @@ queue, memory, and report machinery all run for real.
 
 import time
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from tests.mocks import MockValidInference, ScriptedInference, MockInference, BlockingBrain
+from tests.mocks import InfiniteBrain, MockValidInference, ScriptedInference, MockInference, BlockingBrain
+from tests.snapshots.old_files import OldTank
+
 from lib.brain import Brain
 from lib.drivers import DummyDriver
 from lib.drivers.pygame_driver import PyGameDriver
 from lib.tank import Tank
-from lib.types.config import SimulationConfig
+from lib.types.config import SimulationConfig, TankConfig
 from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport
 
@@ -69,8 +71,7 @@ class TestEndToEnd:
         actions = [
             PetAction(thought=f"swimming {i}", target_x=100, target_y=100) for i in range(10)
             ]
-        thoughts = [RoleContent.assistant(action.model_dump_json()) for action in actions]
-        inference = ScriptedInference(thoughts)
+        inference = ScriptedInference(actions)
 
         brain = Brain(model_path, config.brain, inference=inference)
         driver = DummyDriver(config.tank.runtime)
@@ -93,7 +94,7 @@ class TestEndToEnd:
         assert 0 <= brain.current_y <= expected_h
 
     def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig, model_path: Path):
-        inference = ScriptedInference(RoleContent.assistant("not valid json {"))
+        inference = ScriptedInference.from_thoughts(RoleContent.assistant("not valid json {"))
         brain = Brain(model_path, config.brain, inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
@@ -106,8 +107,8 @@ class TestEndToEnd:
         import pygame
 
         target_x, target_y = 150, 200
-        action = PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
-        brain = BlockingBrain(RoleContent.assistant(action))
+        action = PetAction(thought="moving", target_x=target_x, target_y=target_y)
+        brain = BlockingBrain(action)
         driver = PyGameDriver(2, (config.tank.screen_width, config.tank.screen_height))
 
         with patch("lib.drivers.pygame_driver.pygame.draw", wraps=pygame.draw) as mock_draw:
@@ -129,14 +130,13 @@ class TestEndToEnd:
     @pytest.mark.slow
     def test_previous_response_appears_in_system_prompt(self, config: SimulationConfig):
         target_x, target_y = 150, 200
-        action1= PetAction(thought="moving", target_x=target_x, target_y=target_y).model_dump_json()
-        action2 = PetAction(thought="moving", target_x=10, target_y=10).model_dump_json()
+        action1= PetAction(thought="moving", target_x=target_x, target_y=target_y)
+        action2 = PetAction(thought="moving", target_x=10, target_y=10)
 
-        brain = BlockingBrain([RoleContent.assistant(action1),RoleContent.assistant(action2)])
+        brain = BlockingBrain([action1, action2])
         driver = DummyDriver(0.1)
 
         real_worker = getattr(Brain, "_generate_decision")
-
         def spy(self_brain, cx, cy):
             return real_worker(self_brain, cx, cy)
 

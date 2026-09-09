@@ -153,7 +153,7 @@ class TestGenerateDecision:
         
         if action is None:
             action = PetAction(thought="hello", target_x=10, target_y=20)
-        inference = ScriptedInference(RoleContent.assistant(action.model_dump_json()))
+        inference = ScriptedInference(action)
         brain = Brain(Path("fake/model/path.gguf"), config, inference)
         brain.wake_up((50,50))
 
@@ -188,8 +188,7 @@ class TestGenerateDecision:
     def test_max_oob_triggers_fallback(self, brain: Brain):
         brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
         action = PetAction(thought="oob", target_x=999, target_y=999)
-        thought = RoleContent.assistant(action.model_dump_json())
-        brain.inference = ScriptedInference(thought)
+        brain.inference = ScriptedInference(action)
         brain._generate_decision(10, 10)
 
         assert brain.current_oob_count == 0
@@ -200,8 +199,7 @@ class TestGenerateDecision:
     def test_memory_cleared_on_max_oob(self, brain: Brain):
         brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
         action = PetAction(thought="oob", target_x=999, target_y=999)
-        thought = RoleContent.assistant(action.model_dump_json())
-        brain.inference = ScriptedInference(thought)
+        brain.inference = ScriptedInference(action)
         brain._generate_decision(10, 10)
 
         assert brain.memory.length == 0
@@ -214,7 +212,7 @@ class TestGenerateDecision:
 
     def test_malformed_json_resets_thinking_and_counts(self, brain: Brain):
         thought = RoleContent.assistant("not valid json {{")
-        brain.inference = ScriptedInference(thought)
+        brain.inference = ScriptedInference.from_thoughts(thought)
         
         brain.is_thinking = True
         brain._generate_decision(50, 50)
