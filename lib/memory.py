@@ -21,16 +21,15 @@ class ThoughtLoopError(MemoryHandlerError):
 
 
 class Memory:
-    def __init__(self, config: MemoryConfig):
+    def __init__(self, config: MemoryConfig, *, total_recall = False):
         self.config = config
         self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
         self.thought_loops = 0
+        self.total_memory: list[RoleContent] = []
+        self.total_recall = total_recall
 
-    def get_messages(self, system_prompt: str) -> list[ChatCompletionRequestMessage]:
-        sys_prompt = RoleContent.system(system_prompt)
-        pydantic_messages = [sys_prompt] + list(self._memory_queue)
-        messages = [msg.model_dump() for msg in pydantic_messages]
-        return messages  # type:ignore[report-return-type]
+    def get_messages(self, system_prompt: str) -> list[RoleContent]:
+        return [RoleContent.system(system_prompt)] + list(self)
 
     def get_action(self, index: int) -> PetAction | None:
         memory = self._memory_queue[index].content
@@ -69,8 +68,13 @@ class Memory:
     def clear(self):
         self._memory_queue.clear()
 
+    def __iter__(self):
+        yield from self._memory_queue
+
     def __add__(self, message: RoleContent) -> "Memory":
         self._memory_queue.append(message)
+        if self.total_recall:
+            self.total_memory.append(message)
         return self
 
     def __len__(self) -> int:

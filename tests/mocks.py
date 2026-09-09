@@ -79,8 +79,10 @@ class BlockingBrain(Brain):
         actions: list[PetAction] | PetAction,
         model_path=Path("fake/path/model.gguf"),
         config=BrainConfig.model_construct(),
+        bounds = (500, 500)
     ):
         super().__init__(model_path, config, ScriptedInference(actions))
+        self.wake_up(bounds)
 
     @classmethod
     def from_thoughts(
@@ -88,11 +90,26 @@ class BlockingBrain(Brain):
         thoughts: list[RoleContent] | RoleContent,
         model_path=Path("fake/path/model.gguf"),
         config=BrainConfig.model_construct(),
+        bounds = (500, 500)
     ):
         if not isinstance(thoughts, list):
             thoughts = [thoughts]
         obj = cls([], model_path, config)
         obj.inference = ScriptedInference.from_thoughts(thoughts)
+        obj.wake_up(bounds)
+        return obj
+
+    @classmethod
+    def generate_valid_thoughts(
+        cls,
+        amount: int,
+        model_path=Path("fake/path/model.gguf"),
+        config=BrainConfig.model_construct(),
+        bounds = (500, 500)
+    ):
+        obj = cls([], model_path, config)
+        obj.inference = ScriptedInference.infinite(limit=amount)
+        obj.wake_up(bounds)
         return obj
 
     def _generate_decision(self, current_x: int, current_y: int):
