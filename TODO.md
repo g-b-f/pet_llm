@@ -7,6 +7,8 @@ Make `target_x` and `target_y` reflect in the system prompt
 - Need to make movement more deterministic
 
 
+Remove `Brain.wake_up()`?
+
 Tests
 
 - make the LLM say to move, check that the pygame driver moved

@@ -58,6 +58,9 @@ class RoleContent(BaseModel, use_enum_values=True):
     def assistant(cls, content: str):
         return cls(role=Role.assistant, content=content)
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}.{self.role}("{self.content}")'
+
 
 class MessageChoice(BaseModel):
     index: int
