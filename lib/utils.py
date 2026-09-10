@@ -2,13 +2,9 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator
+from typing import Iterator
 
 from lib.types.config import SimulationConfig
-
-if TYPE_CHECKING:
-    from lib.types.config import LossFunctionWeights
-    from lib.types.report import BrainReport
 
 DEFAULT_LOG_LEVEL = "INFO"
 MAX_LOG_SIZE_BYTES = 1024 * 1024 * 10 # 10 MB
@@ -68,42 +64,10 @@ def frange(start: float, stop: float, step: float, multiplier=100) -> Iterator[f
         yield current / multiplier
         current += step * multiplier
 
-
-def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> float:
-    """Calculates a normalized scalar loss penalizing degenerate LLM behaviors.
-
-    Args:
-        report: Execution report emitted by the simulation run.
-        thought_loop_weight: Multiplier for repeated looping states.
-        empty_thought_weight: Multiplier for uninformative or empty outputs.
-        out_of_bounds_weight: Multiplier for safety and constraint violations.
-        malformed_json_weight: Multiplier for unparseable LLM outputs.
-        inactivity_penalty: Penalty returned if no iterations were executed.
-
-    Returns:
-        The total loss scalar to be minimized by Optuna.
-    """
-    if report.iterations <= 0:
-        raise RuntimeError("no iterations")
-
-    weighted_error_score = (
-        (report.thought_loops * weights.thought_loop)
-        + (report.empty_thoughts * weights.empty_thought)
-        + (report.out_of_bounds_attempts * weights.out_of_bounds)
-        + (report.non_alphanumeric * weights.invalid_chars)
-        + (report.malformed_json * weights.malformed_json)
-    )
-
-    error_rate = weighted_error_score / float(report.iterations)
-    absolute_error_term = weighted_error_score / 100.0
-
-    return float(error_rate + absolute_error_term)
-
-
 def values_from_trial(
     trial_id: int,
     config=SimulationConfig.model_construct(),
-    fpath=Path(__file__).parent / "study_backend.jsonl"
+    fpath=Path(__file__).parents[1] / "study_backend.jsonl"
 ) -> SimulationConfig:
     with open(fpath) as f:
         for line in f.readlines():

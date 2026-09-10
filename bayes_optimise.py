@@ -10,7 +10,8 @@ from lib.optimisation_helpers import append_report, get_storage, suggest_vals
 from lib.tank import Tank
 from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
 from lib.types.report import StudyReport
-from lib.utils import get_logger, loss_function
+from lib.utils import get_logger
+from lib.optimisation_helpers import loss_function
 from models.download import Model, get_model
 
 RUNTIME = 200
