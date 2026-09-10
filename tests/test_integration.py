@@ -1,12 +1,4 @@
-"""End-to-end integration tests for the Tank + Brain + Driver pipeline.
-
-These run the real simulation loop (real Brain, real Tank, a headless
-DummyDriver) and only mock the expensive LLM call, so the threading,
-queue, memory, and report machinery all run for real.
-"""
-
 import time
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -15,20 +7,13 @@ from tests.mocks import MockValidInference, ScriptedInference, MockInference, Bl
 
 from lib.brain import Brain
 from lib.drivers import DummyDriver
-from lib.drivers.pygame_driver import PyGameDriver
+from lib.drivers import PyGameDriver
 from lib.tank import Tank
-from lib.types.config import SimulationConfig, TankConfig
+from lib.types.config import SimulationConfig
 from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport
 
 RUNTIME_SECONDS = 2
-
-@pytest.fixture
-def model_path(tmp_path: Path) -> Path:
-    file = tmp_path / "model.gguf"
-    file.touch()
-    return file
-
 
 @pytest.fixture
 def config() -> SimulationConfig:
@@ -67,9 +52,7 @@ class TestEndToEnd:
 
         assert brain.memory.length > 1
 
-    def test_pet_moves_and_stays_in_bounds(
-        self, config: SimulationConfig, model_path: Path
-    ):
+    def test_pet_moves_and_stays_in_bounds(self, config: SimulationConfig):
         brain = Brain(config.brain, (500,500), MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
@@ -80,7 +63,7 @@ class TestEndToEnd:
         assert 0 <= brain.current_x <= expected_w
         assert 0 <= brain.current_y <= expected_h
 
-    def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig,):
+    def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig):
         inference = ScriptedInference.from_thoughts(RoleContent.assistant("not valid json {"))
         brain = Brain(config.brain, (500,500), inference)
         driver = DummyDriver(config.tank.runtime)

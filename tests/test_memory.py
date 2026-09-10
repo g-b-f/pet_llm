@@ -14,9 +14,8 @@ def memory() -> Memory:
 def sample_action() -> PetAction:
     return PetAction(
         thought="I want to swim",
-        action=Action.move_to,
         target_x=10,
-        target_y=20,
+        target_y=20
     )
 
 
