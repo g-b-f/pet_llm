@@ -13,16 +13,17 @@ from lib.types.report import StudyReport
 from lib.utils import get_logger
 from lib.optimisation_helpers import loss_function
 from models.download import Model, get_model
+from random import randint
 
-RUNTIME = 200
-N_TRIALS = 20
-N_SEEDS = 3
+RUNTIME = 300
+N_TRIALS = 15
+N_SEEDS = 10
 
-logger = get_logger(__name__, "info", log_file="log.txt")
+logger = get_logger(__name__, "info", log_file="reports/llama_log.txt")
 
 
 class Optimiser:
-    comments = "Testing out different models"
+    comments = "Deeply testing llama. Also using user role for oob message"
     n_jobs = 1
 
     loss_function_weights = LossFunctionWeights(
@@ -41,12 +42,14 @@ class Optimiser:
     )
 
     def __init__(
-        self, model: Model, version: int, config: SimulationConfig, comments: str, *, visual: bool
+        self, model: Model, version: int, config: SimulationConfig, comments: str,
+        *, visual = False, random_seed = False
     ):
         self.config = config
         self.model = model
         self.comments = comments
         self.visual = visual
+        self.random_seed = random_seed
 
         self.model_path = get_model(self.model)
         self.study_name = f"v{version}_pet_llm_{self.model_path.stem}"
@@ -70,11 +73,13 @@ class Optimiser:
             self.report_path.write_text(study_report.model_dump_json(indent=2))
 
         for seed in range(N_SEEDS):
+            seed = randint(100, 10**8 -1) if self.random_seed else seed
+            config.brain.params.seed = seed
+
             runtime = config.tank.runtime
             visual_bounds = (config.tank.screen_width, config.tank.screen_height)
             driver = PyGameDriver(runtime, visual_bounds) if self.visual else DummyDriver(runtime)
 
-            config.brain.params.seed = seed
             inference = LlamaCpp(self.config.brain.params, self.model_path)
 
             bounds = Tank.get_bounds(config.tank)
@@ -132,14 +137,14 @@ class Optimiser:
 
 
 if __name__ == "__main__":
-    original_version = 12
+    original_version = 16
 
     # options = [Model.smollm3, Model.smollm2, Model.llama, Model.granite, Model.deepseek, Model.gemma]
     options = [Model.llama]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")
-
+    
     for version_increment, model in enumerate(options):
         version_increment = 0  # keep same version for now
 
@@ -148,7 +153,7 @@ if __name__ == "__main__":
             original_version + version_increment,
             SimulationConfig.model_construct(),
             "Testing out different models, with dummy driver",
-            visual=False,
+            random_seed=True
         )
 
         logger.info(f"starting for {model.value}")

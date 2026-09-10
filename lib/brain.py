@@ -134,10 +134,6 @@ class Brain:
         system_prompt = self.config.thoughts.system_prompt.format(
             self.x_bounds, self.y_bounds, current_x, current_y
         )
-        if self.current_thought == self.config.thoughts.initial_thought:
-            prompt_hash = md5(system_prompt.encode("utf-8")).hexdigest()
-            logger.debug(f"system prompt hash: {prompt_hash}")
-
         messages = self.memory.get_messages(system_prompt)
         message = self.inference.create_chat_completion(messages)
 
@@ -168,8 +164,7 @@ class Brain:
             logger.info(f"tried to go to {action.target_x, action.target_y}")
             oob = self.config.thoughts.out_of_bounds_message
             if oob:
-                # self.memory += RoleContent.user(oob.format(self.x_bounds, self.y_bounds))
-                self.memory += RoleContent.system(oob.format(self.x_bounds, self.y_bounds))
+                self.memory += RoleContent.user(oob.format(self.x_bounds, self.y_bounds))
             self.current_oob_count += 1
             self.report.out_of_bounds_attempts += 1
 

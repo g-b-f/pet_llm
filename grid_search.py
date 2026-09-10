@@ -11,11 +11,11 @@ from lib.utils import get_logger, values_from_trial
 from models.download import Model, get_model
 
 model_path = get_model(Model.llama)
-logger = get_logger(__name__)
+logger = get_logger(__name__, "info", log_file="reports/llama_log.txt")
 
 RUNTIME = 300
-version = 13
-comments = "thought guiding using schema: thought regex is '^[a-zA-Z .!?,']{10,250}$'"
+version = 15
+comments = "Comparing roles for oob message: here using `user` role"
 
 report_path = Path(__file__).parent / f"reports/v{version}_pet_llm_{model_path.stem}.json"
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
             )
             report_path.write_text(study_report.model_dump_json(indent=2))
 
-        seeds = [1,2,3,10,11,12,13,14,15]
+        seeds = [1,2,3,4]
         for seed in seeds:
             logger.info(f"{seed=}")
             config.brain.params.seed = seed
