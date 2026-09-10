@@ -1,0 +1,138 @@
+{
+  "comments": "Testing out different models, with dummy driver",
+  "tuner_config": {
+    "temperature": [
+      0.8,
+      2.5
+    ],
+    "frequency_penalty": [
+      0.2,
+      2.5
+    ],
+    "presence_penalty": [
+      0.2,
+      2.5
+    ],
+    "repeat_penalty": [
+      0.2,
+      2.5
+    ]
+  },
+  "loss_function_weights": {
+    "thought_loop": 10.0,
+    "empty_thought": 10.0,
+    "out_of_bounds": 10.0,
+    "malformed_json": 100.0,
+    "invalid_chars": 10.0
+  },
+  "simulation_config": {
+    "tank": {
+      "runtime": 200,
+      "screen_width": 800,
+      "screen_height": 600
+    },
+    "brain": {
+      "thoughts": {
+        "fallback_thought": "Mind empty... drifting randomly.",
+        "initial_thought": "Waking up...",
+        "initial_prompt": "Start exploring!",
+        "out_of_bounds_message": "You can't leave the tank! Try a coordinate inside ({}, {}).",
+        "system_prompt": "You are a small pet living in a glass tank. Formulate a thought then pick coordinates inside the tank bounds to move toward. Keep moving and don't stay in the same place.Adhere strictly to the requested JSON schema.\nTank bounds: ({}, {}). Your position: ({}, {}).\n"
+      },
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.024451570980939,
+        "frequency_penalty": 2.0926471089245773,
+        "presence_penalty": 2.3155232596220907,
+        "repeat_penalty": 0.3295761452217364,
+        "min_p": 0.05,
+        "seed": null
+      },
+      "memory": {
+        "max_length": 5
+      }
+    }
+  },
+  "trials": [
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.024451570980939,
+        "frequency_penalty": 2.0926471089245773,
+        "presence_penalty": 2.3155232596220907,
+        "repeat_penalty": 0.3295761452217364,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 8,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 7,
+        "malformed_json": 0,
+        "non_alphanumeric": 8,
+        "actual_runtime": 191.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.024451570980939,
+        "frequency_penalty": 2.0926471089245773,
+        "presence_penalty": 2.3155232596220907,
+        "repeat_penalty": 0.3295761452217364,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 0,
+        "empty_thoughts": 4,
+        "out_of_bounds_attempts": 11,
+        "malformed_json": 0,
+        "non_alphanumeric": 3,
+        "actual_runtime": 192.0
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.024451570980939,
+        "frequency_penalty": 2.0926471089245773,
+        "presence_penalty": 2.3155232596220907,
+        "repeat_penalty": 0.3295761452217364,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 17,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 0,
+        "non_alphanumeric": 17,
+        "actual_runtime": 191.0
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.1427699702781837,
+        "frequency_penalty": 1.7380259434567897,
+        "presence_penalty": 0.907914809019484,
+        "repeat_penalty": 0.834264308353571,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 14,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 9,
+        "malformed_json": 0,
+        "non_alphanumeric": 13,
+        "actual_runtime": 194.6
+      }
+    }
+  ]
+}
