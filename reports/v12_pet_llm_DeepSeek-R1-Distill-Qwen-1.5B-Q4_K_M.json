@@ -1,0 +1,978 @@
+{
+  "comments": "Testing out different models, with dummy driver",
+  "tuner_config": {
+    "temperature": [
+      0.8,
+      2.5
+    ],
+    "frequency_penalty": [
+      0.2,
+      2.5
+    ],
+    "presence_penalty": [
+      0.2,
+      2.5
+    ],
+    "repeat_penalty": [
+      0.2,
+      2.5
+    ]
+  },
+  "loss_function_weights": {
+    "thought_loop": 10.0,
+    "empty_thought": 10.0,
+    "out_of_bounds": 10.0,
+    "malformed_json": 100.0,
+    "invalid_chars": 10.0
+  },
+  "simulation_config": {
+    "tank": {
+      "runtime": 200,
+      "screen_width": 800,
+      "screen_height": 600
+    },
+    "brain": {
+      "thoughts": {
+        "fallback_thought": "Mind empty... drifting randomly.",
+        "initial_thought": "Waking up...",
+        "initial_prompt": "Start exploring!",
+        "out_of_bounds_message": "You can't leave the tank! Try a coordinate inside ({}, {}).",
+        "system_prompt": "You are a small pet living in a glass tank. Formulate a thought then pick coordinates inside the tank bounds to move toward. Keep moving and don't stay in the same place.Adhere strictly to the requested JSON schema.\nTank bounds: ({}, {}). Your position: ({}, {}).\n"
+      },
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3781372808812877,
+        "frequency_penalty": 0.3876682662380019,
+        "presence_penalty": 1.5242464349797908,
+        "repeat_penalty": 1.5679683181582802,
+        "min_p": 0.05,
+        "seed": null
+      },
+      "memory": {
+        "max_length": 5
+      }
+    }
+  },
+  "trials": [
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3781372808812877,
+        "frequency_penalty": 0.3876682662380019,
+        "presence_penalty": 1.5242464349797908,
+        "repeat_penalty": 1.5679683181582802,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 21,
+        "thought_loops": 0,
+        "empty_thoughts": 1,
+        "out_of_bounds_attempts": 19,
+        "malformed_json": 1,
+        "non_alphanumeric": 19,
+        "actual_runtime": 198.7
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3781372808812877,
+        "frequency_penalty": 0.3876682662380019,
+        "presence_penalty": 1.5242464349797908,
+        "repeat_penalty": 1.5679683181582802,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 15,
+        "thought_loops": 0,
+        "empty_thoughts": 1,
+        "out_of_bounds_attempts": 15,
+        "malformed_json": 2,
+        "non_alphanumeric": 13,
+        "actual_runtime": 198.4
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3781372808812877,
+        "frequency_penalty": 0.3876682662380019,
+        "presence_penalty": 1.5242464349797908,
+        "repeat_penalty": 1.5679683181582802,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 1,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 1,
+        "malformed_json": 6,
+        "non_alphanumeric": 1,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.1820161130615792,
+        "frequency_penalty": 1.6407120004417102,
+        "presence_penalty": 2.287483730515439,
+        "repeat_penalty": 1.3230381495250052,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 15,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 13,
+        "malformed_json": 2,
+        "non_alphanumeric": 9,
+        "actual_runtime": 198.6
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.1820161130615792,
+        "frequency_penalty": 1.6407120004417102,
+        "presence_penalty": 2.287483730515439,
+        "repeat_penalty": 1.3230381495250052,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 8,
+        "thought_loops": 0,
+        "empty_thoughts": 3,
+        "out_of_bounds_attempts": 6,
+        "malformed_json": 1,
+        "non_alphanumeric": 5,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.1820161130615792,
+        "frequency_penalty": 1.6407120004417102,
+        "presence_penalty": 2.287483730515439,
+        "repeat_penalty": 1.3230381495250052,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 10,
+        "malformed_json": 1,
+        "non_alphanumeric": 11,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.519091999208614,
+        "frequency_penalty": 1.139426193281521,
+        "presence_penalty": 2.421847713271617,
+        "repeat_penalty": 2.0687285269419826,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 16,
+        "thought_loops": 0,
+        "empty_thoughts": 1,
+        "out_of_bounds_attempts": 16,
+        "malformed_json": 2,
+        "non_alphanumeric": 6,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.519091999208614,
+        "frequency_penalty": 1.139426193281521,
+        "presence_penalty": 2.421847713271617,
+        "repeat_penalty": 2.0687285269419826,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 4,
+        "thought_loops": 0,
+        "empty_thoughts": 3,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 8,
+        "non_alphanumeric": 1,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.519091999208614,
+        "frequency_penalty": 1.139426193281521,
+        "presence_penalty": 2.421847713271617,
+        "repeat_penalty": 2.0687285269419826,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 18,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 18,
+        "malformed_json": 1,
+        "non_alphanumeric": 18,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.195130985084804,
+        "frequency_penalty": 1.036619574191022,
+        "presence_penalty": 1.531186885538778,
+        "repeat_penalty": 1.3425486290812614,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 16,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 15,
+        "malformed_json": 1,
+        "non_alphanumeric": 12,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.195130985084804,
+        "frequency_penalty": 1.036619574191022,
+        "presence_penalty": 1.531186885538778,
+        "repeat_penalty": 1.3425486290812614,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 4,
+        "thought_loops": 0,
+        "empty_thoughts": 2,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 3,
+        "non_alphanumeric": 2,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.195130985084804,
+        "frequency_penalty": 1.036619574191022,
+        "presence_penalty": 1.531186885538778,
+        "repeat_penalty": 1.3425486290812614,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 13,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 12,
+        "malformed_json": 1,
+        "non_alphanumeric": 11,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 0.9448557643620904,
+        "frequency_penalty": 2.260423290515774,
+        "presence_penalty": 0.21260899697114788,
+        "repeat_penalty": 2.4671462479232664,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 16,
+        "thought_loops": 0,
+        "empty_thoughts": 2,
+        "out_of_bounds_attempts": 16,
+        "malformed_json": 1,
+        "non_alphanumeric": 14,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 0.9448557643620904,
+        "frequency_penalty": 2.260423290515774,
+        "presence_penalty": 0.21260899697114788,
+        "repeat_penalty": 2.4671462479232664,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 28,
+        "thought_loops": 0,
+        "empty_thoughts": 18,
+        "out_of_bounds_attempts": 28,
+        "malformed_json": 1,
+        "non_alphanumeric": 8,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 0.9448557643620904,
+        "frequency_penalty": 2.260423290515774,
+        "presence_penalty": 0.21260899697114788,
+        "repeat_penalty": 2.4671462479232664,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 15,
+        "thought_loops": 0,
+        "empty_thoughts": 2,
+        "out_of_bounds_attempts": 15,
+        "malformed_json": 2,
+        "non_alphanumeric": 11,
+        "actual_runtime": 197.9
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3621388531295047,
+        "frequency_penalty": 2.1080795937607584,
+        "presence_penalty": 1.7652487863488402,
+        "repeat_penalty": 1.3541144107522114,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 15,
+        "thought_loops": 0,
+        "empty_thoughts": 2,
+        "out_of_bounds_attempts": 15,
+        "malformed_json": 1,
+        "non_alphanumeric": 10,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3621388531295047,
+        "frequency_penalty": 2.1080795937607584,
+        "presence_penalty": 1.7652487863488402,
+        "repeat_penalty": 1.3541144107522114,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 1,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 1,
+        "malformed_json": 3,
+        "non_alphanumeric": 1,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.3621388531295047,
+        "frequency_penalty": 2.1080795937607584,
+        "presence_penalty": 1.7652487863488402,
+        "repeat_penalty": 1.3541144107522114,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 13,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 12,
+        "malformed_json": 2,
+        "non_alphanumeric": 6,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.2215838222706967,
+        "frequency_penalty": 1.3073943118884042,
+        "presence_penalty": 1.9926524610170164,
+        "repeat_penalty": 1.921395566053232,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 0,
+        "empty_thoughts": 1,
+        "out_of_bounds_attempts": 11,
+        "malformed_json": 1,
+        "non_alphanumeric": 4,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.2215838222706967,
+        "frequency_penalty": 1.3073943118884042,
+        "presence_penalty": 1.9926524610170164,
+        "repeat_penalty": 1.921395566053232,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 1,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 1,
+        "malformed_json": 0,
+        "non_alphanumeric": 1,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 2.2215838222706967,
+        "frequency_penalty": 1.3073943118884042,
+        "presence_penalty": 1.9926524610170164,
+        "repeat_penalty": 1.921395566053232,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 8,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 7,
+        "malformed_json": 1,
+        "non_alphanumeric": 5,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.2366470486632806,
+        "frequency_penalty": 1.2106381536364443,
+        "presence_penalty": 1.777007860181664,
+        "repeat_penalty": 1.2086785513722331,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 14,
+        "thought_loops": 0,
+        "empty_thoughts": 3,
+        "out_of_bounds_attempts": 13,
+        "malformed_json": 0,
+        "non_alphanumeric": 5,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.2366470486632806,
+        "frequency_penalty": 1.2106381536364443,
+        "presence_penalty": 1.777007860181664,
+        "repeat_penalty": 1.2086785513722331,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 7,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 7,
+        "malformed_json": 0,
+        "non_alphanumeric": 6,
+        "actual_runtime": 198.2
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.2366470486632806,
+        "frequency_penalty": 1.2106381536364443,
+        "presence_penalty": 1.777007860181664,
+        "repeat_penalty": 1.2086785513722331,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 6,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 1,
+        "non_alphanumeric": 5,
+        "actual_runtime": 198.0
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.966465817630819,
+        "frequency_penalty": 1.2775127521488845,
+        "presence_penalty": 0.6051831030800988,
+        "repeat_penalty": 1.2972510267180617,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 17,
+        "thought_loops": 0,
+        "empty_thoughts": 7,
+        "out_of_bounds_attempts": 12,
+        "malformed_json": 1,
+        "non_alphanumeric": 10,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.966465817630819,
+        "frequency_penalty": 1.2775127521488845,
+        "presence_penalty": 0.6051831030800988,
+        "repeat_penalty": 1.2972510267180617,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 10,
+        "thought_loops": 0,
+        "empty_thoughts": 4,
+        "out_of_bounds_attempts": 7,
+        "malformed_json": 1,
+        "non_alphanumeric": 6,
+        "actual_runtime": 198.5
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.966465817630819,
+        "frequency_penalty": 1.2775127521488845,
+        "presence_penalty": 0.6051831030800988,
+        "repeat_penalty": 1.2972510267180617,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 11,
+        "malformed_json": 0,
+        "non_alphanumeric": 11,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.4429078478862647,
+        "frequency_penalty": 1.6561519452581408,
+        "presence_penalty": 1.2126474074586713,
+        "repeat_penalty": 2.376117882191608,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 10,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 10,
+        "malformed_json": 1,
+        "non_alphanumeric": 5,
+        "actual_runtime": 197.6
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.4429078478862647,
+        "frequency_penalty": 1.6561519452581408,
+        "presence_penalty": 1.2126474074586713,
+        "repeat_penalty": 2.376117882191608,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 22,
+        "thought_loops": 0,
+        "empty_thoughts": 3,
+        "out_of_bounds_attempts": 22,
+        "malformed_json": 0,
+        "non_alphanumeric": 16,
+        "actual_runtime": 197.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.4429078478862647,
+        "frequency_penalty": 1.6561519452581408,
+        "presence_penalty": 1.2126474074586713,
+        "repeat_penalty": 2.376117882191608,
+        "min_p": 0.05,
+        "seed": 2
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 11,
+        "malformed_json": 1,
+        "non_alphanumeric": 11,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7179950401474344,
+        "frequency_penalty": 0.6343046124577414,
+        "presence_penalty": 0.9866903264423459,
+        "repeat_penalty": 0.4052208093797828,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 2,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7179950401474344,
+        "frequency_penalty": 0.6343046124577414,
+        "presence_penalty": 0.9866903264423459,
+        "repeat_penalty": 0.4052208093797828,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 198.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.810554467531951,
+        "frequency_penalty": 0.3925773976220117,
+        "presence_penalty": 0.9075332991073072,
+        "repeat_penalty": 0.3776639880874523,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 2,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.7
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.810554467531951,
+        "frequency_penalty": 0.3925773976220117,
+        "presence_penalty": 0.9075332991073072,
+        "repeat_penalty": 0.3776639880874523,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.7
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.767794420044699,
+        "frequency_penalty": 0.29383348636715734,
+        "presence_penalty": 0.9766885098803844,
+        "repeat_penalty": 0.3165428281191881,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 4,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.7
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.767794420044699,
+        "frequency_penalty": 0.29383348636715734,
+        "presence_penalty": 0.9766885098803844,
+        "repeat_penalty": 0.3165428281191881,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 11,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 6,
+        "malformed_json": 0,
+        "non_alphanumeric": 1,
+        "actual_runtime": 197.6
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7235647071407578,
+        "frequency_penalty": 0.26976503299249455,
+        "presence_penalty": 0.9570348438393395,
+        "repeat_penalty": 0.40475623178459696,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 2,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7235647071407578,
+        "frequency_penalty": 0.26976503299249455,
+        "presence_penalty": 0.9570348438393395,
+        "repeat_penalty": 0.40475623178459696,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 20,
+        "thought_loops": 2,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 6,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 198.1
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7276320035270412,
+        "frequency_penalty": 0.23782191743305003,
+        "presence_penalty": 0.8799938300663483,
+        "repeat_penalty": 0.4347407901273431,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.9
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.7276320035270412,
+        "frequency_penalty": 0.23782191743305003,
+        "presence_penalty": 0.8799938300663483,
+        "repeat_penalty": 0.4347407901273431,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 8,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 3,
+        "malformed_json": 0,
+        "non_alphanumeric": 3,
+        "actual_runtime": 197.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.821020768239074,
+        "frequency_penalty": 0.21875801319464538,
+        "presence_penalty": 0.9153000928794504,
+        "repeat_penalty": 0.39216415570867846,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 8,
+        "thought_loops": 0,
+        "empty_thoughts": 2,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 0,
+        "non_alphanumeric": 4,
+        "actual_runtime": 197.9
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.821020768239074,
+        "frequency_penalty": 0.21875801319464538,
+        "presence_penalty": 0.9153000928794504,
+        "repeat_penalty": 0.39216415570867846,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.9
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.8107876845809128,
+        "frequency_penalty": 0.28843248389882103,
+        "presence_penalty": 0.9262926394060349,
+        "repeat_penalty": 0.41309763973690117,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.8107876845809128,
+        "frequency_penalty": 0.28843248389882103,
+        "presence_penalty": 0.9262926394060349,
+        "repeat_penalty": 0.41309763973690117,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 9,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 4,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.8
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.8138053234032134,
+        "frequency_penalty": 0.3361463234775114,
+        "presence_penalty": 0.8363740322008747,
+        "repeat_penalty": 0.4341971012663979,
+        "min_p": 0.05,
+        "seed": 0
+      },
+      "report": {
+        "iterations": 5,
+        "thought_loops": 1,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 197.3
+      }
+    },
+    {
+      "params": {
+        "context_size": 2048,
+        "temperature": 1.8138053234032134,
+        "frequency_penalty": 0.3361463234775114,
+        "presence_penalty": 0.8363740322008747,
+        "repeat_penalty": 0.4341971012663979,
+        "min_p": 0.05,
+        "seed": 1
+      },
+      "report": {
+        "iterations": 1,
+        "thought_loops": 0,
+        "empty_thoughts": 0,
+        "out_of_bounds_attempts": 0,
+        "malformed_json": 0,
+        "non_alphanumeric": 0,
+        "actual_runtime": 195.4
+      }
+    }
+  ]
+}
