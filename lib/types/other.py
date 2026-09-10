@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
@@ -87,7 +86,7 @@ class ChatCompletionResponse(BaseModel):
         return self.choices[0].message
 
     def get_action(self):
-        return PetAction(**json.loads(self.get_message().content))
+        return PetAction.model_validate_json(self.get_message().content)
 
 
 class RenderInfo(BaseModel):

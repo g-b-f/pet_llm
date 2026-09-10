@@ -1,4 +1,3 @@
-import json
 from collections import deque
 
 from llama_cpp.llama_types import ChatCompletionRequestMessage
@@ -34,7 +33,7 @@ class Memory:
     def get_action(self, index: int) -> PetAction | None:
         memory = self._memory_queue[index].content
         try:
-            return PetAction(**json.loads(memory))
+            return PetAction.model_validate_json(memory)
         except:
             return None
 

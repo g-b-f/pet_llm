@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import humanize
@@ -102,12 +101,12 @@ class Optimiser:
         total_trials = N_TRIALS * N_SEEDS
 
         if self.report_path.exists():
-            data = json.loads(self.report_path.read_text())
-            num_trials = len(StudyReport(**data).trials)
+            data = StudyReport.model_validate_json(self.report_path.read_text())
+            num_trials = len(data.trials)
             logger.info(
                 f"{num_trials=}, {total_trials=}, {N_TRIALS - round(num_trials // N_SEEDS)=}"
             )
-            if len(StudyReport(**data).trials) >= N_TRIALS * N_SEEDS:
+            if num_trials >= N_TRIALS * N_SEEDS:
                 logger.info(f"enough trials for {self.report_path.stem}, exiting")
                 return
             del data

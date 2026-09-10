@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import optuna
@@ -48,7 +47,6 @@ def suggest_vals(trial: optuna.Trial, tuner_config: TunerConfig, params_config =
 
 
 def append_report(report_path: Path, report: BrainReport, params: ParamsConfig):
-    data = json.loads(report_path.read_text())
-    study_report = StudyReport(**data)
+    study_report = StudyReport.model_validate_json(report_path.read_text())
     study_report.trials.append(Trial(params=params, report=report))
     report_path.write_text(study_report.model_dump_json(indent=2))

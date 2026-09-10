@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from lib.memory import Memory, ThoughtLoopError
@@ -88,7 +86,7 @@ class TestGetAction:
         assert action is None
 
     def test_non_action_json_returns_none(self, memory: Memory):
-        memory += RoleContent.user(json.dumps({"foo": "bar"}))
+        memory += RoleContent.user('{"foo": "bar"}')
         action = memory.get_action(0)
         assert action is None
 
