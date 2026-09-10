@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 from lib.types.config import (
@@ -69,8 +71,8 @@ class TrialCollection(BaseModel):
 
 class StudyReport(BaseModel):
     comments: str = Field("")
-    tuner_config: TunerConfig
-    loss_function_weights: LossFunctionWeights
+    tuner_config: Optional[TunerConfig]
+    loss_function_weights: Optional[LossFunctionWeights]
     simulation_config: SimulationConfig
     trials: list[Trial]
 

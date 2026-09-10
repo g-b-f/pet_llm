@@ -29,15 +29,17 @@ if __name__ == "__main__":
         if not report_path.exists():
             study_report = StudyReport(
                 comments=comments,
-                tuner_config=TunerConfig.model_construct(),
-                loss_function_weights=LossFunctionWeights.model_construct(),
+                tuner_config=None,
+                loss_function_weights=None,
                 simulation_config=config,
                 trials=[],
             )
             report_path.write_text(study_report.model_dump_json(indent=2))
-        
-        for seed in range(10, 16):
+
+        seeds = [1,2,3,10,11,12,13,14,15]
+        for seed in seeds:
             logger.info(f"{seed=}")
+            config.brain.params.seed = seed
 
             bounds = Tank.get_bounds(config.tank)
             inference = LlamaCpp(config.brain.params, model_path)
@@ -46,3 +48,5 @@ if __name__ == "__main__":
             result = simulation.run()
 
             append_report(report_path, result.report, config.brain.params)
+
+    print("done")
