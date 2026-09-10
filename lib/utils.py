@@ -1,7 +1,10 @@
+import json
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator
+
+from lib.types.config import SimulationConfig
 
 if TYPE_CHECKING:
     from lib.types.config import LossFunctionWeights
@@ -95,3 +98,26 @@ def loss_function(report: "BrainReport", weights: "LossFunctionWeights") -> floa
     absolute_error_term = weighted_error_score / 100.0
 
     return float(error_rate + absolute_error_term)
+
+
+def values_from_trial(
+    trial_id: int,
+    config=SimulationConfig.model_construct(),
+    fpath=Path(__file__).parent / "study_backend.jsonl"
+) -> SimulationConfig:
+    with open(fpath) as f:
+        for line in f.readlines():
+            d = json.loads(line)
+
+            if d.get("trial_id") == trial_id:
+                if d.get("param_name") == "temperature":
+                    config.brain.params.temperature = d["param_value_internal"]
+                if d.get("param_name") == "frequency_penalty":
+                    config.brain.params.frequency_penalty = d["param_value_internal"]
+                if d.get("param_name") == "presence_penalty":
+                    config.brain.params.presence_penalty = d["param_value_internal"]
+                if d.get("param_name") == "repeat_penalty":
+                    config.brain.params.repeat_penalty = d["param_value_internal"]
+
+    print(config.brain.params.model_dump_json(indent=2))
+    return config

@@ -26,16 +26,16 @@ def get_storage(n_jobs:int) -> JournalStorage:
     if n_jobs == 1:
         lock_obj: BaseJournalFileLock = DummyLock()
     elif n_jobs > 1:
-        lock_obj: BaseJournalFileLock = JournalFileOpenLock(string_backend)
+        lock_obj: BaseJournalFileLock = JournalFileOpenLock(string_backend) # type: ignore[no-redef]
     else:
         raise ValueError(f"n_jobs must be >= 1, got {n_jobs}")
     
     return JournalStorage(
-        JournalFileBackend(
-            string_backend,
-            lock_obj=lock_obj
+            JournalFileBackend(
+                string_backend,
+                lock_obj=lock_obj
+                )
             )
-        )
 
 def suggest_vals(trial: optuna.Trial, tuner_config: TunerConfig, params_config = ParamsConfig.model_construct()) -> ParamsConfig:
     params_config.temperature = trial.suggest_float("temperature", *tuner_config.temperature)

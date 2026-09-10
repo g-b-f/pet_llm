@@ -168,6 +168,7 @@ class Brain:
             logger.info(f"tried to go to {action.target_x, action.target_y}")
             oob = self.config.thoughts.out_of_bounds_message
             if oob:
+                # self.memory += RoleContent.user(oob.format(self.x_bounds, self.y_bounds))
                 self.memory += RoleContent.system(oob.format(self.x_bounds, self.y_bounds))
             self.current_oob_count += 1
             self.report.out_of_bounds_attempts += 1
