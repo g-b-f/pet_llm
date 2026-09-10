@@ -6,8 +6,11 @@ Make `target_x` and `target_y` reflect in the system prompt
 - now, `render()` in `PyGameDriver` doesn't have access to superclasses so can't move it
 - Need to make movement more deterministic
 
+Enforce better thoughts
 
-Remove `Brain.wake_up()`?
+- `LogitsProcessor` to encourage thoughts of certain sizes
+- `LogitsProcessor` to prevent/ discourage thought loops
+
 
 Tests
 
