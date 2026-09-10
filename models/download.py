@@ -19,6 +19,8 @@ class Model(StrEnum):
     - miniCPM = "minicpm5-1b-Q8_0"
     - deepseek = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M"
     - granite = "granite-4.2-3b-Q4_K_M"
+    - glm = "ggml-model-Q4_K_M"
+    - nemotron = "NVIDIA-Nemotron3-Nano-4B-Q4_K_M"
     """
 
     smollm2 = "smollm2-1.7b-q8_0"
@@ -32,6 +34,7 @@ class Model(StrEnum):
     deepseek = "DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M"
     granite = "granite-4.2-3b-Q4_K_M"
     glm = "ggml-model-Q4_K_M"
+    nemotron = "NVIDIA-Nemotron3-Nano-4B-Q4_K_M"
 
 
 mapping: dict[Model, str] = {
@@ -46,6 +49,7 @@ mapping: dict[Model, str] = {
     Model.deepseek: "unsloth/DeepSeek-R1-Distill-Qwen-1.5B-GGUF",
     Model.granite: "ibm-granite/granite-4.2-3b-GGUF",
     Model.glm: "zai-org/glm-edge-4b-chat-gguf",
+    Model.nemotron: "nvidia/NVIDIA-Nemotron-3-Nano-4B-GGUF"
 }
 
 
