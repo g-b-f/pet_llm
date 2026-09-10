@@ -134,7 +134,8 @@ class Optimiser:
 if __name__ == "__main__":
     original_version = 12
 
-    options = [Model.smollm3, Model.smollm2, Model.llama, Model.granite, Model.deepseek, Model.gemma]
+    # options = [Model.smollm3, Model.smollm2, Model.llama, Model.granite, Model.deepseek, Model.gemma]
+    options = [Model.llama]
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")

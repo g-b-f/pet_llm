@@ -36,7 +36,7 @@ if __name__ == "__main__":
             )
             report_path.write_text(study_report.model_dump_json(indent=2))
         
-        for seed in range(1, 6):
+        for seed in range(10, 16):
             logger.info(f"{seed=}")
 
             bounds = Tank.get_bounds(config.tank)
