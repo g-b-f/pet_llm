@@ -20,10 +20,8 @@ class Action(Enum):
     idle = "idle"
     swim_fast = "swim_fast"
 
-
 class PetAction(BaseModel, use_enum_values=True):
-    thought: str = Field(description="The thought process of the pet.")
-    # action: Action = Field(description="The action to take.")
+    thought: str = Field(description="The thought process of the pet.", pattern=r"^[a-zA-Z0-9 .!?,']{10,250}$")
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 
