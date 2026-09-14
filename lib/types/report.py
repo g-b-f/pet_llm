@@ -68,20 +68,19 @@ class TrialCollection(BaseModel):
     seeds: list[int | None]
     reports: list[BrainReport]
 
-
-class StudyReport(BaseModel):
+class StudyReportBase(BaseModel):
+    # hash: str = Field(pattern=r"[a-f0-9]{20,}")
     comments: str = Field("")
     tuner_config: Optional[TunerConfig]
     loss_function_weights: Optional[LossFunctionWeights]
     simulation_config: SimulationConfig
+
+
+class StudyReport(StudyReportBase):
     trials: list[Trial]
 
 
-class StudyReportCollection(BaseModel):
-    comments: str = Field("")
-    tuner_config: TunerConfig
-    loss_function_weights: LossFunctionWeights
-    simulation_config: SimulationConfig
+class StudyReportCollection(StudyReportBase):
     trials: list[TrialCollection]
 
     @classmethod
