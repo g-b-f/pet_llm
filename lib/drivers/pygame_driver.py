@@ -6,16 +6,16 @@ from pygame import Color
 from lib.drivers.base import DriverBase
 from lib.types.other import RenderInfo
 
-DEBUG = True
+DEBUG = False
 
 
 class PyGameDriver(DriverBase):
     # Layout (pixels)
-    TEXT_BOX_HEIGHT = 100
+    # TEXT_BOX_HEIGHT = 100
     TEXT_BOX_MARGIN = 10
     TANK_PADDING_X = 50
     STATUS_LOC = (20, 10)
-    THOUGHT_LOC = (20, 30)
+    THOUGHT_LOC = (20, 40)
     DEBUG_LOC = (20, 110)
 
     # Colors (R, G, B)
@@ -34,21 +34,25 @@ class PyGameDriver(DriverBase):
 
     # UI text and timing
     FONT_NAME = "monospace"
-    FONT_SIZE = 15
+    FONT_SIZE = 30
     FPS = 60
 
     def __init__(self, runtime: float | None, bounds: tuple[int, int]):
         self.bounds = bounds
-        self.bounds_offset = self.TANK_PADDING_X, self.TEXT_BOX_HEIGHT // 2
-
-        end_time = None if runtime is None else pygame.time.get_ticks() + runtime * 1000
-
         pygame.init()
+
+        # TODO: add bounds offset to pygame bounds
         self.screen = pygame.display.set_mode(self.bounds)
         pygame.display.set_caption("Pet LLM")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(self.FONT_NAME, self.FONT_SIZE)
+        self.em = self.font.size("M")[0]
+        self.ex = self.font.size("X")[1]
 
+        self.TEXT_BOX_HEIGHT = (self.ex * 5) - (2 * self.TEXT_BOX_MARGIN)
+        self.bounds_offset = 0, self.TEXT_BOX_HEIGHT + self.TEXT_BOX_MARGIN
+
+        end_time = None if runtime is None else pygame.time.get_ticks() + runtime * 1000
         super().__init__(end_time)
 
     def _blit_text(
@@ -59,10 +63,9 @@ class PyGameDriver(DriverBase):
         font: pygame.font.Font,
         color: tuple[int, int, int] | pygame.Color
     ):
-        space_width = font.size(" ")[0]
-        max_width, max_height = surface.get_size()
+        max_width = surface.get_size()[0]
         x, y = pos
-        max_chars = (max_width - x) // space_width
+        max_chars = (max_width - x) // self.em
         lines = wrap(text, max_chars)
         for line in lines:
             line_width, line_height = font.size(line)
@@ -95,7 +98,7 @@ class PyGameDriver(DriverBase):
             self.TEXT_BOX_MARGIN,
             self.TEXT_BOX_MARGIN,
             self.bounds[0] - 2 * self.TEXT_BOX_MARGIN,
-            self.TEXT_BOX_HEIGHT - 2 * self.TEXT_BOX_MARGIN,
+            (self.ex * 5) - (2 * self.TEXT_BOX_MARGIN),
         )
         pygame.draw.rect(self.screen, self.TEXT_BOX_COLOR, text_box_rect)
 
