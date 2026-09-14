@@ -1,5 +1,7 @@
 # To Do
 
+add hash to StudyReport
+
 Make `target_x` and `target_y` reflect in the system prompt
 
 - before refactor/ decouple, `_render_scene()` would move the location both visibly and actually
@@ -27,6 +29,12 @@ Make inter-class communication more lightweight
 - remove empty thoughts to prevent loops
 - improve thought loop checking algorithm
 - remove `idle` and `swim_fast` options
+
+## Thought logging
+
+Separate logger for sqlite or similar
+
+Include hash
 
 
 ## Features
