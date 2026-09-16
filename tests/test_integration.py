@@ -4,8 +4,8 @@ from unittest.mock import patch
 import pytest
 
 from tests.mocks import MockValidInference, ScriptedInference, MockInference, BlockingBrain
+from tests.mocks import NonLoggingBrain as Brain
 
-from lib.brain import Brain
 from lib.drivers import DummyDriver
 from lib.drivers import PyGameDriver
 from lib.tank import Tank
@@ -64,8 +64,8 @@ class TestEndToEnd:
         assert 0 <= brain.current_y <= expected_h
 
     def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig):
-        inference = ScriptedInference.from_thoughts(RoleContent.assistant("not valid json {"))
-        brain = Brain(config.brain, (500,500), inference)
+        thought = RoleContent.assistant("not valid json {")
+        brain =  BlockingBrain.from_thoughts(thought)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         res = tank.run()

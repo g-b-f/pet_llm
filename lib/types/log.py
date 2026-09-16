@@ -9,11 +9,12 @@ Vibecoded with Qwen 3.8 27B
 
 from enum import StrEnum
 from typing import Literal, Union
+import warnings
 
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime as dt
 from lib.types.config import ParamsConfig
-from lib.types.other import PetAction
+from lib.types.other import PetAction, Role, RoleContent
 
 
 class EventType(StrEnum):
@@ -52,17 +53,23 @@ class ThoughtEvent(EventBase):
     
     @classmethod
     def from_action(cls, action: PetAction, run_id: int, datetime: dt | None = None):
-        datetime = datetime or dt.now()
         target = None
         if action.target_x is not None and action.target_y:
             target = (action.target_x, action.target_y)
          
         return cls(
             run_id=run_id,
-            datetime=datetime,
+            datetime=datetime or dt.now(),
             thought=action.thought,
             target=target
         )
+
+    @classmethod
+    def from_role_content(cls, data: RoleContent, run_id:int, datetime: dt | None = None):
+        if data.role != Role.assistant:
+            warnings.warn("Thought role must be assistant, got '{data.role}'")
+        action = PetAction.model_validate_json(data.content)
+        return cls.from_action(action, run_id=run_id, datetime=datetime or dt.now())
 
 
 class OOBResetEvent(EventBase):
@@ -78,6 +85,18 @@ class MalformedJSONEvent(EventBase):
     """The LLM returned unparseable JSON; ``content`` is the raw output."""
     type: Literal[EventType.malformed_json] = EventType.malformed_json
     content: str = Field(description="The raw, unparseable LLM output")
+
+    @classmethod
+    def from_role_content(cls, data: RoleContent, run_id:int, datetime: dt | None = None):
+        if data.role.value != Role.assistant.value:
+            warnings.warn(f"Malformed JSON role should be assistant, got '{data.role}'")
+        
+        content = repr(data.content).removeprefix("'").removesuffix("'")
+        return cls(
+            run_id=run_id,
+            datetime=datetime or dt.now(),
+            content=content
+        )
 
 
 LogEvent = Union[ThoughtEvent, OOBResetEvent, ThoughtLoopEvent, MalformedJSONEvent]

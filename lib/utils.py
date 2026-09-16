@@ -85,3 +85,4 @@ def values_from_trial(
 
     print(config.brain.params.model_dump_json(indent=2))
     return config
+

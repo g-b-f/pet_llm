@@ -1,13 +1,14 @@
 import json
+from pathlib import Path
 import queue
 import random
 import string
 import threading
-from hashlib import md5
 
 from lib import memory
 from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
+from lib.types.log import EventBase, ThoughtEvent, MalformedJSONEvent
 from lib.types.other import (
     EnvironmentalInfo,
     PetAction,
@@ -30,6 +31,8 @@ class Brain:
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
+
+    thought_log_path = Path(__file__).parent / "thoughts.jsonl"
 
     def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
         self.config = config
@@ -57,6 +60,17 @@ class Brain:
     @classmethod
     def near(cls, coord1: tuple[int|float, int|float], coord2: tuple[int|float, int|float]):
         return ((coord1[0] - coord2[0]) **2 + (coord1[1] - coord2[1]))  <= cls.ARRIVAL_THRESHOLD**2
+
+    def log_event(self, event: EventBase):
+        event.run_id = self.config.run_id
+        with open(self.thought_log_path, "a") as f:
+            f.write(event.model_dump_json() + "\n")
+
+    def log_thought(self, thought: PetAction | RoleContent):
+        if isinstance(thought, RoleContent):
+            thought = PetAction.model_validate_json(thought.content)
+        self.log_event(ThoughtEvent.from_action(action=thought, run_id=-1))
+        
 
     def update(self, environment_info: EnvironmentalInfo) -> None:
         """Applies queued LLM decisions and advances the pet toward its target.
@@ -143,6 +157,8 @@ class Brain:
             self.report.malformed_json += 1
             try:
                 logger.warning(f"malformed JSON: {message.content!r}")
+                event = MalformedJSONEvent.from_role_content(data=message, run_id=-1)
+                self.log_event(event)
             except:
                 logger.warning("malformed JSON: couldn't print")
 
@@ -150,6 +166,8 @@ class Brain:
             self.is_thinking = False
             self.iterations += 1
             return
+
+        self.log_thought(action)
 
         thought = action.get_thought()
         logger.info(f"thought {thought!r}")

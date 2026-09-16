@@ -2,9 +2,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from llama_cpp.llama_types import CreateChatCompletionResponse
 
-from tests.mocks import MockInference, MockValidInference, ScriptedInference
+from tests.mocks import MockInference, MockValidInference, NonLoggingBrain, ScriptedInference
 from lib.brain import Brain
 from lib.types.config import BrainConfig
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
@@ -14,7 +13,7 @@ from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 @pytest.fixture
 def brain() -> Brain:
     config = BrainConfig.model_construct()
-    return Brain(config, (100, 100), MockInference())
+    return NonLoggingBrain(config, (100, 100), MockInference())
 
 
 @pytest.fixture
@@ -119,7 +118,7 @@ class TestGenerateDecision:
         if action is None:
             action = PetAction(thought="hello there", target_x=10, target_y=20)
         inference = ScriptedInference(action)
-        brain = Brain(config, (100, 100), inference)
+        brain = NonLoggingBrain(config, (100, 100), inference)
 
         brain._generate_decision(50, 50)
         return brain

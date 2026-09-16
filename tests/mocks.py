@@ -1,8 +1,11 @@
 from random import Random
+from typing import TYPE_CHECKING
 
 from lib.brain import Brain
 from lib.inference.base import InferenceBase
 from lib.types.config import BrainConfig
+if TYPE_CHECKING:
+    from lib.types.log import EventBase
 from lib.types.other import PetAction, RoleContent
 
 class ScriptedInference(InferenceBase):
@@ -61,11 +64,21 @@ class MockValidInference(MockInference):
             PetAction(thought="hello world", target_y=10, target_x=10).model_dump_json()
         )
 
-class InfiniteBrain(Brain):
+class NonLoggingBrain(Brain):
+    def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
+        self.logged_thoughts: list[dict] = []
+        super().__init__(config, bounds, inference)
+
+    def log_event(self, event: "EventBase"):
+        self.logged_thoughts.append(event.model_dump())
+
+
+class InfiniteBrain(NonLoggingBrain):
     def __init__(self, config = BrainConfig.model_construct(), bounds = (500,500)):
         super().__init__(config, bounds, ScriptedInference.infinite())
 
-class BlockingBrain(Brain):
+
+class BlockingBrain(NonLoggingBrain):
     """returns inference until the iterator is empty, then blocks with is_thinking=True"""
 
     def __init__(
@@ -73,9 +86,9 @@ class BlockingBrain(Brain):
         actions: list[PetAction] | PetAction,
         config = BrainConfig.model_construct(),
         bounds: tuple[int,int] = (500, 500)
-    ):
+    ):  
         super().__init__(config, bounds, ScriptedInference(actions))
-    
+
     @classmethod
     def from_thoughts(
         cls,

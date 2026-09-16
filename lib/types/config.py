@@ -64,6 +64,7 @@ class TunerConfig(BaseModel):
 
 
 class BrainConfig(BaseModel):
+    run_id: int = Field(0)
     thoughts: ThoughtConfig = Field(
         default_factory=ThoughtConfig.model_construct,
         description="The configuration for the pet's thoughts",
