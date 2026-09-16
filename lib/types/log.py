@@ -8,11 +8,12 @@ Vibecoded with Qwen 3.8 27B
 """
 
 from enum import StrEnum
-from typing import Annotated, Union
+from typing import Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime as dt
 from lib.types.config import ParamsConfig
+from lib.types.other import PetAction
 
 
 class EventType(StrEnum):
@@ -41,43 +42,45 @@ class EventBase(BaseModel):
 
 
 class ThoughtEvent(EventBase):
-    """A parsed LLM decision.
+    """A parsed LLM decision"""
 
-    ``target`` is only set when the decision's target was out of bounds (the
-    brain logs the coordinates in that case); otherwise it is ``None``.
-    """
-
-    type= EventType.thought
     thought: str = Field(description="The pet's thought, as returned by the LLM")
     target: tuple[int, int] | None = Field(
         default=None, description="The target coordinates, if any"
         )
-
-
-class ScoredThoughtEvent(ThoughtEvent):
-    """A thought event with a score of how good the thought was"""
-    loss: float | None = Field(description="The result of applying the loss function to this thought")
+    type: EventType = EventType.thought
+    
+    @classmethod
+    def from_action(cls, action: PetAction, run_id: int, datetime: dt | None = None):
+        datetime = datetime or dt.now()
+        target = None
+        if action.target_x is not None and action.target_y:
+            target = (action.target_x, action.target_y)
+         
+        return cls(
+            run_id=run_id,
+            datetime=datetime,
+            thought=action.thought,
+            target=target
+        )
 
 
 class OOBResetEvent(EventBase):
     """Memory was cleared after too many consecutive out-of-bounds targets."""
-    type = EventType.oob_reset
+    type: Literal[EventType.oob_reset] = EventType.oob_reset
 
 
 class ThoughtLoopEvent(EventBase):
     """Memory was cleared after the same thought repeated (a thought loop)."""
-    type = EventType.thought_loop
+    type: Literal[EventType.thought_loop] = EventType.thought_loop
 
 class MalformedJSONEvent(EventBase):
     """The LLM returned unparseable JSON; ``content`` is the raw output."""
-    type = EventType.malformed_json
+    type: Literal[EventType.malformed_json] = EventType.malformed_json
     content: str = Field(description="The raw, unparseable LLM output")
 
 
-LogEvent = Annotated[
-    Union[ThoughtEvent, OOBResetEvent, ThoughtLoopEvent, MalformedJSONEvent],
-    Field(discriminator="type"),
-]
+LogEvent = Union[ThoughtEvent, OOBResetEvent, ThoughtLoopEvent, MalformedJSONEvent]
 
 
 class SeedRun(BaseModel):

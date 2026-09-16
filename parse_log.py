@@ -1,14 +1,15 @@
 import ast
 import contextlib
 import re
+from datetime import datetime as dt
 from pathlib import Path
 
+from lib.types.config import ParamsConfig
 from lib.types.log import (
     LogTrial,
     MalformedJSONEvent,
     OOBResetEvent,
     OptimisationLog,
-    Params,
     SeedRun,
     ThoughtEvent,
     ThoughtLoopEvent,
@@ -25,22 +26,26 @@ OUTPUT_PATH = INPUT_PATH.with_suffix(".json")
 # Log-line helpers
 # --------------------------------------------------------------------------- #
 
-# "2026-09-05 19:40:42 INFO - starting optimisation"  ->  "starting optimisation"
-_LINE_RE = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \w+ - (.*)$")
+# "2026-09-05 19:40:42 INFO - starting optimisation"  ->  (datetime, "starting optimisation")
+_LINE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \w+ - (.*)$")
+_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-def _message(line: str) -> str | None:
-    """Return the message part of a log line.
+def _parse_line(line: str) -> tuple[dt, str] | None:
+    """Split a log line into its timestamp and message.
 
     Args:
         line: A raw log line, e.g. ``"2026-09-05 19:40:42 INFO - thought 'hi'"``.
 
     Returns:
-        The message after the ``"LEVEL - "`` prefix, or ``None`` if the line
-        does not match the expected log format.
+        A ``(timestamp, message)`` tuple, or ``None`` if the line does not
+        match the expected log format.
     """
     match = _LINE_RE.match(line)
-    return match.group(1) if match else None
+    if match is None:
+        return None
+    timestamp = dt.strptime(match.group(1), _TIME_FORMAT)
+    return timestamp, match.group(2)
 
 
 def _parse_numbers(message: str) -> dict[str, int | float]:
@@ -118,8 +123,11 @@ class _ParseState:
         self.thought = None
 
 
-def _parse_params(numbers: dict[str, int | float]) -> Params | None:
-    """Build a :class:`Params` from a ``seed=`` line's numeric fields.
+def _parse_params(numbers: dict[str, int | float]) -> ParamsConfig | None:
+    """Build a :class:`ParamsConfig` from a ``seed=`` line's numeric fields.
+
+    The ``seed`` field is excluded so that runs sharing the same sampling
+    parameters group into one trial regardless of their individual seeds.
 
     Args:
         numbers: The parsed ``key=value`` pairs from a ``seed=`` line.
@@ -132,7 +140,7 @@ def _parse_params(numbers: dict[str, int | float]) -> Params | None:
     if not fields:
         return None
     try:
-        return Params.model_validate(fields)
+        return ParamsConfig.model_validate(fields)
     except ValueError:
         return None
 
@@ -156,22 +164,25 @@ def _parse_target(message: str) -> tuple[int, int] | None:
 
 
 def _handle_event(
-    message: str, run: SeedRun, current_thought: ThoughtEvent | None
+    message: str, timestamp: dt, run: SeedRun, current_thought: ThoughtEvent | None
 ) -> ThoughtEvent | None:
     """Append the event described by ``message`` to ``run``.
 
     Args:
         message: The full log message.
+        timestamp: The timestamp of the log line.
         run: The seed run the event belongs to.
         current_thought: The most recent thought event, if any.
 
     Returns:
         The updated current thought (only a ``thought`` event changes it).
     """
-    if message.startswith("thought "):
+    if message.startswith("thought loop detected"):
+        run.events.append(ThoughtLoopEvent(run_id=run.seed, datetime=timestamp))
+    elif message.startswith("thought "):
         thought = _parse_repr(message, "thought ")
         if thought is not None:
-            event = ThoughtEvent(thought=thought)
+            event = ThoughtEvent(run_id=run.seed, datetime=timestamp, thought=thought)
             run.events.append(event)
             return event
     elif message.startswith("tried to go to "):
@@ -179,13 +190,13 @@ def _handle_event(
         if current_thought is not None and target is not None:
             current_thought.target = target
     elif message.startswith("attempted out-of-bounds too much"):
-        run.events.append(OOBResetEvent())
-    elif message.startswith("thought loop detected"):
-        run.events.append(ThoughtLoopEvent())
+        run.events.append(OOBResetEvent(run_id=run.seed, datetime=timestamp))
     elif message.startswith("malformed JSON:"):
         content = _parse_repr(message, "malformed JSON: ")
         if content is not None:
-            run.events.append(MalformedJSONEvent(content=content))
+            run.events.append(
+                MalformedJSONEvent(run_id=run.seed, datetime=timestamp, content=content)
+            )
     # "thought was:" and any other message are dropped
     return current_thought
 
@@ -223,11 +234,12 @@ def _handle_loss(message: str, log: OptimisationLog, state: _ParseState) -> None
     state.close_run(log)
 
 
-def _dispatch(message: str, log: OptimisationLog, state: _ParseState) -> None:
+def _dispatch(message: str, timestamp: dt, log: OptimisationLog, state: _ParseState) -> None:
     """Route a single log message to the appropriate handler.
 
     Args:
         message: The message part of a log line.
+        timestamp: The timestamp of the log line.
         log: The log being built.
         state: The mutable parse state.
     """
@@ -250,7 +262,7 @@ def _dispatch(message: str, log: OptimisationLog, state: _ParseState) -> None:
     if state.trial is None:
         state.trial = LogTrial()
         log.trials.append(state.trial)
-    state.thought = _handle_event(message, state.run, state.thought)
+    state.thought = _handle_event(message, timestamp, state.run, state.thought)
 
 
 def parse_log(path: Path) -> OptimisationLog:
@@ -267,9 +279,10 @@ def parse_log(path: Path) -> OptimisationLog:
     state = _ParseState()
     with path.open(encoding="utf-8") as handle:
         for line in handle:
-            message = _message(line)
-            if message is not None:
-                _dispatch(message, log, state)
+            parsed = _parse_line(line)
+            if parsed is not None:
+                timestamp, message = parsed
+                _dispatch(message, timestamp, log, state)
     state.close_run(log)
     return log
 
