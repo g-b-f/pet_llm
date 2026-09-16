@@ -5,7 +5,6 @@ from lib.drivers import DummyDriver
 from lib.inference import LlamaCpp
 from lib.optimisation_helpers import append_report
 from lib.tank import Tank
-from lib.types.config import LossFunctionWeights, TunerConfig
 from lib.types.report import StudyReport
 from lib.utils import get_logger, values_from_trial
 from models.download import Model, get_model

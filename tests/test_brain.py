@@ -1,13 +1,11 @@
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tests.mocks import MockInference, MockValidInference, NonLoggingBrain, ScriptedInference
 from lib.brain import Brain
 from lib.types.config import BrainConfig
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
-
+from tests.mocks import MockInference, MockValidInference, NonLoggingBrain, ScriptedInference
 
 
 @pytest.fixture

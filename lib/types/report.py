@@ -2,12 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from lib.types.config import (
-    LossFunctionWeights,
-    ParamsConfig,
-    SimulationConfig,
-    TunerConfig,
-)
+from lib.types.config import LossFunctionWeights, ParamsConfig, SimulationConfig, TunerConfig
 
 
 class BrainReport(BaseModel):

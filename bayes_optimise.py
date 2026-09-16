@@ -1,4 +1,5 @@
 from pathlib import Path
+from random import randint
 
 import humanize
 import optuna
@@ -6,14 +7,12 @@ import optuna
 from lib.brain import Brain
 from lib.drivers import DummyDriver, PyGameDriver
 from lib.inference.llama_cpp_python import LlamaCpp
-from lib.optimisation_helpers import append_report, get_storage, suggest_vals
+from lib.optimisation_helpers import append_report, get_storage, loss_function, suggest_vals
 from lib.tank import Tank
 from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
 from lib.types.report import StudyReport
 from lib.utils import get_logger
-from lib.optimisation_helpers import loss_function
 from models.download import Model, get_model
-from random import randint
 
 RUNTIME = 300
 N_TRIALS = 15

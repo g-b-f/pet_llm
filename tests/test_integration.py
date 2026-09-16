@@ -3,15 +3,13 @@ from unittest.mock import patch
 
 import pytest
 
-from tests.mocks import MockValidInference, ScriptedInference, MockInference, BlockingBrain
-from tests.mocks import NonLoggingBrain as Brain
-
-from lib.drivers import DummyDriver
-from lib.drivers import PyGameDriver
+from lib.drivers import DummyDriver, PyGameDriver
 from lib.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport
+from tests.mocks import BlockingBrain, MockInference, MockValidInference, ScriptedInference
+from tests.mocks import NonLoggingBrain as Brain
 
 RUNTIME_SECONDS = 2
 

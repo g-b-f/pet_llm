@@ -1,19 +1,15 @@
 import json
-from pathlib import Path
 import queue
 import random
 import string
 import threading
+from pathlib import Path
 
 from lib import memory
 from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
-from lib.types.log import EventBase, ThoughtEvent, MalformedJSONEvent
-from lib.types.other import (
-    EnvironmentalInfo,
-    PetAction,
-    RoleContent,
-)
+from lib.types.log import EventBase, MalformedJSONEvent, ThoughtEvent
+from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 from lib.types.report import BrainReport
 from lib.utils import get_logger
 

@@ -4,9 +4,11 @@ from typing import TYPE_CHECKING
 from lib.brain import Brain
 from lib.inference.base import InferenceBase
 from lib.types.config import BrainConfig
+
 if TYPE_CHECKING:
     from lib.types.log import EventBase
 from lib.types.other import PetAction, RoleContent
+
 
 class ScriptedInference(InferenceBase):
     def __init__(self, actions: list[PetAction] | PetAction):

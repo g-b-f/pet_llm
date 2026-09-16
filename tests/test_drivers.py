@@ -1,11 +1,12 @@
 from unittest.mock import MagicMock, patch
+
 import pytest
 
+from lib.drivers import DummyDriver, PyGameDriver
 from lib.tank import Tank
-from tests.mocks import BlockingBrain
-from lib.drivers import PyGameDriver, DummyDriver
 from lib.types.config import TankConfig
 from lib.types.other import RenderInfo
+from tests.mocks import BlockingBrain
 
 BOUNDS = (100, 100)
 

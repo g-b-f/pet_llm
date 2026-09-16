@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import optuna
-from optuna.storages.journal import JournalFileBackend, JournalStorage, JournalFileOpenLock
+from optuna.storages.journal import JournalFileBackend, JournalFileOpenLock, JournalStorage
 from optuna.storages.journal._file import BaseJournalFileLock
 
 from lib.types.config import LossFunctionWeights, ParamsConfig, TunerConfig
