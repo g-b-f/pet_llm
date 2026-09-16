@@ -7,7 +7,7 @@ from typing import Iterator
 from lib.types.config import SimulationConfig
 
 DEFAULT_LOG_LEVEL = "INFO"
-MAX_LOG_SIZE_BYTES = 1024 * 1024 * 10 # 10 MB
+MAX_LOG_SIZE_BYTES = 1024 * 1024 * 10  # 10 MB
 LOG_DIR = Path(__file__).parent.parent
 
 
@@ -64,6 +64,7 @@ def frange(start: float, stop: float, step: float, multiplier=100) -> Iterator[f
         yield current / multiplier
         current += step * multiplier
 
+
 def values_from_trial(
     trial_id: int,
     config=SimulationConfig.model_construct(),
@@ -85,4 +86,3 @@ def values_from_trial(
 
     print(config.brain.params.model_dump_json(indent=2))
     return config
-

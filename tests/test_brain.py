@@ -18,10 +18,9 @@ def brain() -> Brain:
 def env_info() -> EnvironmentalInfo:
     return EnvironmentalInfo(mouse=(0, 0))
 
+
 class TestUpdate:
-    def test_pet_moves_toward_target(
-        self, brain: Brain, env_info: EnvironmentalInfo
-    ):
+    def test_pet_moves_toward_target(self, brain: Brain, env_info: EnvironmentalInfo):
         brain.target_x = 100.0
         brain.target_y = 50.0
         initial_x = brain.current_x
@@ -35,9 +34,7 @@ class TestUpdate:
         brain.update(env_info)
         assert abs(brain.current_x - (initial_x + Brain.PET_SPEED)) < 0.01
 
-    def test_queued_decision_applied(
-        self, brain: Brain, env_info: EnvironmentalInfo
-    ):
+    def test_queued_decision_applied(self, brain: Brain, env_info: EnvironmentalInfo):
         decision = PetAction(thought="new thought", target_x=10, target_y=20)
         brain.result_queue.put(decision)
         brain.update(env_info)
@@ -45,9 +42,7 @@ class TestUpdate:
         assert brain.target_x == 10
         assert brain.target_y == 20
 
-    def test_arrival_triggers_decision_request(
-        self, brain: Brain, env_info: EnvironmentalInfo
-    ):
+    def test_arrival_triggers_decision_request(self, brain: Brain, env_info: EnvironmentalInfo):
         brain.target_x = brain.current_x
         brain.target_y = brain.current_y
         with patch.object(brain, "request_decision_async") as mock_req:
@@ -91,9 +86,7 @@ class TestRequestDecisionAsync:
 
 
 class TestTargetOutOfBounds:
-    @pytest.mark.parametrize(
-        ("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)]
-    )
+    @pytest.mark.parametrize(("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)])
     def test_target_out_of_bounds(self, brain: Brain, target_x: int, target_y: int):
         action = PetAction(thought="test thought", target_x=target_x, target_y=target_y)
         assert brain.target_out_of_bounds(action)
@@ -108,11 +101,8 @@ class TestTargetOutOfBounds:
 
 class TestGenerateDecision:
     def _setup_brain_for_generation(
-            self,
-            action: PetAction|None = None,
-            config = BrainConfig.model_construct(),
-            ):
-        
+        self, action: PetAction | None = None, config=BrainConfig.model_construct()
+    ):
         if action is None:
             action = PetAction(thought="hello there", target_x=10, target_y=20)
         inference = ScriptedInference(action)
@@ -168,13 +158,13 @@ class TestGenerateDecision:
     def test_memory_updated_on_success(self, brain: Brain):
         brain.inference = MockValidInference()
         initial_len = brain.memory.length
-        brain._generate_decision(10,10)
+        brain._generate_decision(10, 10)
         assert brain.memory.length > initial_len
 
     def test_malformed_json_resets_thinking_and_counts(self, brain: Brain):
         thought = RoleContent.assistant("not valid json {{")
         brain.inference = ScriptedInference.from_thoughts(thought)
-        
+
         brain.is_thinking = True
         brain._generate_decision(50, 50)
 

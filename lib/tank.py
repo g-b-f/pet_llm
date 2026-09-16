@@ -48,9 +48,8 @@ class Tank:
         brain_report.actual_runtime = round(time.time() - self.start_time, 1)
 
         return OutputReport(
-            config=SimulationConfig(tank=self.config, brain=self.brain.config),
-            report=brain_report
-            )
+            config=SimulationConfig(tank=self.config, brain=self.brain.config), report=brain_report
+        )
 
     def run(self) -> OutputReport:
         """Runs the main rendering loop"""

@@ -20,8 +20,11 @@ class Action(Enum):
     idle = "idle"
     swim_fast = "swim_fast"
 
+
 class PetAction(BaseModel, use_enum_values=True):
-    thought: str = Field(description="The thought process of the pet.", pattern=r"^[a-zA-Z0-9 .!?,']{10,250}$")
+    thought: str = Field(
+        description="The thought process of the pet.", pattern=r"^[a-zA-Z0-9 .!?,']{10,250}$"
+    )
     target_x: int = Field(description="Target X coordinate.")
     target_y: int = Field(description="Target Y coordinate.")
 
@@ -29,9 +32,12 @@ class PetAction(BaseModel, use_enum_values=True):
         try:
             return self.thought.encode().decode()
         except UnicodeEncodeError:
-            logger.warning(f"""non utf-8 thought: '{self.thought.encode(errors = "backslashreplace").decode(errors = "backslashreplace")}'""")
-            logger.warning(f"""equivalent to: '{self.thought.encode(errors = "namereplace").decode(errors = "namereplace")}'""")
-            return self.thought.encode(errors = "replace").decode(errors = "replace")
+            backslash = self.thought.encode(errors="backslashreplace").decode(errors="backslashreplace")
+            namereplace = self.thought.encode(errors="namereplace").decode(errors="namereplace")
+            logger.warning(f"non utf-8 thought: '{backslash}'")
+            logger.warning(f"equivalent to: '{namereplace}'")
+            return self.thought.encode(errors="replace").decode(errors="replace")
+
 
 class Role(Enum):
     user = "user"

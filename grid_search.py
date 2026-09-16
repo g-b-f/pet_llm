@@ -24,7 +24,6 @@ if __name__ == "__main__":
 
     # for temperature in frange(1.5, 2.5, 0.3):
     if 1:
-
         if not report_path.exists():
             study_report = StudyReport(
                 comments=comments,
@@ -35,7 +34,7 @@ if __name__ == "__main__":
             )
             report_path.write_text(study_report.model_dump_json(indent=2))
 
-        seeds = [1,2,3,4]
+        seeds = [1, 2, 3, 4]
         for seed in seeds:
             logger.info(f"{seed=}")
             config.brain.params.seed = seed

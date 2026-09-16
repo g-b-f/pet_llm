@@ -13,15 +13,17 @@ from tests.mocks import NonLoggingBrain as Brain
 
 RUNTIME_SECONDS = 2
 
+
 @pytest.fixture
 def config() -> SimulationConfig:
     cfg = SimulationConfig.model_construct()
     cfg.tank.runtime = RUNTIME_SECONDS
     return cfg
 
+
 class TestEndToEnd:
     def test_simulation_produces_output_report(self, config: SimulationConfig):
-        brain = Brain(config.brain, (500,500), MockValidInference())
+        brain = Brain(config.brain, (500, 500), MockValidInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         report = tank.run()
@@ -31,7 +33,7 @@ class TestEndToEnd:
         assert report.report.actual_runtime is not None
 
     def test_simulation_honors_requested_runtime(self, config: SimulationConfig):
-        brain = Brain(config.brain, (500,500), MockInference())
+        brain = Brain(config.brain, (500, 500), MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
 
@@ -43,7 +45,7 @@ class TestEndToEnd:
 
     def test_simulation_accumulates_llm_messages_in_memory(self, config: SimulationConfig):
         inference = ScriptedInference.infinite()
-        brain = Brain(config.brain, (500,500), inference)
+        brain = Brain(config.brain, (500, 500), inference)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         tank.run()
@@ -51,7 +53,7 @@ class TestEndToEnd:
         assert brain.memory.length > 1
 
     def test_pet_moves_and_stays_in_bounds(self, config: SimulationConfig):
-        brain = Brain(config.brain, (500,500), MockInference())
+        brain = Brain(config.brain, (500, 500), MockInference())
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         tank.run()
@@ -63,7 +65,7 @@ class TestEndToEnd:
 
     def test_malformed_llm_output_uses_fallback(self, config: SimulationConfig):
         thought = RoleContent.assistant("not valid json {")
-        brain =  BlockingBrain.from_thoughts(thought)
+        brain = BlockingBrain.from_thoughts(thought)
         driver = DummyDriver(config.tank.runtime)
         tank = Tank(brain, config.tank, driver)
         res = tank.run()
@@ -98,13 +100,14 @@ class TestEndToEnd:
     @pytest.mark.slow
     def test_previous_response_appears_in_system_prompt(self, config: SimulationConfig):
         target_x, target_y = 150, 200
-        action1= PetAction(thought="moving around", target_x=target_x, target_y=target_y)
+        action1 = PetAction(thought="moving around", target_x=target_x, target_y=target_y)
         action2 = PetAction(thought="moving around", target_x=10, target_y=10)
 
         brain = BlockingBrain([action1, action2])
         driver = DummyDriver(0.1)
 
         real_worker = getattr(Brain, "_generate_decision")
+
         def spy(self_brain, cx, cy):
             return real_worker(self_brain, cx, cy)
 
@@ -117,6 +120,5 @@ class TestEndToEnd:
             for call in mock_gen.call_args_list
         )
         assert arrived, (
-            f"no decision requested near ({target_x}, {target_y}); "
-            f"calls: {mock_gen.call_args_list}"
+            f"no decision requested near ({target_x}, {target_y}); calls: {mock_gen.call_args_list}"
         )

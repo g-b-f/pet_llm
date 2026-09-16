@@ -12,11 +12,7 @@ def memory() -> Memory:
 
 @pytest.fixture
 def sample_action() -> PetAction:
-    return PetAction(
-        thought="I want to swim",
-        target_x=10,
-        target_y=20
-    )
+    return PetAction(thought="I want to swim", target_x=10, target_y=20)
 
 
 class TestMemoryBasics:
@@ -104,9 +100,7 @@ class TestSupervise:
 
     def test_different_thoughts_no_error(self, memory: Memory):
         for i in range(3):
-            action = PetAction(
-                thought=f"thought number {i}", target_x=i, target_y=i
-            )
+            action = PetAction(thought=f"thought number {i}", target_x=i, target_y=i)
             memory += RoleContent.assistant(action.model_dump_json())
         memory.supervise()
 

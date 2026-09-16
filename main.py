@@ -16,7 +16,7 @@ if __name__ == "__main__":
     inference = LlamaCpp(config.brain.params, model_path)
     tank_bounds = Tank.get_bounds(config.tank)
     brain = Brain(config.brain, tank_bounds, inference)
-    
+
     bounds = (config.tank.screen_width, config.tank.screen_height)
     driver = PyGameDriver(config.tank.runtime, bounds)
     # driver = DummyDriver(config.tank.runtime)

@@ -82,6 +82,7 @@ def mock_brain() -> MagicMock:
 def tank_config() -> TankConfig:
     return TankConfig.model_construct()
 
+
 class TestRenderInfoFlow:
     def test_driver_receives_snapshot_each_frame(
         self, mock_brain: MagicMock, tank_config: TankConfig
@@ -122,9 +123,7 @@ class TestRenderInfoFlow:
         Tank(mock_brain, tank_config, driver).run()
         assert driver.received[0].has_started_thinking is started
 
-    def test_loop_runs_until_driver_stops(
-        self, mock_brain: MagicMock, tank_config: TankConfig
-    ):
+    def test_loop_runs_until_driver_stops(self, mock_brain: MagicMock, tank_config: TankConfig):
         driver = ScriptedDriver(n_frames=N_FRAMES)
         Tank(mock_brain, tank_config, driver).run()
 

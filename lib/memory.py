@@ -18,7 +18,7 @@ class ThoughtLoopError(MemoryHandlerError):
 
 
 class Memory:
-    def __init__(self, config: MemoryConfig, *, total_recall = False):
+    def __init__(self, config: MemoryConfig, *, total_recall=False):
         self.config = config
         self._memory_queue: deque[RoleContent] = deque(maxlen=config.max_length)
         self.thought_loops = 0

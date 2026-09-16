@@ -52,8 +52,12 @@ class TestGetLogger:
         logger_parent = get_logger("__main__", log_file=tmp_log2)
         logger_child2 = get_logger("lib.some_name2", log_file=tmp_log3)
 
-
-        assert logger_parent.handlers[0].baseFilename == str(tmp_log2), "main logger did not write to its own file"
-        assert logger_child1.handlers[0].baseFilename == str(tmp_log2), "lib logger did not switch to main logger's file"
-        assert logger_child2.handlers[0].baseFilename == str(tmp_log3), "lib logger created after main logger did not keep its own file"
-
+        assert logger_parent.handlers[0].baseFilename == str(tmp_log2), (
+            "main logger did not write to its own file"
+        )
+        assert logger_child1.handlers[0].baseFilename == str(tmp_log2), (
+            "lib logger did not switch to main logger's file"
+        )
+        assert logger_child2.handlers[0].baseFilename == str(tmp_log3), (
+            "lib logger created after main logger did not keep its own file"
+        )

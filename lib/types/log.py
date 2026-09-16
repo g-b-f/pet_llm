@@ -24,6 +24,7 @@ class EventType(StrEnum):
     thought_loop = "thought_loop"
     malformed_json = "malformed_json"
 
+
 class EventBase(BaseModel):
     run_id: int
     datetime: dt
@@ -39,7 +40,7 @@ class EventBase(BaseModel):
             return ThoughtLoopEvent(**self.model_dump())
         elif self.type == "malformed_json":
             return MalformedJSONEvent(**self.model_dump())
-        
+
         raise ValueError("couldn't get type")
 
 
@@ -49,15 +50,15 @@ class ThoughtEvent(EventBase):
     thought: str = Field(description="The pet's thought, as returned by the LLM")
     target: tuple[int, int] | None = Field(
         default=None, description="The target coordinates, if any"
-        )
+    )
     type: EventType = EventType.thought
-    
+
     @classmethod
     def from_action(cls, action: PetAction, run_id: int, datetime: dt | None = None):
         target = None
         if action.target_x is not None and action.target_y:
             target = (action.target_x, action.target_y)
-         
+
         return cls(
             run_id=run_id,
             datetime=datetime or dt.now(),
@@ -66,7 +67,7 @@ class ThoughtEvent(EventBase):
         )
 
     @classmethod
-    def from_role_content(cls, data: RoleContent, run_id:int, datetime: dt | None = None):
+    def from_role_content(cls, data: RoleContent, run_id: int, datetime: dt | None = None):
         if data.role != Role.assistant:
             warnings.warn("Thought role must be assistant, got '{data.role}'")
         action = PetAction.model_validate_json(data.content)
@@ -75,29 +76,29 @@ class ThoughtEvent(EventBase):
 
 class OOBResetEvent(EventBase):
     """Memory was cleared after too many consecutive out-of-bounds targets."""
+
     type: Literal[EventType.oob_reset] = EventType.oob_reset
 
 
 class ThoughtLoopEvent(EventBase):
     """Memory was cleared after the same thought repeated (a thought loop)."""
+
     type: Literal[EventType.thought_loop] = EventType.thought_loop
+
 
 class MalformedJSONEvent(EventBase):
     """The LLM returned unparseable JSON; ``content`` is the raw output."""
+
     type: Literal[EventType.malformed_json] = EventType.malformed_json
     content: str = Field(description="The raw, unparseable LLM output")
 
     @classmethod
-    def from_role_content(cls, data: RoleContent, run_id:int, datetime: dt | None = None):
+    def from_role_content(cls, data: RoleContent, run_id: int, datetime: dt | None = None):
         if data.role.value != Role.assistant.value:
             warnings.warn(f"Malformed JSON role should be assistant, got '{data.role}'")
-        
+
         content = repr(data.content).removeprefix("'").removesuffix("'")
-        return cls(
-            run_id=run_id,
-            datetime=datetime or dt.now(),
-            content=content
-        )
+        return cls(run_id=run_id, datetime=datetime or dt.now(), content=content)
 
 
 LogEvent = Union[ThoughtEvent, OOBResetEvent, ThoughtLoopEvent, MalformedJSONEvent]

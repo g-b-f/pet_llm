@@ -10,6 +10,7 @@ from tests.mocks import BlockingBrain
 
 BOUNDS = (100, 100)
 
+
 @pytest.fixture
 def render_info():
     return RenderInfo(
@@ -42,7 +43,7 @@ def driver():
 def test_drivers_give_same_results():
     config = TankConfig.model_construct()
     runtime = 11
-    py_driver = PyGameDriver(runtime, (500,500))
+    py_driver = PyGameDriver(runtime, (500, 500))
     py_brain = BlockingBrain.generate_valid_thoughts(14)
     py_brain.memory.total_recall = True
     py_tank = Tank(py_brain, config, py_driver)

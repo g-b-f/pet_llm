@@ -26,7 +26,7 @@ class ScriptedInference(InferenceBase):
         return obj
 
     @classmethod
-    def infinite(cls, *, limit: int|None = None, max_target = 100):
+    def infinite(cls, *, limit: int | None = None, max_target=100):
         """Returns an inference object that will infinitely give valid responses"""
         obj = cls([])
 
@@ -66,6 +66,7 @@ class MockValidInference(MockInference):
             PetAction(thought="hello world", target_y=10, target_x=10).model_dump_json()
         )
 
+
 class NonLoggingBrain(Brain):
     def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
         self.logged_thoughts: list[dict] = []
@@ -76,7 +77,7 @@ class NonLoggingBrain(Brain):
 
 
 class InfiniteBrain(NonLoggingBrain):
-    def __init__(self, config = BrainConfig.model_construct(), bounds = (500,500)):
+    def __init__(self, config=BrainConfig.model_construct(), bounds=(500, 500)):
         super().__init__(config, bounds, ScriptedInference.infinite())
 
 
@@ -86,17 +87,17 @@ class BlockingBrain(NonLoggingBrain):
     def __init__(
         self,
         actions: list[PetAction] | PetAction,
-        config = BrainConfig.model_construct(),
-        bounds: tuple[int,int] = (500, 500)
-    ):  
+        config=BrainConfig.model_construct(),
+        bounds: tuple[int, int] = (500, 500)
+    ):
         super().__init__(config, bounds, ScriptedInference(actions))
 
     @classmethod
     def from_thoughts(
         cls,
         thoughts: list[RoleContent] | RoleContent,
-        config = BrainConfig.model_construct(),
-        bounds: tuple[int,int] = (500, 500)
+        config=BrainConfig.model_construct(),
+        bounds: tuple[int, int] = (500, 500)
     ):
         if not isinstance(thoughts, list):
             thoughts = [thoughts]

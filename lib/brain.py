@@ -52,10 +52,9 @@ class Brain:
         self.current_oob_count = 0
         self.report = BrainReport.model_construct()
 
-
     @classmethod
-    def near(cls, coord1: tuple[int|float, int|float], coord2: tuple[int|float, int|float]):
-        return ((coord1[0] - coord2[0]) **2 + (coord1[1] - coord2[1]))  <= cls.ARRIVAL_THRESHOLD**2
+    def near(cls, coord1: tuple[int | float, int | float], coord2: tuple[int | float, int | float]):
+        return ((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1])) <= cls.ARRIVAL_THRESHOLD**2
 
     def log_event(self, event: EventBase):
         event.run_id = self.config.run_id
@@ -66,7 +65,6 @@ class Brain:
         if isinstance(thought, RoleContent):
             thought = PetAction.model_validate_json(thought.content)
         self.log_event(ThoughtEvent.from_action(action=thought, run_id=-1))
-        
 
     def update(self, environment_info: EnvironmentalInfo) -> None:
         """Applies queued LLM decisions and advances the pet toward its target.
@@ -104,7 +102,7 @@ class Brain:
             thought=self.config.thoughts.fallback_thought,
             # action=Action.move_to,
             target_x=random.randint(0, self.x_bounds),
-            target_y=random.randint(0, self.y_bounds)
+            target_y=random.randint(0, self.y_bounds),
         )
         self.result_queue.put(fallback_decision)
 
@@ -127,9 +125,7 @@ class Brain:
 
         self.is_thinking = True
         worker_thread = threading.Thread(
-            target=self._generate_decision,
-            args=(current_x, current_y),
-            daemon=True
+            target=self._generate_decision, args=(current_x, current_y), daemon=True
         )
         worker_thread.start()
 

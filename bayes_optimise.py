@@ -41,8 +41,14 @@ class Optimiser:
     )
 
     def __init__(
-        self, model: Model, version: int, config: SimulationConfig, comments: str,
-        *, visual = False, random_seed = False
+        self,
+        model: Model,
+        version: int,
+        config: SimulationConfig,
+        comments: str,
+        *,
+        visual=False,
+        random_seed=False,
     ):
         self.config = config
         self.model = model
@@ -72,7 +78,7 @@ class Optimiser:
             self.report_path.write_text(study_report.model_dump_json(indent=2))
 
         for seed in range(N_SEEDS):
-            seed = randint(100, 10**8 -1) if self.random_seed else seed
+            seed = randint(100, 10**8 - 1) if self.random_seed else seed
             config.brain.params.seed = seed
 
             runtime = config.tank.runtime
@@ -143,7 +149,7 @@ if __name__ == "__main__":
 
     eta = RUNTIME * N_TRIALS * N_SEEDS * len(options)
     print(f"eta: {humanize.naturaltime(eta, future=True)}")
-    
+
     for version_increment, model in enumerate(options):
         version_increment = 0  # keep same version for now
 
