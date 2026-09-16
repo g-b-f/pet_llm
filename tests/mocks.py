@@ -30,7 +30,7 @@ class ScriptedInference(InferenceBase):
             i = 0
             while limit is None or i < limit:
                 target_x = target_y = rng.randint(0, max_target)
-                thought = f"thought {i}"
+                thought = f"thought number {i}"
                 i += 1
                 action = PetAction(thought=thought, target_x=target_x, target_y=target_y)
                 yield RoleContent.assistant(action.model_dump_json())
@@ -58,7 +58,7 @@ class MockValidInference(MockInference):
 
     def create_chat_completion(self, *args, **kwargs):
         return RoleContent.assistant(
-            PetAction(thought="hello", target_y=10, target_x=10).model_dump_json()
+            PetAction(thought="hello world", target_y=10, target_x=10).model_dump_json()
         )
 
 class InfiniteBrain(Brain):

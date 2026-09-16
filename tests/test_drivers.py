@@ -57,7 +57,6 @@ def test_drivers_give_same_results():
     py_thoughts = list(py_tank.brain.memory.total_memory)
     dummy_thoughts = list(dummy_tank.brain.memory.total_memory)
 
-    # dummy driver doesn't have "Start exploring"?
     assert py_thoughts == dummy_thoughts
 
 

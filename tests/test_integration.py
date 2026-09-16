@@ -77,7 +77,7 @@ class TestEndToEnd:
         import pygame
 
         target_x, target_y = 150, 200
-        action = PetAction(thought="moving", target_x=target_x, target_y=target_y)
+        action = PetAction(thought="moving around", target_x=target_x, target_y=target_y)
         brain = BlockingBrain(action)
         driver = PyGameDriver(2, (config.tank.screen_width, config.tank.screen_height))
 
@@ -100,8 +100,8 @@ class TestEndToEnd:
     @pytest.mark.slow
     def test_previous_response_appears_in_system_prompt(self, config: SimulationConfig):
         target_x, target_y = 150, 200
-        action1= PetAction(thought="moving", target_x=target_x, target_y=target_y)
-        action2 = PetAction(thought="moving", target_x=10, target_y=10)
+        action1= PetAction(thought="moving around", target_x=target_x, target_y=target_y)
+        action2 = PetAction(thought="moving around", target_x=10, target_y=10)
 
         brain = BlockingBrain([action1, action2])
         driver = DummyDriver(0.1)

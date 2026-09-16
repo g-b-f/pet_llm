@@ -105,7 +105,7 @@ class TestSupervise:
     def test_different_thoughts_no_error(self, memory: Memory):
         for i in range(3):
             action = PetAction(
-                thought=f"thought {i}", target_x=i, target_y=i
+                thought=f"thought number {i}", target_x=i, target_y=i
             )
             memory += RoleContent.assistant(action.model_dump_json())
         memory.supervise()

@@ -98,14 +98,14 @@ class TestTargetOutOfBounds:
         ("target_x", "target_y"), [(101, 50), (-1, 50), (50, 101), (50, -1)]
     )
     def test_target_out_of_bounds(self, brain: Brain, target_x: int, target_y: int):
-        action = PetAction(thought="t", target_x=target_x, target_y=target_y)
+        action = PetAction(thought="test thought", target_x=target_x, target_y=target_y)
         assert brain.target_out_of_bounds(action)
 
     @pytest.mark.parametrize(
         ("target_x", "target_y"), [(50, 50), (100, 100), (0, 0), (100, 0), (0, 100)]
     )
     def test_target_in_bounds(self, brain: Brain, target_x: int, target_y: int):
-        action = PetAction(thought="t", target_x=target_x, target_y=target_y)
+        action = PetAction(thought="test thought", target_x=target_x, target_y=target_y)
         assert not brain.target_out_of_bounds(action)
 
 
@@ -117,7 +117,7 @@ class TestGenerateDecision:
             ):
         
         if action is None:
-            action = PetAction(thought="hello", target_x=10, target_y=20)
+            action = PetAction(thought="hello there", target_x=10, target_y=20)
         inference = ScriptedInference(action)
         brain = Brain(config, (100, 100), inference)
 
@@ -128,7 +128,7 @@ class TestGenerateDecision:
         brain = self._setup_brain_for_generation()
         assert not brain.result_queue.empty()
         decision = brain.result_queue.get()
-        assert decision.thought == "hello"
+        assert decision.thought == "hello there"
 
     def test_increments_iterations(self):
         brain = self._setup_brain_for_generation()
@@ -140,18 +140,18 @@ class TestGenerateDecision:
         assert not brain.is_thinking
 
     def test_oob_decision_not_queued(self):
-        action = PetAction(thought="oob", target_x=999, target_y=999)
+        action = PetAction(thought="out of bounds", target_x=999, target_y=999)
         brain = self._setup_brain_for_generation(action)
         assert brain.result_queue.empty()
 
     def test_oob_increments_oob_count(self):
-        action = PetAction(thought="oob", target_x=999, target_y=999)
+        action = PetAction(thought="out of bounds", target_x=999, target_y=999)
         brain = self._setup_brain_for_generation(action)
         assert brain.current_oob_count == 1
 
     def test_max_oob_triggers_fallback(self, brain: Brain):
         brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
-        action = PetAction(thought="oob", target_x=999, target_y=999)
+        action = PetAction(thought="out of bounds", target_x=999, target_y=999)
         brain.inference = ScriptedInference(action)
         brain._generate_decision(10, 10)
 
@@ -162,7 +162,7 @@ class TestGenerateDecision:
 
     def test_memory_cleared_on_max_oob(self, brain: Brain):
         brain.current_oob_count = Brain.MAX_OOB_COUNT - 1
-        action = PetAction(thought="oob", target_x=999, target_y=999)
+        action = PetAction(thought="out of bounds", target_x=999, target_y=999)
         brain.inference = ScriptedInference(action)
         brain._generate_decision(10, 10)
 
