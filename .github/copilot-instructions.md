@@ -2,6 +2,10 @@
 
 Desktop "virtual pet" simulation: a Pygame-rendered pet swims in a tank, steered by a local LLM (via llama-cpp-python) that runs in a background thread and emits structured JSON decisions.
 
+## How to respond to instructions
+
+Work under the assumptions that both your prompt and the pre-existing tests are a source of truth, but don't take them as gospel: if something seems incorrect about the aforementioned, use the `askQuestions` tool for clarification or permission to continue.
+
 ## Commands
 
 This project uses **uv** (see `uv.lock`). Always prefix commands with `uv run`:
@@ -53,13 +57,11 @@ Model selection is hardcoded in [main.py](main.py): `get_model(Model.smollm2)`, 
 
 3. **Threading:** `result_queue: queue.Queue[PetAction]` is the only cross-thread channel. `is_thinking` must be reset in a `finally` block. `wake_up()` must complete before `request_decision_async` (enforced by `assert self.awake`).
 
-4. **Two-phase init:** `Brain.__init__` only stores the model path; `wake_up(bounds)` (called by `Tank`) does the expensive `Llama` load and creates `memory`/`result_queue`.
+4. **Drivers are display-only.** The driver never mutates simulation state: `Tank` hands it a `RenderInfo` snapshot built fresh from the brain each frame, and there is no channel for the driver to write back. The loop ends when the driver sets `self.running = False` (on QUIT, or when `pygame.time.get_ticks()` passes `end_time` computed from `TankConfig.runtime`).
 
-5. **Drivers are display-only.** The driver never mutates simulation state: `Tank` hands it a `RenderInfo` snapshot built fresh from the brain each frame, and there is no channel for the driver to write back. The loop ends when the driver sets `self.running = False` (on QUIT, or when `pygame.time.get_ticks()` passes `end_time` computed from `TankConfig.runtime`).
+5. **Memory is lossy:** `maxlen` comes from `MemoryConfig.max_length` (default 5); old messages silently drop. The system prompt is **not** stored — `get_messages(system_prompt)` prepends it fresh per call. `Memory.__add__` mutates and returns `self` (both `+` and `+=` mutate).
 
-6. **Memory is lossy:** `maxlen` comes from `MemoryConfig.max_length` (default 5); old messages silently drop. The system prompt is **not** stored — `get_messages(system_prompt)` prepends it fresh per call. `Memory.__add__` mutates and returns `self` (both `+` and `+=` mutate).
-
-7. **Decision triggering is arrival-based:** new decision requested only when the pet is within `ARRIVAL_THRESHOLD` (3.0 px) of its target. Movement = normalized step of `PET_SPEED` (2.5 px/frame). `PetAction.action` is currently commented out of the schema — only `thought`, `target_x`, `target_y` exist.
+6. **Decision triggering is arrival-based:** new decision requested only when the pet is within `ARRIVAL_THRESHOLD` (3.0 px) of its target. Movement = normalized step of `PET_SPEED` (2.5 px/frame). `PetAction.action` is currently commented out of the schema — only `thought`, `target_x`, `target_y` exist.
 
 ## Testing Conventions
 
