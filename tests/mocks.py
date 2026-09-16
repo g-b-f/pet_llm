@@ -21,7 +21,7 @@ class ScriptedInference(InferenceBase):
         return obj
 
     @classmethod
-    def infinite(cls, max_target = 100, limit: int|None = None):
+    def infinite(cls, *, limit: int|None = None, max_target = 100):
         """Returns an inference object that will infinitely give valid responses"""
         obj = cls([])
 
@@ -71,8 +71,8 @@ class BlockingBrain(Brain):
     def __init__(
         self,
         actions: list[PetAction] | PetAction,
-        config=BrainConfig.model_construct(),
-        bounds = (500, 500)
+        config = BrainConfig.model_construct(),
+        bounds: tuple[int,int] = (500, 500)
     ):
         super().__init__(config, bounds, ScriptedInference(actions))
     
@@ -80,12 +80,12 @@ class BlockingBrain(Brain):
     def from_thoughts(
         cls,
         thoughts: list[RoleContent] | RoleContent,
-        config=BrainConfig.model_construct(),
-        bounds = (500, 500)
+        config = BrainConfig.model_construct(),
+        bounds: tuple[int,int] = (500, 500)
     ):
         if not isinstance(thoughts, list):
             thoughts = [thoughts]
-        obj = cls([], bounds, config)
+        obj = cls([], config, bounds)
         obj.inference = ScriptedInference.from_thoughts(thoughts)
         return obj
 
@@ -93,8 +93,8 @@ class BlockingBrain(Brain):
     def generate_valid_thoughts(
         cls,
         amount: int,
-        config=BrainConfig.model_construct(),
-        bounds = (500, 500)
+        config = BrainConfig.model_construct(),
+        bounds: tuple[int,int] = (500, 500)
     ):
         obj = cls([], config, bounds)
         obj.inference = ScriptedInference.infinite(limit=amount)
