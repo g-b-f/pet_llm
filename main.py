@@ -11,8 +11,10 @@ logger = get_logger(__name__)
 
 if __name__ == "__main__":
     config = values_from_trial(183)
+    config.tank.runtime = 60 * 30
     config.brain.params.seed = 11
     config.tank.screen_width, config.tank.screen_height = 1200, 900
+
     inference = LlamaCpp(config.brain.params, model_path)
     tank_bounds = Tank.get_bounds(config.tank)
     brain = Brain(config.brain, tank_bounds, inference)

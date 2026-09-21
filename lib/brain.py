@@ -10,11 +10,12 @@ from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
 from lib.types.log import (
     EventBase,
+    BeginSimulationEvent,
     MalformedJSONEvent,
     MemoryClearEvent,
     MemoryClearReason,
-    ThoughtEvent,
-)
+    ThoughtEvent
+    )
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 from lib.types.report import BrainReport
 from lib.utils import get_logger
@@ -33,8 +34,22 @@ class Brain:
     PET_SPEED = 2.5
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
+    EVENT_LOGGING = True
 
     thought_log_path = Path(__file__).parents[1] / "reports/thoughts.jsonl"
+
+    @classmethod
+    def get_new_run_id(cls) -> int:
+        with open(cls.thought_log_path) as f:
+            data: list[dict] = [json.loads(line) for line in f.readlines()]
+            run_ids: set[int] = {d["run_id"] for d in data}
+            return max(run_ids) + 1
+
+    def log_event(self, event: EventBase):
+        if self.EVENT_LOGGING:
+            event.run_id = self.config.run_id
+            with open(self.thought_log_path, "a") as f:
+                f.write(event.model_dump_json() + "\n")
 
     def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
         self.config = config
@@ -58,14 +73,13 @@ class Brain:
         self.current_oob_count = 0
         self.report = BrainReport.model_construct()
 
+        if self.config.run_id == -1:
+            self.config.run_id = self.get_new_run_id()
+        self.log_event(BeginSimulationEvent.new(self.config.run_id, self.config.params))
+
     @classmethod
     def near(cls, coord1: tuple[int | float, int | float], coord2: tuple[int | float, int | float]):
         return ((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1])) <= cls.ARRIVAL_THRESHOLD**2
-
-    def log_event(self, event: EventBase):
-        event.run_id = self.config.run_id
-        with open(self.thought_log_path, "a") as f:
-            f.write(event.model_dump_json() + "\n")
 
     def log_thought(self, thought: PetAction | RoleContent):
         if isinstance(thought, RoleContent):

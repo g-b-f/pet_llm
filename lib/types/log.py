@@ -10,7 +10,7 @@ Vibecoded with Qwen 3.8 27B
 import warnings
 from datetime import datetime as dt
 from enum import StrEnum
-from typing import Literal, Union
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -22,11 +22,11 @@ class EventType(StrEnum):
     thought = "thought"
     memory_cleared = "memory_cleared"
     malformed_json = "malformed_json"
+    begin_simulation = "begin_simulation"
 
 class MemoryClearReason(StrEnum):
     too_many_out_of_bounds = "too_many_out_of_bounds"
     thought_loop = "thought_loop"
-
 
 class EventBase(BaseModel):
     run_id: int
@@ -49,9 +49,7 @@ class ThoughtEvent(EventBase):
     """A parsed LLM decision"""
 
     thought: str = Field(description="The pet's thought, as returned by the LLM")
-    target: tuple[int, int] | None = Field(
-        default=None, description="The target coordinates, if any"
-    )
+    target: tuple[int, int] | None = Field(None, description="The target coordinates, if any")
     type: EventType = EventType.thought
 
     @classmethod
@@ -77,7 +75,7 @@ class ThoughtEvent(EventBase):
 class MemoryClearEvent(EventBase):
     """Memory was cleared; `reason` is why."""
 
-    type: Literal[EventType.memory_cleared] = EventType.memory_cleared
+    type: Literal[EventType.memory_cleared] = EventType.memory_cleared # type: ignore[reportIncompatibleVariableOverride]
     reason: MemoryClearReason = Field(description="Why the memory was cleared")
 
     @classmethod
@@ -88,7 +86,7 @@ class MemoryClearEvent(EventBase):
 class MalformedJSONEvent(EventBase):
     """The LLM returned unparseable JSON; `content` is the raw output."""
 
-    type: Literal[EventType.malformed_json] = EventType.malformed_json
+    type: Literal[EventType.malformed_json] = EventType.malformed_json # type: ignore[reportIncompatibleVariableOverride]
     content: str = Field(description="The raw, unparseable LLM output")
 
     @classmethod
@@ -100,7 +98,20 @@ class MalformedJSONEvent(EventBase):
         return cls(run_id=run_id, datetime=datetime or dt.now(), content=content)
 
 
-LogEvent = ThoughtEvent | MemoryClearEvent | MalformedJSONEvent
+class BeginSimulationEvent(EventBase):
+    type: Literal[EventType.begin_simulation] = EventType.begin_simulation # type: ignore[reportIncompatibleVariableOverride]
+    params: ParamsConfig
+
+    @classmethod
+    def new(cls, run_id: int, params: ParamsConfig, datetime: dt|None = None):
+        return cls(
+            run_id=run_id,
+            params=params,
+            datetime=datetime or dt.now()
+        )
+
+
+LogEvent = ThoughtEvent | MemoryClearEvent | MalformedJSONEvent | BeginSimulationEvent
 
 
 class SeedRun(BaseModel):
