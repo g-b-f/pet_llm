@@ -8,11 +8,11 @@ from lib.types.config import ParamsConfig
 from lib.types.log import (
     LogTrial,
     MalformedJSONEvent,
-    OOBResetEvent,
+    MemoryClearEvent,
+    MemoryClearReason,
     OptimisationLog,
     SeedRun,
     ThoughtEvent,
-    ThoughtLoopEvent,
 )
 
 # --------------------------------------------------------------------------- #
@@ -178,7 +178,11 @@ def _handle_event(
         The updated current thought (only a ``thought`` event changes it).
     """
     if message.startswith("thought loop detected"):
-        run.events.append(ThoughtLoopEvent(run_id=run.seed, datetime=timestamp))
+        run.events.append(
+            MemoryClearEvent(
+                run_id=run.seed, datetime=timestamp, reason=MemoryClearReason.thought_loop
+            )
+        )
     elif message.startswith("thought "):
         thought = _parse_repr(message, "thought ")
         if thought is not None:
@@ -190,7 +194,11 @@ def _handle_event(
         if current_thought is not None and target is not None:
             current_thought.target = target
     elif message.startswith("attempted out-of-bounds too much"):
-        run.events.append(OOBResetEvent(run_id=run.seed, datetime=timestamp))
+        run.events.append(
+            MemoryClearEvent(
+                run_id=run.seed, datetime=timestamp, reason=MemoryClearReason.too_many_out_of_bounds
+            )
+        )
     elif message.startswith("malformed JSON:"):
         content = _parse_repr(message, "malformed JSON: ")
         if content is not None:

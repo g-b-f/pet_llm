@@ -11,11 +11,11 @@ from lib.types.log import (
     EventType,
     LogTrial,
     MalformedJSONEvent,
-    OOBResetEvent,
+    MemoryClearEvent,
+    MemoryClearReason,
     OptimisationLog,
     SeedRun,
     ThoughtEvent,
-    ThoughtLoopEvent,
 )
 
 # A representative slice of the optimisation log: a header, one trial with
@@ -567,7 +567,12 @@ class TestParseLog:
     def test_oob_reset_event(self, sample_log_path: Path):
         log = parse_log.parse_log(sample_log_path)
         events = log.trials[0].seeds[0].events
-        oob = [e for e in events if isinstance(e, OOBResetEvent)]
+        oob = [
+            e
+            for e in events
+            if isinstance(e, MemoryClearEvent)
+            and e.reason == MemoryClearReason.too_many_out_of_bounds
+        ]
         assert len(oob) == 1
         assert oob[0].run_id == 0
         assert oob[0].datetime == dt(2026, 9, 5, 19, 41, 21)
@@ -575,7 +580,12 @@ class TestParseLog:
     def test_thought_loop_event(self, sample_log_path: Path):
         log = parse_log.parse_log(sample_log_path)
         events = log.trials[0].seeds[0].events
-        loops = [e for e in events if isinstance(e, ThoughtLoopEvent)]
+        loops = [
+            e
+            for e in events
+            if isinstance(e, MemoryClearEvent)
+            and e.reason == MemoryClearReason.thought_loop
+        ]
         assert len(loops) == 1
         assert loops[0].datetime == dt(2026, 9, 5, 19, 41, 42)
 
@@ -610,7 +620,8 @@ class TestParseLog:
         events = log.trials[0].seeds[0].events
         # events are in log order: four thoughts, then an out-of-bounds reset
         assert all(isinstance(e, ThoughtEvent) for e in events[:4])
-        assert isinstance(events[4], OOBResetEvent)
+        assert isinstance(events[4], MemoryClearEvent)
+        assert events[4].reason == MemoryClearReason.too_many_out_of_bounds
 
     def test_round_trip_json(self, sample_log_path: Path):
         log = parse_log.parse_log(sample_log_path)
@@ -623,17 +634,26 @@ class TestModels:
     def test_event_type_defaults(self):
         ts = dt(2026, 9, 5, 19, 40, 55)
         assert ThoughtEvent(run_id=0, datetime=ts, thought="x").type == EventType.thought
-        assert OOBResetEvent(run_id=0, datetime=ts).type == EventType.oob_reset
-        assert ThoughtLoopEvent(run_id=0, datetime=ts).type == EventType.thought_loop
+        assert (
+            MemoryClearEvent(run_id=0, datetime=ts, reason=MemoryClearReason.too_many_out_of_bounds).type
+            == EventType.memory_cleared
+        )
         assert (
             MalformedJSONEvent(run_id=0, datetime=ts, content="x").type == EventType.malformed_json
         )
+
+    def test_memory_clear_event_new(self):
+        event = MemoryClearEvent.new(reason=MemoryClearReason.thought_loop)
+        assert event.run_id == -1
+        assert event.reason == MemoryClearReason.thought_loop
+        assert event.type == EventType.memory_cleared
 
     def test_get_subclass(self):
         ts = dt(2026, 9, 5, 19, 40, 55)
         base = ThoughtEvent(run_id=0, datetime=ts, thought="x")
         assert isinstance(base.get_subclass(), ThoughtEvent)
-        assert isinstance(OOBResetEvent(run_id=0, datetime=ts).get_subclass(), OOBResetEvent)
+        cleared = MemoryClearEvent(run_id=0, datetime=ts, reason=MemoryClearReason.too_many_out_of_bounds)
+        assert isinstance(cleared.get_subclass(), MemoryClearEvent)
 
     def test_seed_run_defaults(self):
         run = SeedRun(seed=0)

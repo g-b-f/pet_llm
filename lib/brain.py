@@ -8,7 +8,13 @@ from pathlib import Path
 from lib import memory
 from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
-from lib.types.log import EventBase, MalformedJSONEvent, ThoughtEvent
+from lib.types.log import (
+    EventBase,
+    MalformedJSONEvent,
+    MemoryClearEvent,
+    MemoryClearReason,
+    ThoughtEvent,
+)
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 from lib.types.report import BrainReport
 from lib.utils import get_logger
@@ -28,7 +34,7 @@ class Brain:
     ARRIVAL_THRESHOLD = 3.0
     MAX_OOB_COUNT = 3
 
-    thought_log_path = Path(__file__).parent / "thoughts.jsonl"
+    thought_log_path = Path(__file__).parents[1] / "reports/thoughts.jsonl"
 
     def __init__(self, config: BrainConfig, bounds: tuple[int, int], inference: InferenceBase):
         self.config = config
@@ -182,6 +188,7 @@ class Brain:
                 logger.info("attempted out-of-bounds too much, clearing memory")
                 self._fallback()
                 self.memory.clear()
+                self.log_event(MemoryClearEvent.new(reason=MemoryClearReason.too_many_out_of_bounds))
                 self.current_oob_count = 0
         else:
             self.result_queue.put(action)
@@ -199,6 +206,7 @@ class Brain:
             )
             logger.info(f"thought was: '{e.last_thought}'")
             # self.memory.append(RoleContent.system("you'd like to do something else now"))
+            self.log_event(MemoryClearEvent.new(reason=MemoryClearReason.thought_loop))
             self.memory.clear()
             self._fallback()
         finally:
