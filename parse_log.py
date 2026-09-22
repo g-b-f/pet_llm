@@ -186,7 +186,7 @@ def _handle_event(
     elif message.startswith("thought "):
         thought = _parse_repr(message, "thought ")
         if thought is not None:
-            event = ThoughtEvent(run_id=run.seed, datetime=timestamp, thought=thought)
+            event = ThoughtEvent(run_id=run.seed, datetime=timestamp, thought=thought, target=None)
             run.events.append(event)
             return event
     elif message.startswith("tried to go to "):
