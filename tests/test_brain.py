@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.brain import Brain
+from lib.classes.brain import Brain
 from lib.types.config import BrainConfig
 from lib.types.other import EnvironmentalInfo, PetAction, RoleContent
 from tests.mocks import MockInference, MockValidInference, NonLoggingBrain, ScriptedInference
@@ -67,19 +67,19 @@ class TestFallback:
 class TestRequestDecisionAsync:
     def test_skips_if_already_thinking(self, brain: Brain):
         brain.is_thinking = True
-        with patch("lib.brain.threading.Thread") as mock_thread:
+        with patch("lib.classes.brain.threading.Thread") as mock_thread:
             brain.request_decision_async(50, 50)
             mock_thread.assert_not_called()
 
     def test_starts_thread(self, brain: Brain):
-        with patch("lib.brain.threading.Thread") as mock_thread:
+        with patch("lib.classes.brain.threading.Thread") as mock_thread:
             mock_thread.return_value = MagicMock()
             brain.request_decision_async(50, 50)
             mock_thread.assert_called_once()
             mock_thread.return_value.start.assert_called_once()
 
     def test_sets_thinking_flag(self, brain: Brain):
-        with patch("lib.brain.threading.Thread") as mock_thread:
+        with patch("lib.classes.brain.threading.Thread") as mock_thread:
             mock_thread.return_value = MagicMock()
             brain.request_decision_async(50, 50)
             assert brain.is_thinking

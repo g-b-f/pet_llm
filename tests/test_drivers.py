@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lib.drivers import DummyDriver, PyGameDriver
-from lib.tank import Tank
+from lib.classes.tank import Tank
 from lib.types.config import TankConfig
 from lib.types.other import RenderInfo
 from tests.mocks import BlockingBrain

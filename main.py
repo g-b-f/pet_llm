@@ -1,9 +1,9 @@
-from lib.brain import Brain
-from lib.drivers.pygame_driver import PyGameDriver
-from lib.inference.llama_cpp_python import LlamaCpp
-from lib.tank import Tank
+from lib.classes import Brain
+from lib.drivers import PyGameDriver
+from lib.inference import LlamaCpp
+from lib.classes import Tank
 from lib.utils import get_logger, values_from_trial
-from models.download import Model, get_model
+from models import Model, get_model
 
 model_path = get_model(Model.llama)
 logger = get_logger(__name__)

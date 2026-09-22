@@ -2,7 +2,7 @@ import time
 import tomllib
 from pathlib import Path
 
-from lib.brain import Brain
+from lib.classes.brain import Brain
 from lib.drivers.base import DriverBase
 from lib.types.config import SimulationConfig, TankConfig
 from lib.types.other import EnvironmentalInfo, RenderInfo
@@ -10,10 +10,10 @@ from lib.types.report import OutputReport
 
 DEBUG = True
 
-tom = (Path(__file__).parent.parent / "pyproject.toml").read_text()
+tom = (Path(__file__).parents[2] / "pyproject.toml").read_text()
 version = tomllib.loads(tom)["project"]["version"]
 
-report_path = Path(__file__).parent.parent / "report.json"
+report_path = Path(__file__).parents[2] / "report.json"
 
 
 class Tank:

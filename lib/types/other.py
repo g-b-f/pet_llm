@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from lib.utils import get_logger
 
 if TYPE_CHECKING:
-    from lib.brain import Brain
+    from lib.classes import Brain
 
 logger = get_logger(__name__)
 

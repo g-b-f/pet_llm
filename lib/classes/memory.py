@@ -1,20 +1,12 @@
 from collections import deque
 
+from lib.exceptions import ThoughtLoopError
 from lib.types.config import MemoryConfig
 from lib.types.other import PetAction, RoleContent
 from lib.utils import get_logger
 
 logger = get_logger(__name__, "info", log_file="log_bayes.txt")
 
-
-class MemoryHandlerError(Exception):
-    pass
-
-
-class ThoughtLoopError(MemoryHandlerError):
-    def __init__(self, last_thought, *args) -> None:
-        self.last_thought = last_thought
-        super().__init__(*args)
 
 
 class Memory:

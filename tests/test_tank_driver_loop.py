@@ -15,7 +15,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from lib.drivers.base import DriverBase
-from lib.tank import Tank
+from lib.classes import Tank
 from lib.types.config import BrainConfig, TankConfig
 from lib.types.other import EnvironmentalInfo, RenderInfo
 from lib.types.report import BrainReport

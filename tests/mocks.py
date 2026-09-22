@@ -1,8 +1,8 @@
 from random import Random
 from typing import TYPE_CHECKING
 
-from lib.brain import Brain
-from lib.inference.base import InferenceBase
+from lib.classes import Brain
+from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
 
 if TYPE_CHECKING:

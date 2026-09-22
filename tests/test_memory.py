@@ -1,6 +1,6 @@
 import pytest
 
-from lib.memory import Memory, ThoughtLoopError
+from lib.classes.memory import Memory, ThoughtLoopError
 from lib.types.config import MemoryConfig
 from lib.types.other import PetAction, RoleContent
 

@@ -5,7 +5,8 @@ import string
 import threading
 from pathlib import Path
 
-from lib import memory
+from lib.classes.memory import Memory
+from lib.exceptions import ThoughtLoopError
 from lib.inference import InferenceBase
 from lib.types.config import BrainConfig
 from lib.types.log import (
@@ -36,7 +37,7 @@ class Brain:
     MAX_OOB_COUNT = 3
     EVENT_LOGGING = True
 
-    thought_log_path = Path(__file__).parents[1] / "reports/thoughts.jsonl"
+    thought_log_path = Path(__file__).parents[2] / "reports/thoughts.jsonl"
 
     @classmethod
     def get_new_run_id(cls) -> int:
@@ -67,7 +68,7 @@ class Brain:
         self.is_thinking = False
         self.result_queue: queue.Queue[PetAction] = queue.Queue()
 
-        self.memory = memory.Memory(self.config.memory)
+        self.memory = Memory(self.config.memory)
         self.memory += self.initial_memory
         self.iterations = 0
         self.current_oob_count = 0
@@ -213,7 +214,7 @@ class Brain:
 
         try:
             self.memory.supervise()
-        except memory.ThoughtLoopError as e:
+        except ThoughtLoopError as e:
             self.report.thought_loops += 1
             logger.info(
                 f"thought loop detected after {self.iterations} iterations, clearing memory"

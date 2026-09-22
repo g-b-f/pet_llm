@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from lib.drivers import DummyDriver, PyGameDriver
-from lib.tank import Tank
+from lib.classes.tank import Tank
 from lib.types.config import SimulationConfig
 from lib.types.other import PetAction, RoleContent
 from lib.types.report import OutputReport

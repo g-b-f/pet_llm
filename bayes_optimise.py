@@ -4,15 +4,15 @@ from random import randint
 import humanize
 import optuna
 
-from lib.brain import Brain
+from lib.classes import Brain
 from lib.drivers import DummyDriver, PyGameDriver
-from lib.inference.llama_cpp_python import LlamaCpp
+from lib.inference import LlamaCpp
 from lib.optimisation_helpers import append_report, get_storage, loss_function, suggest_vals
-from lib.tank import Tank
+from lib.classes import Tank
 from lib.types.config import LossFunctionWeights, SimulationConfig, TunerConfig
 from lib.types.report import StudyReport
 from lib.utils import get_logger
-from models.download import Model, get_model
+from models import Model, get_model
 
 RUNTIME = 300
 N_TRIALS = 15
