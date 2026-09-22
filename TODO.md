@@ -14,11 +14,6 @@ Enforce better thoughts
 - `LogitsProcessor` to prevent/ discourage thought loops
 
 
-Tests
-
-- make the LLM say to move, check that the pygame driver moved
-- add test that co-ord from LLM appears in next system prompt
-
 Make inter-class communication more lightweight
 
 - toggle between validation and not?
@@ -28,7 +23,6 @@ Make inter-class communication more lightweight
 
 - remove empty thoughts to prevent loops
 - improve thought loop checking algorithm
-- remove `idle` and `swim_fast` options
 
 ## Thought logging
 
