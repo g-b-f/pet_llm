@@ -41,6 +41,8 @@ class EventBase(BaseModel):
             return MemoryClearEvent(**self.model_dump())
         elif self.type == "malformed_json":
             return MalformedJSONEvent(**self.model_dump())
+        elif self.type == "begin_simulation":
+            return BeginSimulationEvent(**self.model_dump())
 
         raise ValueError("couldn't get type")
 
