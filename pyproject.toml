@@ -9,10 +9,12 @@ dependencies = [
     "humanize>=4.16.0",
     "levenshtein>=0.27.4",
     "llama-cpp-python>=0.3.35",
+    "psycopg2>=2.9.13",
     "py-pglite>=0.5.3",
     "pydantic>=2.13.4",
     "pygame>=2.6.1",
     "sqlalchemy>=2.0.52",
+    "types-psycopg2>=2.9.21.20260911",
 ]
 
 [[tool.uv.index]]
