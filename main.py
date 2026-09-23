@@ -1,5 +1,5 @@
 from lib.classes import Brain
-from lib.drivers import PyGameDriver
+from lib.drivers.pygame_driver import PyGameDriver
 from lib.inference import LlamaCpp
 from lib.classes import Tank
 from lib.utils import get_logger, values_from_trial
@@ -13,6 +13,7 @@ if __name__ == "__main__":
     config = values_from_trial(183)
     config.tank.runtime = 60 * 5
     config.brain.params.seed = 11
+    config.brain.run_id = 2
     config.tank.screen_width, config.tank.screen_height = 1200, 900
 
     inference = LlamaCpp(config.brain.params, model_path)

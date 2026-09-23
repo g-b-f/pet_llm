@@ -8,7 +8,7 @@ from pathlib import Path
 from lib.classes.memory import Memory
 from lib.exceptions import ThoughtLoopError
 from lib.inference import InferenceBase
-from lib.classes.recorder import JsonRecorder
+from lib.classes.recorder import JsonRecorder, PostGresSQLRecorder
 from lib.types.config import BrainConfig
 from lib.types.log import (
     EventBase,
@@ -50,8 +50,8 @@ class Brain:
             return max(run_ids) + 1
 
     def log_event(self, event: EventBase):
-        rec = JsonRecorder(self.thought_log_path, self.config.run_id)
-        rec.log(event)
+        with PostGresSQLRecorder(self.config.run_id) as rec:
+            rec.log(event)
 
         return
 

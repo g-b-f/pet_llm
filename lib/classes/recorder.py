@@ -1,9 +1,9 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
+from typing import Any
 from uuid import uuid4
 
-from py_pglite.sqlalchemy import SQLAlchemyPGliteManager # type: ignore[import-untyped]
-from sqlalchemy import Connection, Engine, text
+import psycopg2
 
 from lib.types.log import EventBase, ThoughtEvent, MemoryClearEvent, MalformedJSONEvent, BeginSimulationEvent
 
@@ -11,12 +11,22 @@ from lib.types.log import EventBase, ThoughtEvent, MemoryClearEvent, MalformedJS
 EVENT_LOGGING = True
 
 class RecorderBase(metaclass = ABCMeta):
-    def __init__(self, *,  path: Path, run_id: int|None = None):
-        self.path = path
+    is_open = False
+    def __init__(self, run_id: int|None = None):
         if run_id is None:
-            pass
-        else:
+            raise RuntimeError
             self.run_id = uuid4().int
+        else:
+            self.run_id = run_id
+
+    @abstractmethod
+    def __enter__(self) -> Any:
+        self.__class__.is_open = True
+
+    @abstractmethod
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.__class__.is_open = False
+        
 
     @abstractmethod
     def log(self, event: EventBase) -> None:
@@ -25,24 +35,57 @@ class RecorderBase(metaclass = ABCMeta):
 
 class JsonRecorder(RecorderBase):
     def __init__(self, path: Path, run_id: int|None = None):
-        super().__init__(run_id=run_id, path=path)
+        self.path = path
+        super().__init__(run_id)
 
-    def log(self, event: EventBase):
-        event.run_id = self.run_id
+    def __enter__(self):
         if EVENT_LOGGING:
             if not self.path.exists():
                 self.path.touch()
-            
-            with open(self.path, "a") as f:
-                f.write(event.model_dump_json() + "\n")
+            self.file = open(self.path, "a")
+            super().__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if hasattr(self, "file"):
+            self.file.close()
+        super().__exit__(exc_type, exc_value, traceback)
+
+    def log(self, event: EventBase):
+        event.run_id = self.run_id
+        self.file.write(event.model_dump_json() + "\n")
+
+    
 
 class PostGresSQLRecorder(RecorderBase):
 
-    def __init__(self, path: Path, run_id: int|None = None):
-        super().__init__(run_id=run_id, path=path)
+    def __init__(self, run_id: int|None = None, path=None):
+        super().__init__(run_id)
 
-    def create_db(self, engine: Engine):
-        create_sql = text("""
+    def __enter__(self):
+        if EVENT_LOGGING:
+            self.connection = psycopg2.connect(
+                database="postgres",
+                user="postgres",
+                password="password",
+                host="localhost",
+                port= "5432"
+            )
+
+            self.connection.autocommit = True
+            super().__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.connection.close()
+        return super().__exit__(exc_type, exc_value, traceback)
+
+    def execute(self, sql: str, params: dict|None = None):
+        with self.connection.cursor() as cur:
+            cur.execute(sql, params)
+    
+    def create_db(self):
+        create_sql = """
         CREATE TYPE memory_clear_reason AS ENUM (
             'too_many_out_of_bounds',
             'thought_loop'
@@ -56,7 +99,7 @@ class PostGresSQLRecorder(RecorderBase):
             frequency_penalty DOUBLE PRECISION NOT NULL,
             presence_penalty DOUBLE PRECISION NOT NULL,
             repeat_penalty DOUBLE PRECISION NOT NULL,
-            min_p DOUBLE PRECISION NOT NULL DEFAULT,
+            min_p DOUBLE PRECISION NOT NULL,
             seed BIGINT
         );
 
@@ -82,17 +125,15 @@ class PostGresSQLRecorder(RecorderBase):
             datetime TIMESTAMPTZ NOT NULL,
             content TEXT NOT NULL
         );
-        """)
-        with engine.connect() as conn:
-            conn.execute(create_sql)
+        """
+        self.execute(create_sql)
 
-    def _insert_thought(self, event: ThoughtEvent, connection: Connection):
-        insert_sql = text(
-            """
+    def _insert_thought(self, event: ThoughtEvent):
+        insert_sql ="""
             INSERT INTO thought_events (run_id, datetime, thought, target_x, target_y)
-            VALUES (:run_id, :datetime, :thought, :target_x, :target_y)
+            VALUES (%(run_id)s, %(datetime)s, %(thought)s, %(target_x)s, %(target_y)s)
             """
-        )
+        
         params = {
             "run_id": event.run_id,
             "datetime": event.datetime,
@@ -100,44 +141,43 @@ class PostGresSQLRecorder(RecorderBase):
             "target_x": event.target[0] if event.target else None,
             "target_y": event.target[1] if event.target else None,
         }
-        connection.execute(insert_sql, params)
+        self.execute(insert_sql, params)
 
-    def _insert_memory_clear(self, event: MemoryClearEvent, connection: Connection):
-        insert_sql = text(
-            """
+    def _insert_memory_clear(self, event: MemoryClearEvent):
+        insert_sql = """
             INSERT INTO memory_clear_events (run_id, datetime, reason)
-            VALUES (:run_id, :datetime, :reason)
+            VALUES (%(run_id)s, %(datetime)s, %(reason)s)
             """
-        )
         params = {
             "run_id": event.run_id,
             "datetime": event.datetime,
-            "reason": event.reason.value,
+            "reason": event.reason,
         }
-        connection.execute(insert_sql, params)
+        self.execute(insert_sql, params)
 
-    def _insert_malformed_json(self, event: MalformedJSONEvent, connection: Connection):
-        insert_sql = text(
-            """
+    def _insert_malformed_json(self, event: MalformedJSONEvent):
+        insert_sql ="""
             INSERT INTO malformed_json_events (run_id, datetime, content)
-            VALUES (:run_id, :datetime, :content)
+            VALUES (%(run_id)s, %(datetime)s, %(content)s)
             """
-        )
         params = {
             "run_id": event.run_id,
             "datetime": event.datetime,
             "content": event.content,
         }
-        connection.execute(insert_sql, params)
-        connection.commit()
+        self.execute(insert_sql, params)
 
-    def _insert_begin_simulation(self, event: BeginSimulationEvent, connection: Connection):
-        insert_sql = text(
+    def _insert_begin_simulation(self, event: BeginSimulationEvent):
+        insert_sql = """
+            INSERT INTO runs
+            (created_at, context_size, temperature, frequency_penalty,
+            presence_penalty, repeat_penalty, min_p, seed)
+
+            VALUES (%(created_at)s, %(context_size)s, %(temperature)s,
+            %(frequency_penalty)s, %(presence_penalty)s, %(repeat_penalty)s,
+            %(min_p)s, %(seed)s)
             """
-            INSERT INTO runs (created_at, context_size, temperature, frequency_penalty, presence_penalty, repeat_penalty, min_p, seed)
-            VALUES (:created_at, :context_size, :temperature, :frequency_penalty, :presence_penalty, :repeat_penalty, :min_p, :seed)
-            """
-        )
+
         params = {
             "created_at": event.datetime,
             "context_size": event.params.context_size,
@@ -148,39 +188,29 @@ class PostGresSQLRecorder(RecorderBase):
             "min_p": event.params.min_p,
             "seed": event.params.seed,
         }
-        connection.execute(insert_sql, params)
+        self.execute(insert_sql, params)
 
     def insert(
             self,
             event: ThoughtEvent | MemoryClearEvent | MalformedJSONEvent | BeginSimulationEvent,
-            engine: Engine
         ):
-        with engine.connect() as conn:
-            if isinstance(event, ThoughtEvent):
-                self._insert_thought(event, conn)
-            elif isinstance(event, MemoryClearEvent):
-                self._insert_memory_clear(event, conn)
-            elif isinstance(event, MalformedJSONEvent):
-                self._insert_malformed_json(event, conn)
-            elif isinstance(event, BeginSimulationEvent):
-                self._insert_begin_simulation(event, conn)
-            else:
-                raise ValueError(f"Unsupported event type: {type(event)}")
+        if isinstance(event, ThoughtEvent):
+            self._insert_thought(event)
+        elif isinstance(event, MemoryClearEvent):
+            self._insert_memory_clear(event)
+        elif isinstance(event, MalformedJSONEvent):
+            self._insert_malformed_json(event)
+        elif isinstance(event, BeginSimulationEvent):
+            self._insert_begin_simulation(event)
+        else:
+            raise ValueError(f"Unsupported event type: {type(event)}")
             
-
-class PGLiteSQLRecorder(PostGresSQLRecorder):
-    # this is a pretty bizarre stack (py-pglite -> SQLAlchemy -> raw SQL -> pglite -> postgres)
-    # because I wanted to practice postgres commands while being able to commit the db to git
-    def __init__(self, path: Path, run_id: int|None = None):
-        super().__init__(run_id=run_id, path=path)
-
     def log(self, event: EventBase):
         if EVENT_LOGGING:
             event.run_id = self.run_id
-            with SQLAlchemyPGliteManager() as db:
-                engine: Engine = db.get_engine()
+            self.insert(event) # type: ignore[reportArgumentType]
 
-                if not self.path.exists():
-                    self.create_db(engine)
 
-                self.insert(event, engine) # type: ignore[reportArgumentType]
+if __name__ == "__main__":
+    with PostGresSQLRecorder(run_id=-1) as rec:
+        rec.create_db()
