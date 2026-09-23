@@ -6,7 +6,6 @@ from py_pglite.sqlalchemy import SQLAlchemyPGliteManager # type: ignore[import-u
 from sqlalchemy import Connection, Engine, text
 
 from lib.types.log import EventBase, ThoughtEvent, MemoryClearEvent, MalformedJSONEvent, BeginSimulationEvent
-from lib.types.other import PetAction, RoleContent
 
 # TODO: move this into global/ environment variables
 EVENT_LOGGING = True
@@ -19,7 +18,6 @@ class RecorderBase(metaclass = ABCMeta):
         else:
             self.run_id = uuid4().int
 
-
     @abstractmethod
     def log(self, event: EventBase) -> None:
         raise RuntimeError("must be subclassed!")
@@ -30,11 +28,13 @@ class JsonRecorder(RecorderBase):
         super().__init__(run_id=run_id, path=path)
 
     def log(self, event: EventBase):
+        event.run_id = self.run_id
         if EVENT_LOGGING:
-            event.run_id = self.run_id
+            if not self.path.exists():
+                self.path.touch()
+            
             with open(self.path, "a") as f:
                 f.write(event.model_dump_json() + "\n")
-
 
 class PostGresSQLRecorder(RecorderBase):
 
@@ -129,6 +129,7 @@ class PostGresSQLRecorder(RecorderBase):
             "content": event.content,
         }
         connection.execute(insert_sql, params)
+        connection.commit()
 
     def _insert_begin_simulation(self, event: BeginSimulationEvent, connection: Connection):
         insert_sql = text(

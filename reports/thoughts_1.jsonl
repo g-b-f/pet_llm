@@ -1,0 +1,88 @@
+{"run_id":256975675028638896488381052317569141490,"datetime":"2026-09-23T11:46:42.833614","type":"begin_simulation","params":{"context_size":2048,"temperature":1.9604443514736345,"frequency_penalty":1.7236074544269426,"presence_penalty":0.7375280022674281,"repeat_penalty":0.8474958097025505,"min_p":0.05,"seed":11}}
+{"run_id":331911023868780284779185707715028075068,"datetime":"2026-09-23T11:46:48.682207","type":"thought","thought":"move north","target":[600,500]}
+{"run_id":148574276441041153328518996267321514786,"datetime":"2026-09-23T11:46:52.580260","type":"thought","thought":"move north","target":[600,500]}
+{"run_id":213357722852817009000416321215749033969,"datetime":"2026-09-23T11:46:54.946123","type":"thought","thought":"move north","target":[600,500]}
+{"run_id":179173918821333732714053492112777230277,"datetime":"2026-09-23T11:46:57.302994","type":"thought","thought":"move north","target":[600,500]}
+{"run_id":43160216647312445542028928680533955847,"datetime":"2026-09-23T11:46:59.645669","type":"thought","thought":"move north","target":[600,500]}
+{"run_id":279163052283158949414423741281554064789,"datetime":"2026-09-23T11:46:59.648671","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":120212420043438472413592604544363385216,"datetime":"2026-09-23T11:47:02.877079","type":"thought","thought":"you will be stuck forever!","target":[599,498]}
+{"run_id":38888951632092454358594585386639467248,"datetime":"2026-09-23T11:47:09.249385","type":"thought","thought":"you will be stuck forever!","target":[599,498]}
+{"run_id":273024205661580851224118535752494593353,"datetime":"2026-09-23T11:47:12.329515","type":"thought","thought":"you will be stuck forever!","target":[599,498]}
+{"run_id":99261796851496721070690384787187275466,"datetime":"2026-09-23T11:47:15.309158","type":"thought","thought":"you will be stuck forever!","target":[599,498]}
+{"run_id":269828276760516923575754902640735824292,"datetime":"2026-09-23T11:47:18.457145","type":"thought","thought":"you will be stuck forever!","target":[599,498]}
+{"run_id":207989248583734311721807099402702416749,"datetime":"2026-09-23T11:47:18.458656","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":104311663952134606760803755508992727465,"datetime":"2026-09-23T11:47:22.323372","type":"thought","thought":"you will be here at 5000,","target":[1100,800]}
+{"run_id":311007682825936992081034823224389711132,"datetime":"2026-09-23T11:47:29.806030","type":"thought","thought":"you will be here at 5000,","target":[1100,800]}
+{"run_id":252052275045639492460903170792723068926,"datetime":"2026-09-23T11:47:32.903533","type":"thought","thought":"you will be here at 5000,","target":[1100,800]}
+{"run_id":156112905789303668953162029608523717178,"datetime":"2026-09-23T11:47:36.540315","type":"thought","thought":"you will be here at 5000,","target":[1100,800]}
+{"run_id":126576107489272496650220534434221968282,"datetime":"2026-09-23T11:47:39.733221","type":"thought","thought":"you will be here at 5000,","target":[1100,800]}
+{"run_id":219938318752314193048561292374661353161,"datetime":"2026-09-23T11:47:39.735224","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":167081229362451180516487252679978345756,"datetime":"2026-09-23T11:47:42.857685","type":"thought","thought":"It is a big universe","target":[1090,799]}
+{"run_id":219904555250499473358211251746206330751,"datetime":"2026-09-23T11:47:49.185752","type":"thought","thought":"It is a big universe","target":[1090,799]}
+{"run_id":3388683126688454752467183382630014842,"datetime":"2026-09-23T11:47:52.137339","type":"thought","thought":"It is a big universe","target":[1090,799]}
+{"run_id":105471554733337454103620136927985438876,"datetime":"2026-09-23T11:47:54.973626","type":"thought","thought":"It is a big universe","target":[1090,799]}
+{"run_id":93572826181469925497022850071770518962,"datetime":"2026-09-23T11:47:58.095981","type":"thought","thought":"It is a big universe","target":[1090,799]}
+{"run_id":7250649002034982007516262934881502022,"datetime":"2026-09-23T11:47:58.098355","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":77302352384703813647042529936511308756,"datetime":"2026-09-23T11:48:08.519474","type":"thought","thought":"i will go for 1100 and 800.","target":[1100,800]}
+{"run_id":145977984171019770667094160487399311493,"datetime":"2026-09-23T11:48:19.426564","type":"thought","thought":"i will go for 1100 and 800.","target":[1100,800]}
+{"run_id":255054528675539198869057252022240916806,"datetime":"2026-09-23T11:48:23.111685","type":"thought","thought":"i will go for 1100 and 800.","target":[1100,800]}
+{"run_id":53486233972902753751770547037611977644,"datetime":"2026-09-23T11:48:26.571313","type":"thought","thought":"i will go for 1100 and 800.","target":[1100,800]}
+{"run_id":160356233916191999146569493781462186338,"datetime":"2026-09-23T11:48:30.125397","type":"thought","thought":"i will go for 1100 and 800.","target":[1100,800]}
+{"run_id":30050813116720319668435391241694169026,"datetime":"2026-09-23T11:48:30.127393","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":200326271293722393957025014074838821806,"datetime":"2026-09-23T11:48:32.745618","type":"thought","thought":"i will move","target":[100,200]}
+{"run_id":129636988993985766490584122020908679756,"datetime":"2026-09-23T11:48:40.625043","type":"thought","thought":"i will move","target":[100,200]}
+{"run_id":273633980278613073957675721567981876759,"datetime":"2026-09-23T11:48:42.954492","type":"thought","thought":"i will move","target":[100,200]}
+{"run_id":115678737598987280564732709117735161273,"datetime":"2026-09-23T11:48:45.490779","type":"thought","thought":"i will move","target":[100,200]}
+{"run_id":20802079814546148397004342309446077598,"datetime":"2026-09-23T11:48:47.891187","type":"thought","thought":"i will move","target":[100,200]}
+{"run_id":89150197633536631143606916956379585459,"datetime":"2026-09-23T11:48:47.893192","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":217965259636689156548970438621763296633,"datetime":"2026-09-23T11:48:51.457273","type":"thought","thought":"i will move into a random location","target":[100,200]}
+{"run_id":135239292447245165747210688154747541976,"datetime":"2026-09-23T11:48:57.200200","type":"thought","thought":"i will move into a random location","target":[100,200]}
+{"run_id":96639224591049926135567768499459352355,"datetime":"2026-09-23T11:49:00.520537","type":"thought","thought":"i will move into a random location","target":[100,200]}
+{"run_id":136834887866085257727155808384547015322,"datetime":"2026-09-23T11:49:03.749446","type":"thought","thought":"i will move into a random location","target":[100,200]}
+{"run_id":162253735078601488781968333268755577789,"datetime":"2026-09-23T11:49:07.104810","type":"thought","thought":"i will move into a random location","target":[100,200]}
+{"run_id":114923050956648466541228560776061797626,"datetime":"2026-09-23T11:49:07.106815","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":33779808084191538518123955754982078372,"datetime":"2026-09-23T11:49:14.731720","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!,","target":[1100,800]}
+{"run_id":100150478779907968637295918948273753929,"datetime":"2026-09-23T11:49:26.601204","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!","target":[1100,800]}
+{"run_id":160742878639981998375688918424368488247,"datetime":"2026-09-23T11:49:31.663807","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!","target":[1100,800]}
+{"run_id":158370665490748832274880144090773245389,"datetime":"2026-09-23T11:49:36.923954","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!","target":[1100,800]}
+{"run_id":178260062873965845790017390188687567872,"datetime":"2026-09-23T11:49:42.358126","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!","target":[1100,800]}
+{"run_id":38576327015980023603107736293641826359,"datetime":"2026-09-23T11:49:47.968794","type":"thought","thought":"you can't find any better word for your life and I think you've lost your mind to it!","target":[1100,800]}
+{"run_id":195851103590178460937052653030106105834,"datetime":"2026-09-23T11:49:47.970792","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":70560177273393993221599385951506198596,"datetime":"2026-09-23T11:49:51.793812","type":"thought","thought":"my name is SAVES.","target":[1000,700]}
+{"run_id":300105884197918579935218887414526278792,"datetime":"2026-09-23T11:49:57.184328","type":"thought","thought":"my name is SAVES.","target":[1000,700]}
+{"run_id":47198145450850303736755702739201356028,"datetime":"2026-09-23T11:50:00.679871","type":"thought","thought":"my name is SAVES.","target":[1000,700]}
+{"run_id":233464993314787296674718528372547458333,"datetime":"2026-09-23T11:50:03.898655","type":"thought","thought":"my name is SAVES.","target":[1000,700]}
+{"run_id":41213508225794945766539921984518474904,"datetime":"2026-09-23T11:50:07.062973","type":"thought","thought":"my name is SAVES.","target":[1000,700]}
+{"run_id":216783730744981344046884680640529535022,"datetime":"2026-09-23T11:50:07.064976","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":244036558866146792061684194113496904475,"datetime":"2026-09-23T11:50:11.864745","type":"thought","thought":"you can't control my destiny! i won't play!","target":[998,698]}
+{"run_id":80907003993301357298707897099054831441,"datetime":"2026-09-23T11:50:17.017189","type":"thought","thought":"you can't control my destiny! i won't play!","target":[998,698]}
+{"run_id":286581521148244433132601913288743943683,"datetime":"2026-09-23T11:50:20.984651","type":"thought","thought":"you can't control my destiny! i won't play!","target":[998,698]}
+{"run_id":274017837370945120916791360346098502212,"datetime":"2026-09-23T11:50:24.800763","type":"thought","thought":"you can't control my destiny! i won't play!","target":[998,698]}
+{"run_id":325769457312072230881591906313439988712,"datetime":"2026-09-23T11:50:28.715605","type":"thought","thought":"you can't control my destiny! i won't play!","target":[998,698]}
+{"run_id":331603295716255856359242850569016966471,"datetime":"2026-09-23T11:50:28.717606","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":178100713443905808107194301181577524740,"datetime":"2026-09-23T11:50:31.597449","type":"thought","thought":"mythoughts","target":[999,697]}
+{"run_id":255441996487377555156259381806960344684,"datetime":"2026-09-23T11:50:35.224441","type":"thought","thought":"mythoughts","target":[999,697]}
+{"run_id":142390841837566222470220219448209323336,"datetime":"2026-09-23T11:50:37.665161","type":"thought","thought":"mythoughts","target":[999,697]}
+{"run_id":325966350222411699210692147570347162239,"datetime":"2026-09-23T11:50:40.425804","type":"thought","thought":"mythoughts","target":[999,697]}
+{"run_id":251105922367227509407031867933864394641,"datetime":"2026-09-23T11:50:43.053066","type":"thought","thought":"mythoughts","target":[999,697]}
+{"run_id":18095711052532312007412449727304065721,"datetime":"2026-09-23T11:50:43.055059","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":155754645470731465364440773496440531716,"datetime":"2026-09-23T11:50:46.346128","type":"thought","thought":"mythoughts","target":[500,500]}
+{"run_id":249190871508988967623745861060705144054,"datetime":"2026-09-23T11:50:50.589165","type":"thought","thought":"mythoughts","target":[500,500]}
+{"run_id":246967263237763821576823417961675619872,"datetime":"2026-09-23T11:50:53.237468","type":"thought","thought":"mythoughts","target":[500,500]}
+{"run_id":337110818930472781887106691566561947331,"datetime":"2026-09-23T11:50:56.117790","type":"thought","thought":"mythoughts","target":[500,500]}
+{"run_id":57906962047726420657354285646210548420,"datetime":"2026-09-23T11:50:58.895775","type":"thought","thought":"mythoughts","target":[500,500]}
+{"run_id":226024521411319586557640728284551939936,"datetime":"2026-09-23T11:50:58.897780","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":203986441320391042672837421477049908879,"datetime":"2026-09-23T11:51:01.800990","type":"thought","thought":"Your dog is dying","target":[501,498]}
+{"run_id":18802733737027951656636220651053876083,"datetime":"2026-09-23T11:51:06.007502","type":"thought","thought":"Your dog is dying","target":[501,498]}
+{"run_id":38723593654689156784588874991573804051,"datetime":"2026-09-23T11:51:08.384047","type":"thought","thought":"Your dog is dying","target":[501,498]}
+{"run_id":107526428852158852944536195593292447832,"datetime":"2026-09-23T11:51:11.326495","type":"thought","thought":"Your dog is dying","target":[501,498]}
+{"run_id":93405487220139846763664603760328886111,"datetime":"2026-09-23T11:51:14.263283","type":"thought","thought":"Your dog is dying","target":[501,498]}
+{"run_id":182022624412325754286220316857586846574,"datetime":"2026-09-23T11:51:14.265296","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":149570847987098959524089869465993112339,"datetime":"2026-09-23T11:51:21.255082","type":"thought","thought":"i will go for 500","target":[500,500]}
+{"run_id":245261641556551402487334873663521818423,"datetime":"2026-09-23T11:51:28.141117","type":"thought","thought":"i will go for 500","target":[500,500]}
+{"run_id":102854099243485590634131550478075790585,"datetime":"2026-09-23T11:51:30.777521","type":"thought","thought":"i will go for 500","target":[500,500]}
+{"run_id":260677132989528549774668933075569869078,"datetime":"2026-09-23T11:51:33.583333","type":"thought","thought":"i will go for 500","target":[500,500]}
+{"run_id":184122560953862616067688823525134246928,"datetime":"2026-09-23T11:51:36.338680","type":"thought","thought":"i will go for 500","target":[500,500]}
+{"run_id":38825352794246547937354726256960137486,"datetime":"2026-09-23T11:51:36.340674","type":"memory_cleared","reason":"thought_loop"}
+{"run_id":147411350930571287761213992584941454646,"datetime":"2026-09-23T11:51:39.061434","type":"thought","thought":"you can't touch it","target":[501,501]}
+{"run_id":55655504571486796491382195778220275618,"datetime":"2026-09-23T11:51:44.204266","type":"thought","thought":"you can't touch it","target":[501,501]}

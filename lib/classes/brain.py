@@ -8,6 +8,7 @@ from pathlib import Path
 from lib.classes.memory import Memory
 from lib.exceptions import ThoughtLoopError
 from lib.inference import InferenceBase
+from lib.classes.recorder import JsonRecorder
 from lib.types.config import BrainConfig
 from lib.types.log import (
     EventBase,
@@ -37,16 +38,23 @@ class Brain:
     MAX_OOB_COUNT = 3
     EVENT_LOGGING = True
 
-    thought_log_path = Path(__file__).parents[2] / "reports/thoughts.jsonl"
+    thought_log_path = Path(__file__).parents[2] / "reports/thoughts_1.jsonl"
 
     @classmethod
     def get_new_run_id(cls) -> int:
+        if not cls.thought_log_path.exists():
+            return 1
         with open(cls.thought_log_path) as f:
             data: list[dict] = [json.loads(line) for line in f.readlines()]
             run_ids: set[int] = {d["run_id"] for d in data}
             return max(run_ids) + 1
 
     def log_event(self, event: EventBase):
+        rec = JsonRecorder(self.thought_log_path, self.config.run_id)
+        rec.log(event)
+
+        return
+
         if self.EVENT_LOGGING:
             event.run_id = self.config.run_id
             with open(self.thought_log_path, "a") as f:
