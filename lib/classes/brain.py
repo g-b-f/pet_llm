@@ -8,7 +8,7 @@ from pathlib import Path
 from lib.classes.memory import Memory
 from lib.exceptions import ThoughtLoopError
 from lib.inference import InferenceBase
-from lib.classes.recorder import JsonRecorder, PostGresSQLRecorder
+from lib.recorders import JsonRecorder, PostGresSQLRecorder
 from lib.types.config import BrainConfig
 from lib.types.log import (
     EventBase,
