@@ -36,6 +36,8 @@ class Model(StrEnum):
     glm = "ggml-model-Q4_K_M"
     nemotron = "NVIDIA-Nemotron3-Nano-4B-Q4_K_M"
     k2_horizon = "K2-Horizon-3.7B-Pollard-IQ4_XS"
+    ling_3 = "Ling-3.0-tiny-Q4_0"
+    ling_3_moe = "Ling-3.0-tiny-MXFP4_MOE"
 
 
 mapping: dict[Model, str] = {
@@ -51,7 +53,9 @@ mapping: dict[Model, str] = {
     Model.granite: "ibm-granite/granite-4.2-3b-GGUF",
     Model.glm: "zai-org/glm-edge-4b-chat-gguf",
     Model.nemotron: "nvidia/NVIDIA-Nemotron-3-Nano-4B-GGUF",
-    Model.k2_horizon: "PollardWeights/K2-Horizon-3.7B-Pollard"
+    Model.k2_horizon: "PollardWeights/K2-Horizon-3.7B-Pollard",
+    Model.ling_3: "bloomer010/Ling-3.0-tiny-GGUF",
+    Model.ling_3_moe: "bloomer010/Ling-3.0-tiny-GGUF",
 }
 
 
